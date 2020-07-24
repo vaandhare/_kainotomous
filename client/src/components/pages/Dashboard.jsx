@@ -1,4 +1,4 @@
-import React,{ Fragment } from "react";
+import React from "react";
 import Web3 from 'web3';
 import '../../styles/Dashboard.css';
 import Navbar from './Navbar'
@@ -6,28 +6,57 @@ import SocialNetwork from '../../abis/SocialNetwork.json'
 import Deputy from './Deputy'
 import Chief from './Chief'
 import Chairman from './Chairman'
+import axios from "axios";
 
+// Get the current account value from Localstorage
+let currentAccount = localStorage.getItem('currentAccount');
+// let currentChainId = localStorage.getItem('currentChainId');
+// Listener to check chainchanged
+// window.ethereum.on('chainChanged', handleChainChanged)
 
+// function handleChainChanged (chainId) {
 
+//   if (currentChainId !== chainId) {
+
+//     currentChainId = chainId
+//     // Run any other necessary logic...
+//     localStorage.setItem('currentChainId',currentChainId);
+//     console.log('Chain is Changed to:',currentChainId);
+//     window.location.reload(true)
+//   }
+// }
+
+// On accounts change listner for etheruem
+window.ethereum.on('accountsChanged', handleAccountsChanged)
+
+// For now, 'eth_accounts' will continue to always return an array
+async function handleAccountsChanged () {
+  window.web3 = new Web3(window.ethereum)
+  await window.ethereum.enable()
+  const accounts = await window.web3.eth.getAccounts()
+  const account = accounts[0];
+  // const accounts = await web3.eth.getAccounts()
+  if (account !== currentAccount) {
+    currentAccount = account;
+    // Run any other necessary logic...
+    // Save the current Account to Localstorage
+    localStorage.setItem('currentAccount',currentAccount);
+    // reload the window because the account is changed
+    window.location.reload(true);
+  }
+}
 
 class Dashboard extends React.Component {
   async componentWillMount() {
     await this.loadWeb3()
     await this.loadBlockchainData()
+    await this.fetchUserData();
+    this.checkAuth()
   }
-
-  // async getAccount() {
-  
-  //   const accounts = await window.ethereum.enable();
-  //   const accounts = await web3.eth.getAccounts()
-  //   const account = accounts[0];
-  //   this.setState({ account: accounts[0] })
-  //   // do something with new account here
-  //   return account
-  // }
 
   async  loadWeb3() {
     if (window.ethereum) {
+      // console.log('here')
       window.web3 = new Web3(window.ethereum)
       await window.ethereum.enable()
     }
@@ -44,6 +73,7 @@ class Dashboard extends React.Component {
     // Load account
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0];
+    localStorage.setItem('currentAccount',account);
     this.setState({ account: accounts[0] })
     
    // console.log(account)
@@ -68,14 +98,26 @@ class Dashboard extends React.Component {
     }
   }
 
+  async fetchUserData(){
+    const response = await axios.get(`http://localhost:5000/api/Users/${this.state.account}`)
+    this.setState({currentUser:response.data})
+    // console.log(this.state.currentUser)
+  }
+
   createPost(articleName , content,filehash) {
     this.setState({ loading: true })
     console.log(content)
     console.log(articleName)
     console.log(filehash)
     this.state.socialNetwork.methods.createPost(articleName,content,filehash).send({ from: this.state.account })
-    .once('receipt', (receipt) => {
+    .on('confirmation', (reciept) => {
       this.setState({ loading: false })
+      console.log(reciept)
+      // window.location.reload()
+    })
+    .once('receipt', (receipt) => {
+      console.log(receipt)
+      // this.setState({ loading: false })
     })
   }
 
@@ -87,7 +129,13 @@ class Dashboard extends React.Component {
     console.log(articleName)
     console.log(filehash)
     this.state.socialNetwork.methods.modifyPost(prevId,articleName,content,filehash).send({ from: this.state.account })
+    .on('confirmation', (reciept) => {
+      this.setState({ loading: false })
+      console.log(reciept)
+      // window.location.reload()
+    })
     .once('receipt', (receipt) => {
+      
       this.setState({ loading: false })
 
     })
@@ -96,7 +144,13 @@ class Dashboard extends React.Component {
   approvePost(id) {
     this.setState({ loading: true })
     this.state.socialNetwork.methods.approvePost(id).send({ from: this.state.account})
+    .on('confirmation', (reciept) => {
+      this.setState({ loading: false })
+      // console.log(reciept)
+      // window.location.reload()
+    })
     .once('receipt', (receipt) => {
+      console.log(receipt)
       this.setState({ loading: false })
     })
   }
@@ -121,7 +175,7 @@ class Dashboard extends React.Component {
       filehash: '',
       buffer: null,
       files:null,
-      deputyaddress:'0x47917cd8164660681F16E73c52F7a133112AD465'
+      currentUser:{}
     }
     this.createPost = this.createPost.bind(this)
     this.approvePost = this.approvePost.bind(this)
@@ -132,17 +186,33 @@ class Dashboard extends React.Component {
 
   checkAuth(){
     //   Check if the user has login or not if not then go back to login
+    
     let islogin = localStorage.getItem('isLogin');
-    const result = islogin ? "User has Already Login" : this.props.history.push('/auth')
-  }
+    // ?console.log("Auth Status",islogin);
+    if(islogin === 'false'){
+      // console.log('Pushing Auth');
+      this.props.history.push('/auth')
+    }
+    let currentAccount = JSON.parse(localStorage.getItem('currentLogin'));
+    
+    if(this.state.account !== currentAccount.address){
+      console.log('login doesnt match');
+      this.props.history.push('/metamasklogin')
+    }
+    if(!this.state.currentUser.isapproved){
+      this.props.history.push('/notapproved')
+    }
 
+  }
+  
   render() {
-    this.checkAuth()
-    if(this.state.account === '0x47fcb933Bcd2d6471480b04967B1b0024b9cDff0')
+    
+    if(this.state.currentUser.role === 'Member (Operational)')
     {
+      console.log('Member Address',this.state.currentUser.address);
       return(
         <div>
-          <Navbar account={this.state.account} />
+          <Navbar account={this.state.currentUser} />
           <Deputy
           account={this.state.account}
           posts={this.state.posts}
@@ -158,11 +228,11 @@ class Dashboard extends React.Component {
       );
     }
     else{
-      if(this.state.account === '0xd7B24b894Ea0CA70A604Cbd1981592bb4B0F12B6')
-      {
+      if(this.state.currentUser.role === 'Head Of Department')
+      { console.log('Member Address',this.state.currentUser.role);
         return(
           <div>
-          <Navbar account={this.state.account} />
+          <Navbar account={this.state.currentUser} />
           <Chief account={this.state.account}
           posts={this.state.posts}
           addressStatus = {this.state.addressStatus}
@@ -177,7 +247,7 @@ class Dashboard extends React.Component {
       else{
         return(
           <div>
-          <Navbar account={this.state.account} />
+          <Navbar account={this.state.currentUser} />
           <Chairman account={this.state.account}
            posts={this.state.posts}
            addressStatus = {this.state.addressStatus}

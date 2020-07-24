@@ -3,13 +3,13 @@ import Identicon from 'identicon.js';
 import '../../styles/Chief.css'
 
 
-const ipfsClient = require('ipfs-http-client')
-const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
-var warning = "The article file has been modified"
+// const ipfsClient = require('ipfs-http-client')
+// const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
+// var warning = "The article file has been modified"
 
 class Chief extends Component {
   addRow(id) {
-    var arrHead = new Array();
+    var arrHead = [];
     arrHead = ['ID', 'Title', 'Content','FileUploaded', 'Author Address'];
     var traceTable = document.getElementById('tracingTable');
     var rowCnt = traceTable.rows.length;  
@@ -37,7 +37,7 @@ class Chief extends Component {
           var link = "";
               link = "https://ipfs.infura.io/ipfs/";
               link = link.concat(post.filehash);
-              td.innerHTML=  '<a  classNameName="btn btn-link" href="'+link+'">File Link</a>';
+              td.innerHTML=  '<a  className="btn btn-link" href="'+link+'">File Link</a>';
         }
         else {
           td.innerHTML = post.author;
@@ -67,12 +67,12 @@ class Chief extends Component {
 
   warning(id) {
     id = id - 1
-    console.log(id)
-    console.log(this.props.posts[id])
+    // console.log(id)
+    // console.log(this.props.posts[id])
     var post = this.props.posts[id]
     if (post.id !== post.prevId) {
       return (
-        <li classNameName="list-group-item-warning">
+        <li className="list-group-item-warning">
           The article file has been modified.
         </li>
 
@@ -83,13 +83,13 @@ class Chief extends Component {
 
   approval(id) {
     id = id - 1
-    console.log(id)
-    console.log(this.props.posts[id])
+    // console.log(id)
+    // console.log(this.props.posts[id])
     var post = this.props.posts[id]
     if (post.approvalStatus.toString() === "true") {
       return (
-        <li key={id} classNameName="list-group-item-success">
-          <small classNameName="float-right mt-1 ">
+        <li key={id} className="list-group-item-success">
+          <small className="float-right mt-1 ">
             Approved: {post.approvalStatus.toString()}
           </small>
         </li>
@@ -97,8 +97,8 @@ class Chief extends Component {
     }
     else {
       return (
-        <li key={id} classNameName=" list-group-item-danger">
-          <small classNameName="float-right mt-1">
+        <li key={id} className=" list-group-item-danger">
+          <small className="float-right mt-1">
             Approved: {post.approvalStatus.toString()}
           </small>
         </li>
@@ -110,12 +110,12 @@ class Chief extends Component {
   render() {
     var currentId = 0;
     return (
-      <div classNameName="container-fluid">
+      <div className="container-fluid">
   
-      <div classNameName="row">
+      <div className="row">
         <main
           role="main"
-          classNameName="col-lg-12 ml-auto mr-auto"
+          className="col-lg-12 ml-auto mr-auto"
 
         >
           <br/>
@@ -133,16 +133,16 @@ class Chief extends Component {
                         }}>
 
                           <img
-                            classNameName='mr-2'
+                            className='mr-2'
                             width='30'
                             height='30'
                             alt="Identicon"
                             src={`data:image/png;base64,${new Identicon(post.author, 30).toString()}`}
                           />
-                          <small classNameName="text-white">{post.author}</small>
+                          <small className="text-white">{post.author}</small>
                           <button
                               type="button"
-                              classNameName="btn btn-dark btn-outline-light float-right"
+                              className="btn btn-dark btn-outline-light float-right"
 
                               name={post.id}
                               onClick={(event) => {
@@ -153,37 +153,37 @@ class Chief extends Component {
                             >
                               Previous Versions
                           </button>
-                          <ul id="postList" classNameName="list-group list-group-flush">
+                          <ul id="postList" className="list-group list-group-flush">
                             {this.warning(key + 1)}
                       
-                            <li classNameName="list-group-item text-white">
+                            <li className="list-group-item text-white">
                               <input
                                 id="articleName"
                                 type="text"
                                 ref={(input) => { this.articleName = input }}
                                 value={this.props.value}
                                 defaultValue={post.articleName}
-                                classNameName="form-control text-white"
+                                className="form-control text-white"
                                 required />
                             </li>
-                            <li classNameName="list-group-item text-wwhite" >
+                            <li className="list-group-item text-wwhite" >
                               <input
                                 id="postContent"
                                 type="text"
                                 ref={(input) => { this.postContent = input }}
                                 defaultValue={post.content}
-                                classNameName="form-control text-white"
+                                className="form-control text-white"
                                 required />
                             </li>
                             </ul>
 
-                              <a classNameName="btn btn-dark btn-outline-light btn-block" href={link} role="button">File</a>
+                              <a className="btn btn-dark btn-outline-light btn-block" href={link} role="button">File</a>
                           <br/>
                             {this.approval(key + 1)}
                             <br/>
                               <button
                                 type="button"
-                                classNameName="btn btn-danger btn-outline-light float-left "
+                                className="btn btn-danger btn-outline-light float-left "
                                 name={post.id}
                                 onClick={(event) => {
                                   console.log("Checking approval status")
@@ -207,7 +207,7 @@ class Chief extends Component {
 
                               <button
                                 type="button"
-                                classNameName="btn btn-success btn-outline-light float-right"
+                                className="btn btn-success btn-outline-light float-right"
                                 name={post.id}
                                 onClick={(event) => {
                                   console.log("Checking approval status")
@@ -235,15 +235,15 @@ class Chief extends Component {
           );
                     
         })}
-                    <div classNameName="container-fluid mt-5 text-white" border="1 px white solid" id="myDIV">
+                    <div className="container-fluid mt-5 text-white" border="1 px white solid" id="myDIV">
 
-                      <div classNameName="card text-white bg-dark text-center ml-auto mr-auto">
-                        <div classNameName="card-header" >
+                      <div className="card text-white bg-dark text-center ml-auto mr-auto">
+                        <div className="card-header" >
                           PREVIOUS VERSIONS
     </div>
-                        <table classNameName="table table-hover table-striped text-white" id="tracingTable" border="1 px white solid">
+                        <table className="table table-hover table-striped text-white" id="tracingTable" border="1 px white solid">
                           <thead>
-                            <tr classNameName="text-white">
+                            <tr className="text-white">
                               <th >ID</th>
                               <th>Title</th>
                               <th >Description</th>
@@ -251,7 +251,7 @@ class Chief extends Component {
                               <th >Author Address</th>
                             </tr>
                           </thead>
-                          <tbody classNameName="text-white">
+                          <tbody className="text-white">
                           </tbody>
                         </table>
                       </div>

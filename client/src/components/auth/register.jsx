@@ -58,7 +58,7 @@ export class Register extends React.Component {
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input type="text" name="email" value={this.state.email}
-               onChange={(e)=>{this.setState({email:e.target.value})}} placeholder="email" />
+               onChange={(e)=>{this.setState({email:e.target.value})}} placeholder="johndoe@gmail.com" />
             </div>
             <div className="form-group">
               <label htmlFor="address">Address</label>
@@ -90,12 +90,12 @@ export class Register extends React.Component {
               </div>
               ):""
             }
-            
-          </div>
-          
-          <button type="button" className="btn" onClick={this.handleSubmit}>
+            <button type="button" className="btn" onClick={this.handleSubmit}>
             Register
           </button>
+          </div>
+          
+          
         </div>
       </div>
       </Fragment>
