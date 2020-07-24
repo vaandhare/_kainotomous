@@ -5,16 +5,9 @@ import '../../styles/Deputy.css'
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
 var statement = "Upload Your File"
-var Name = ""
-var content = ""
-var warning = "The article file has been modified"
 
 class Deputy extends Component {
-
-
-
-
-  captureFile = (event) => {
+captureFile = (event) => {
     event.preventDefault();
     const file = event.target.files[0]
     const reader = new window.FileReader() // converts the file to a buffer
@@ -235,7 +228,7 @@ class Deputy extends Component {
                               console.log(file)
                               var file1 = document.getElementById(fileId).value
                               console.log(file1)
-                              if (file1 != 0x0) {
+                              if (file1 !== 0x0) {
                                 console.log("file not empty")
                                 console.log("Submitting the file..")
                                 ipfs.add(this.state.buffer, (error, result) => {

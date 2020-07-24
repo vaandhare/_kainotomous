@@ -1,11 +1,19 @@
 import React from "react";
-import loginImg from "../../login.svg";
+// import loginImg from "../../login.svg";
 import "./style.scss";
 import axios from "axios";
 // import { useHistory } from "react-router-dom";
 
 
 export class Login extends React.Component {
+
+  componentWillMount(){
+    this.clearLocalStorage()
+  }
+
+  clearLocalStorage(){
+    localStorage.clear()
+  }
   
   constructor(props) {
     super(props);
@@ -26,12 +34,14 @@ export class Login extends React.Component {
       email:email,
       address:address
     });
-    if(response.data.message == 'error'){
+    if(response.data.message === 'error'){
       this.setState({errorMessage:"Authentication Failed"})
     }
     else{
       localStorage.setItem('isLogin', true);
-      window.location.href = '/dashboard'; 
+      let addjson = {"address":address};
+      localStorage.setItem('currentLogin',JSON.stringify(addjson));
+      window.location.href = '/'; 
     }
     
     this.cleanInputs()
@@ -64,10 +74,11 @@ export class Login extends React.Component {
               <input type="text" name="address" value={this.state.address}
                onChange={(e)=>{this.setState({address:e.target.value})}} placeholder="Blockhain Address" />
             </div>
-          </div>
-          <button type="button" className="btn" onClick={this.handleSubmit}>
+            <button type="button" className="btn" onClick={this.handleSubmit}>
             Login
           </button>
+          </div>
+          
         </div>
       </div>
     );

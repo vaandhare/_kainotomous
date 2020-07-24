@@ -1,21 +1,16 @@
 import React, { Component } from 'react';
 import '../../styles/Dashboard.css'
+import {Link} from 'react-router-dom'
 
 class Navbar extends Component {
   
+  constructor(props){
+    super(props);
+  }
 
   render() {
     var statement = "Unknown"
-    
-    if(this.props.account === '0x47fcb933Bcd2d6471480b04967B1b0024b9cDff0'){
-      statement = "Deputy";
-    }
-    else if (this.props.account === '0xd7B24b894Ea0CA70A604Cbd1981592bb4B0F12B6'){
-      statement = "Chief";
-    }
-    else{
-      statement ="Chairman";
-    }
+    // console.log(this.props.account)
     return (
       
 <nav className="navbar navbar-expand-lg navbar-dark bg-dark" >
@@ -25,25 +20,18 @@ class Navbar extends Component {
   </button>
 
   <div className="collapse navbar-collapse text-white" id="navbarSupportedContent">
-    <ul className="navbar-nav mr-auto ">
-      <li className="nav-item active ">
-        <a className="nav-link " href="#">Home <span className="sr-only">(current)</span></a>
-      </li>
-      <li className="nav-item">
-        <a className="nav-link" href="#">Profile</a>
-      </li>
-      <li className="nav-item ">
-        <a className="nav-link" href="#">
-          Analytics
-        </a>
+  <ul className="navbar-nav mr-auto ">
+  <li className="nav-item text-nowrap d-none d-sm-none d-sm-block text-white">
+          Welcome {this.props.account.fullname}
         </li>
         </ul>
-        <ul className="navbar-nav px-3">
-        <li className="nav-item text-nowrap d-none d-sm-none d-sm-block text-white">
-          Welcome {statement}
+        <ul className="navbar-nav py-2">
         
-      </li>
-    </ul>
+        <li className="nav-item px-2">
+          <Link to="/auth" className="btn btn-light">Logout</Link>
+          </li>
+        </ul>
+
   </div>
 </nav>
 );

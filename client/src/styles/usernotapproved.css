@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css?&family=Roboto:wght@900&display=swap');
+
+*{
+    margin:0;
+    padding: 0;
+  }
+  .errordiv{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 100px;
+    justify-content: center;
+    align-items: center;
+  }
+  button{
+    margin-top:30px;
+    padding:12px 22px;
+    width: max-content;
+    background:#0675a8 ;
+    border:0px;
+    color:white;
+    font-weight: 800;
+  }  
+  
