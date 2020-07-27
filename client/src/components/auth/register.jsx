@@ -76,7 +76,7 @@ export class Register extends React.Component {
               </select>
             </div>
             {
-              this.state.role != "Chairman" ? (
+              this.state.role !== "Chairman" ? (
                 <div className="form-group">
                 <label htmlFor="address">Department</label>
                 <select value={this.state.department} onChange={(e)=>{this.setState({department:e.target.value})}}>
