@@ -17,7 +17,7 @@ const UserSchema = new Schema({
     },
     isapproved:{
         type:Boolean,
-        default:false
+        default:true
     },
     role:{
         type:String,
