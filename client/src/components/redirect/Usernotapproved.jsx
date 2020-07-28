@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import Image403 from '../../assets/Image_403.png'
 
 function Usernotapproved() {
-    const message = 'Hello Function Component!';
+    // const message = 'Hello Function Component!';
     
     return (
     <div className="errordiv">

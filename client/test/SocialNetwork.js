@@ -4,7 +4,7 @@ require('chai')
   .use(require('chai-as-promised'))
   .should()
 
-contract('SocialNetwork', ([deployer, deputy,chief,chairman]) => {
+contract('SocialNetwork', ([moca,dgca,doas,ai]) => {
   let socialNetwork
   
   before(async () => {
@@ -12,7 +12,6 @@ contract('SocialNetwork', ([deployer, deputy,chief,chairman]) => {
   })
    describe('deployment', async () => {
     it('deploys successfully', async () => {
-     // socialNetwork = await SocialNetwork.deployed() 
       const address = await socialNetwork.address
       assert.notEqual(address, 0x0)
       assert.notEqual(address, '')
@@ -26,111 +25,144 @@ contract('SocialNetwork', ([deployer, deputy,chief,chairman]) => {
     })
   })
 
-  describe('posts', async() => {
-    let result, postCount
+  describe('apps', async() => {
+    let result, appCount
 
     before(async () => {
-      result = await socialNetwork.createPost('Test Article','This is my first post','abc123',{ from: deputy })
-      postCount = await socialNetwork.postCount()
+      result = await socialNetwork.createApp('1','doc1','doc2','doc3','doc4','timestamp',{ from: moca })
+      appCount = await socialNetwork.appCount()
     })
 
     
 
-    it('creates posts', async()=> {
+    it('creates applications', async()=> {
     
      //Success
-     assert.equal(postCount, 1)
-     const event = result.logs[0].args
-     assert.equal(event.id.toNumber(), postCount.toNumber(), 'id is correct')
-     assert.equal(event.articleName, 'Test Article', 'Article name is correct' )
-     assert.equal(event.content, 'This is my first post', 'content is correct')
-     assert.equal(event.approvalStatus, false, 'approvalStatus is correct')
-     assert.equal(event.prevId, '1', 'The previous post id is correct')
-     assert.equal(event.filehash, 'abc123', 'The filehash is correct')
+     assert.equal(appCount, 1)
+     const event = result.logs[1].args
+     assert.equal(event.appId.toNumber(), appCount.toNumber(), 'id is correct')
+     assert.equal(event.airportCode, '1','The airport code is correct')
+     assert.equal(event.id, '1', 'Doc id is correct' )
+     assert.equal(event.state, 'created', 'The state of the application is created')
+     assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
+     assert.equal(event.previousStateId, event.appId.toNumber(), 'previous id is correct')
      //Failure
 
-     await socialNetwork.createPost('','','','', {from: deputy}).should.be.rejected;
+     await socialNetwork.createApp('','','','', {from: moca}).should.be.rejected;
     })
 
-    it('lists posts', async()=> {
-        const post = await socialNetwork.posts(postCount)
-        assert.equal(post.id.toNumber(), postCount.toNumber(), 'id is correct')
-        assert.equal(post.articleName, 'Test Article', 'Article name is correct' )
-     assert.equal(post.content, 'This is my first post', 'content is correct')
-     assert.equal(post.approvalStatus, false, 'approvalStatus is correct')
-     assert.equal(post.author, deputy, 'author is correct')
-     assert.equal(post.filehash, 'abc123', 'The fielhash is correct')
+    it('lists applications', async()=> {
+        const app = await socialNetwork.apps(appCount)
+        assert.equal(app.appId.toNumber(), appCount.toNumber(), 'id is correct')
+        assert.equal(app.airportCode, '1', 'the airport code  is correct')
+        assert.equal(app.id, '1', 'Doc id is correct' )
+     assert.equal(app.state, 'created', 'application state is correct')
+     assert.equal(app.timestamp,'timestamp', 'timestamp is correct')
+     assert.equal(app.previousStateId, app.appId.toNumber(), 'previous Id is correct')
     })
 
-     it('allows users to approve posts', async()=> {
-       const post = await socialNetwork.posts(postCount)
-
-      let oldApprovalStatus
-      oldApprovalStatus = post.approvalStatus;
-
-      result = await socialNetwork.approvePost(postCount,{ from: chief})
+     it('allows users to issue applications', async()=> {
+       const app = await socialNetwork.apps(appCount)
+      result = await socialNetwork.issueApp(app.appId,'timestamp',{ from: dgca})
 
       //Success
-     const event = result.logs[0].args
-     assert.equal(event.id.toNumber(), postCount.toNumber(), 'id is correct')
-     assert.equal(event.articleName, 'Test Article', 'Article name is correct' )
-     assert.equal(event.content, 'This is my first post', 'content is correct')
-     assert.equal(event.approvalStatus, true, 'approvalStatus is correct')
-     assert.equal(event.author, deputy, 'author is correct')
-     assert.equal(event.filehash, 'abc123', 'The fielhash is correct')
-
-     //Check if the author received funds or not 
-     let newApprovalStatus
-     newApprovalStatus = post.approvalStatus
-
-    let expectedApprovalStatus
-    expectedApprovalStatus = post.approvalStatus
-
-    assert.equal(expectedApprovalStatus,newApprovalStatus)
+     const event = result.logs[1].args
+     assert.equal(event.appId.toNumber(),2, 'id is correct')
+     assert.equal(event.airportCode, '1', 'airport code is correct')
+     assert.equal(event.id, '2', 'Doc id is correct' )
+     assert.equal(event.state, 'issued', 'state is correct')
+     assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
+     assert.equal(event.previousStateId.toNumber(), 1, 'previous id is correct')
     
     })
 
-it('modified posts', async()=> {
-  //fetch the current post 
-  const post = await socialNetwork.posts(postCount)
-  // fetch the current post id and previous id
-  let _id, oldprevId
-  _id = post.id
-  oldprevId = post.prevId
-  //define new content
-  const title = "modified article"
-  const content = "modified content"
-  const filehash = "abc123456"
-  // modifying the post 
-  result = await socialNetwork.modifyPost(_id,title,content,filehash,{from: deputy})
-  postCount = await socialNetwork.postCount()
-  //Success
-  assert.equal(postCount,2)
-  const event = result.logs[0].args
-  assert.equal(event.id.toNumber(), postCount.toNumber(), 'id is correct')
-  assert.equal(event.articleName, 'modified article', 'Article name is correct' )
-  assert.equal(event.content, 'modified content', 'content is correct')
-  assert.equal(event.approvalStatus, false, 'approvalStatus is correct')
-  assert.equal(event.prevId, '1', 'The previous post id is correct')
-  assert.equal(event.filehash, 'abc123456', 'The fielhash is correct')
+   it('allows users to approve applications', async()=> {
+     appCount++
+    const app = await socialNetwork.apps(appCount)
 
-  //Failure
-  
-  await socialNetwork.modifyPost('','','', {from: deputy}).should.be.rejected;
+   result = await socialNetwork.approveApp(app.appId,'timestamp',{ from: ai})
+
+   //Success
+  const event = result.logs[1].args
+  assert.equal(event.appId.toNumber(),3, 'id is correct')
+  assert.equal(event.airportCode, '1', 'airport code is correct')
+  assert.equal(event.id, '3', 'Doc id is correct' )
+  assert.equal(event.state, 'approved', 'state is correct')
+  assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
+  assert.equal(event.previousStateId.toNumber(), 2, 'previous id is correct')
+
  })
 
- it('retrieves the fileHash', async () => {
-  const post = await socialNetwork.posts(postCount)
-  let filehash = post.filehash
-  const result = await socialNetwork.getHash(postCount)
-  assert.equal(result, filehash,'get hash function works properly ')
-  
-})
+ it('allows users to reject applications', async()=> {
+   appCount++
+  const app = await socialNetwork.apps(appCount)
+
+ result = await socialNetwork.rejectApp(app.appId,'timestamp',{ from: ai})
+
+ //Success
+const event = result.logs[1].args
+assert.equal(event.appId.toNumber(),4, 'id is correct')
+assert.equal(event.airportCode, '1', 'airport code is correct')
+assert.equal(event.id, '4', 'Doc id is correct' )
+assert.equal(event.state, 'rejected', 'state is correct')
+assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
+assert.equal(event.previousStateId.toNumber(), 3, 'previous id is correct')
 
 })
 
+it('allows users to renew applications', async()=> {
+  appCount++
+  const app = await socialNetwork.apps(appCount)
+
+ result = await socialNetwork.renewApp(app.appId,'timestamp',{ from: moca})
+
+ //Success
+const event = result.logs[1].args
+assert.equal(event.appId.toNumber(), 5, 'id is correct')
+assert.equal(event.airportCode, '1', 'airport code is correct')
+assert.equal(event.id, '5', 'Doc id is correct' )
+assert.equal(event.state, 'renewed', 'state is correct')
+assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
+assert.equal(event.previousStateId.toNumber(), 4, 'previous id is correct')
+
+})
+
+it('allows users to assign applications', async()=> {
+  appCount++
+  const app = await socialNetwork.apps(appCount)
+
+ result = await socialNetwork.assignApp(app.appId,'timestamp',{ from: doas})
+
+ //Success
+const event = result.logs[1].args
+assert.equal(event.appId.toNumber(), 6, 'id is correct')
+assert.equal(event.airportCode, '1', 'airport code is correct')
+assert.equal(event.id, '6', 'Doc id is correct' )
+assert.equal(event.state, 'assigned', 'state is correct')
+assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
+assert.equal(event.previousStateId.toNumber(), 5, 'previous id is correct')
+
+})
+
+it('allows users to grant license to applications', async()=> {
+  appCount++
+  const app = await socialNetwork.apps(appCount)
+
+ result = await socialNetwork.grantApp(app.appId,'timestamp',{ from: dgca})
+
+ //Success
+const event = result.logs[1].args
+assert.equal(event.appId.toNumber(), 7, 'id is correct')
+assert.equal(event.airportCode, '1', 'airport code is correct')
+assert.equal(event.id, '7', 'Doc id is correct' )
+assert.equal(event.state, 'granted', 'state is correct')
+assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
+assert.equal(event.previousStateId.toNumber(), 6, 'previous id is correct')
 
 })
 
 
+})
 
+
+})
