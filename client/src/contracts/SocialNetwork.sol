@@ -25,7 +25,6 @@ contract SocialNetwork {
         uint id;
         string state;
         string timestamp;
-        uint previousStateId;
         address payable author;
     }
 
@@ -35,7 +34,6 @@ contract SocialNetwork {
         uint id,
         string state,
         string timestamp,
-        uint previousStateId,
         address payable author
     );
 
@@ -47,7 +45,7 @@ contract SocialNetwork {
         string CARcompliance,
         string exceptionsDoc
     );
-    
+
     event DocIdUpdated(
        uint id,
         uint appId,
@@ -63,7 +61,6 @@ contract SocialNetwork {
         uint id,
         string state,
         string timestamp,
-        uint previousStateId,
         address payable author
     );
 
@@ -73,7 +70,6 @@ event AppAssigned(
         uint id,
         string state,
         string timestamp,
-        uint previousStateId,
         address payable author
     );
     
@@ -83,7 +79,6 @@ event AppAssigned(
     uint id,
     string state,
     string timestamp,
-    uint previousStateId,
     address payable author
 );
 
@@ -93,7 +88,6 @@ event AppAssigned(
     uint id,
     string state,
     string timestamp,
-    uint previousStateId,
     address payable author
 );
 
@@ -103,7 +97,6 @@ event AppAssigned(
     uint id,
     string state,
     string timestamp,
-    uint previousStateId,
     address payable author
 );
 
@@ -113,13 +106,17 @@ event AppAssigned(
     uint id,
     string state,
     string timestamp,
-    uint previousStateId,
     address payable author
 );
     // Constructor function
     constructor () public {
         name = "Airport Database";
     }
+
+    function compareStrings (string memory a, string memory b) public pure returns (bool) {
+        return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))) );
+
+       }
 
    function createApp(string memory airportCode, string memory doc1, string memory doc2, string memory doc3,string memory doc4, string memory timestamp) 
    public {
@@ -136,13 +133,10 @@ event AppAssigned(
     docs[docCount] = Document(docCount,appCount,doc1,doc2,doc3,doc4);
     emit DocCreated(docCount,appCount,doc1,doc2,doc3,doc4);
     // Create the application
-    apps[appCount] = Application(appCount,airportCode,docCount,"created",timestamp,appCount,msg.sender);
+    apps[appCount] = Application(appCount,airportCode,docCount,"created",timestamp,msg.sender);
     // Trigger event
-    emit AppCreated(appCount,airportCode,docCount,"created",timestamp,appCount,msg.sender);
+    emit AppCreated(appCount,airportCode,docCount,"created",timestamp,msg.sender);
 }
-
-
-
 
  function issueApp(uint _id, string memory timestamp) public {
     //Require valid ID
@@ -150,19 +144,15 @@ event AppAssigned(
     //fetch the application and document 
     Application memory app = apps[_id];
     Document memory doc = docs[app.id];
-    // Increment the application count
-    appCount ++;
-    docCount ++;
-    // Create a new document with the updated project id
-    docs[docCount] = Document(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-    emit DocCreated(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-
-    // Create New application with changed state and link it to the prvious application
-    apps[appCount] = Application(appCount,app.airportCode,docCount,
-    "issued",timestamp,app.appId, msg.sender);
-    // Trigger event
-    emit AppIssued(appCount,app.airportCode,docCount,
-    "issued",timestamp,app.appId, msg.sender);
+        // If the state of the application is created only then the further state change will taake place
+        // if(compareStrings(app.state,"created")){
+            //Change the state of the application
+             app.state="issued";
+            //Update the application
+             apps[_id] = app;
+            //Trigger event
+             emit AppIssued(app.appId,app.airportCode,doc.id,"issued",timestamp,msg.sender);
+        // }
 }
 
 
@@ -172,19 +162,15 @@ function assignApp(uint _id, string memory timestamp) public {
     //fetch the application and document 
     Application memory app = apps[_id];
     Document memory doc = docs[app.id];
-    // Increment the application count
-    appCount ++;
-    docCount ++;
-    // Create a new document with the updated project id
-    docs[docCount] = Document(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-    emit DocCreated(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-
-    // Create New application with changed state and link it to the prvious application
-    apps[appCount] = Application(appCount,app.airportCode,docCount,
-    "assigned",timestamp,_id, msg.sender);
-    // Trigger event
-    emit AppAssigned(appCount,app.airportCode,docCount,
-    "assigned",timestamp,_id, msg.sender);
+        // If the state of the application is issued only then the further state change will take place
+       // if(compareStrings(app.state,"issued")){
+            //Change the state of the application
+             app.state="assigned";
+            //Update the application
+             apps[_id] = app;
+            //Trigger event
+             emit AppAssigned(app.appId,app.airportCode,doc.id,"assigned",timestamp,msg.sender);
+       // }
 }
 
 function approveApp(uint _id, string memory timestamp) public {
@@ -193,62 +179,48 @@ function approveApp(uint _id, string memory timestamp) public {
     //fetch the application and document 
     Application memory app = apps[_id];
     Document memory doc = docs[app.id];
-    // Increment the application count
-    appCount ++;
-    docCount ++;
-    // Create a new document with the updated project id
-    docs[docCount] = Document(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-    emit DocCreated(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-
-    // Create New application with changed state and link it to the prvious application
-    apps[appCount] = Application(appCount,app.airportCode,docCount,
-    "approved",timestamp,_id, msg.sender);
-    // Trigger event
-    emit AppApproved(appCount,app.airportCode,docCount,
-    "approved",timestamp,_id, msg.sender);
+        // If the state of the application is assigned only then the further state change will take place
+        //if(compareStrings(app.state,"assigned")){
+            //Change the state of the application
+             app.state="approved";
+            //Update the application
+             apps[_id] = app;
+            //Trigger event
+             emit AppApproved(app.appId,app.airportCode,doc.id,"approved",timestamp,msg.sender);
+       // }
 }
 
 function rejectApp(uint _id, string memory timestamp) public {
-    //Require valid ID
+   //Require valid ID
     require(_id > 0 && _id <= appCount);
     //fetch the application and document 
     Application memory app = apps[_id];
     Document memory doc = docs[app.id];
-    // Increment the application count
-    appCount ++;
-    docCount ++;
-    // Create a new document with the updated project id
-    docs[docCount] = Document(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-    emit DocCreated(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-
-    // Create New application with changed state and link it to the prvious application
-    apps[appCount] = Application(appCount,app.airportCode,docCount,
-    "rejected",timestamp,_id, msg.sender);
-    // Trigger event
-    emit AppRejected(appCount,app.airportCode,docCount,
-    "rejected",timestamp,_id, msg.sender);
+        // If the state of the application is assigned only then the further state change will take place
+        //if(compareStrings(app.state,"assigned")){
+            //Change the state of the application
+             app.state="rejected";
+            //Update the application
+             apps[_id] = app;
+            //Trigger event
+             emit AppRejected(app.appId,app.airportCode,doc.id,"rejected",timestamp,msg.sender);
+       // }
 }
 
 function renewApp(uint _id, string memory timestamp) public {
-    //Require valid ID
+   //Require valid ID
     require(_id > 0 && _id <= appCount);
     //fetch the application and document 
     Application memory app = apps[_id];
     Document memory doc = docs[app.id];
-    // Increment the application count
-    appCount ++;
-    docCount ++;
-    // Create a new document with the updated project id
-    docs[docCount] = Document(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-    emit DocCreated(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-
-    // Create New application with changed state and link it to the prvious application
-    apps[appCount] = Application(appCount,app.airportCode,docCount,
-    "renewed",timestamp,_id, msg.sender);
-    // Trigger event
-    emit AppRenewed(appCount,app.airportCode,docCount,
-    "renewed",timestamp,_id, msg.sender);
-}
+        // validation of state is not used here because this function is used twice. 
+            //Change the state of the application
+             app.state="renewed";
+            //Update the application
+             apps[_id] = app;
+            //Trigger event
+             emit AppRenewed(app.appId,app.airportCode,doc.id,"renewed",timestamp,msg.sender);
+        }
 
 function grantApp(uint _id, string memory timestamp) public {
     //Require valid ID
@@ -256,19 +228,15 @@ function grantApp(uint _id, string memory timestamp) public {
     //fetch the application and document 
     Application memory app = apps[_id];
     Document memory doc = docs[app.id];
-    // Increment the application count
-    appCount ++;
-    docCount ++;
-    // Create a new document with the updated project id
-    docs[docCount] = Document(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-    emit DocCreated(docCount,appCount,doc.aerodromeManual,doc.licensingFee,doc.CARcompliance,doc.exceptionsDoc);
-
-    // Create New application with changed state and link it to the prvious application
-    apps[appCount] = Application(appCount,app.airportCode,docCount,
-    "granted",timestamp,_id, msg.sender);
-    // Trigger event
-    emit AppGranted(appCount,app.airportCode,docCount,
-    "granted",timestamp,_id, msg.sender);
+        // If the state of the application is assigned only then the further state change will take place
+       // if(compareStrings(app.state,"approved")){
+            //Change the state of the application
+             app.state="granted";
+            //Update the application
+             apps[_id] = app;
+            //Trigger event
+             emit AppGranted(app.appId,app.airportCode,doc.id,"granted",timestamp,msg.sender);
+        //}
 }
 
 

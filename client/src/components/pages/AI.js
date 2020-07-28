@@ -25,6 +25,24 @@ class AI extends Component {
         return timestamp;
     }
 
+    approveApplication = (event) =>{
+        event.preventDefault()
+        const appId = event.target.id
+        const timestamp = this.get_timestamp()
+        console.log(appId, timestamp)
+        this.props.approveApp(appId, timestamp)
+        console.log("You have approved app!!")
+    }
+
+    rejectApplication = (event) =>{
+        event.preventDefault()
+        const appId = event.target.id
+        const timestamp = this.get_timestamp()
+        console.log(appId, timestamp)
+        this.props.rejectApp(appId, timestamp)
+        console.log("You have rejected app!!")
+    }
+
     render() {
         return (
             <div className="container-fluid">
@@ -39,18 +57,14 @@ class AI extends Component {
 
                     >
                         {this.props.apps.map((app, key) => {
-                            if (app.state === "assigned"){
+                        console.log('APP ID', app.appId)
+                            if(app.state =="assigned"){
                             return (
                                 <div className="card bg-dark mb-3 col-lg-12 ml-auto mr-auto" key={key} id="cardDIV" style={{ maxWidth: '700px' }}>
-                                    <div className="card-header ml-auto mr-auto">Licensing Application {key}</div>
+                                    <div className="card-header ml-auto mr-auto">Assigned Application {key}</div>
                                     <div className="card-body ">
                                         <form onSubmit={(event) => {
                                             event.preventDefault()
-                                            const appId = app.appId
-                                            const timestamp = this.get_timestamp()
-                                            console.log(appId, timestamp)
-                                            this.props.aApp(appId, timestamp)
-                                            console.log("You have issued app!!")
                                         }}>
                                             Author:
                                             <small className="text-white">{app.author}</small>
@@ -78,37 +92,26 @@ class AI extends Component {
                                                         required />
 
                                                 </li>
+                                                <li className="list-group-item-success">
                                                 <button
-                                                    type="submit"
-                                                    className="btn btn-danger btn-outline-light float-right"
-                                                    name={app.appId}
-                                                    onClick = {(event)=>{
-                                                        event.preventDefault()
-                                                        const appId = app.appId
-                                                        const timestamp = this.get_timestamp()
-                                                        console.log(appId, timestamp)
-                                                        this.props.approveApp(appId, timestamp)
-                                                        console.log("You have approved the app!!")
-                                                    }}
-                                                >
-                                                    Approve Application
-                                                </button>
-
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-danger btn-outline-light float-left"
-                                                    name={app.appId}
-                                                    onClick = {(event)=>{
-                                                        event.preventDefault()
-                                                        const appId = app.appId
-                                                        const timestamp = this.get_timestamp()
-                                                        console.log(appId, timestamp)
-                                                        this.props.rejectApp(appId, timestamp)
-                                                        console.log("You have rejected the app!!")
-                                                    }}
+                                                    id={app.appId}
+                                                    type="button"
+                                                    className="btn btn-secondary btn-outline-light float-right"
+                                                    name="approve"
+                                                    onClick = {this.rejectApplication}
                                                 >
                                                     Reject Application
                                                 </button>
+                                                <button
+                                                    id={app.appId}
+                                                    type="button"
+                                                    className="btn btn-success btn-outline-light float-right"
+                                                    name="approve"
+                                                    onClick = {this.approveApplication}
+                                                >
+                                                    Approve Application
+                                                </button>
+                                                </li>
                                             </ul>
 
                                         </form>
@@ -117,6 +120,7 @@ class AI extends Component {
 
                             );
                                     }
+                            
                         })}
                     </main>
                 </div >

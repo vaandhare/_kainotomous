@@ -257,19 +257,20 @@ class Dashboard extends React.Component {
     }
     let currentAccount = JSON.parse(localStorage.getItem('currentLogin'));
     
-    if(this.state.account != currentAccount.address){
-      console.log('login doesnt match');
-      this.props.history.push('/metamasklogin')
-    }
+    // if(this.state.account != currentAccount.address){
+    //   console.log('login doesnt match');
+    //   this.props.history.push('/metamasklogin')
+    // }
     if(!this.state.currentUser.isapproved){
-      this.props.history.push('/notapproved')
+      
+      // this.props.history.push('/notapproved')
     }
 
   }
   
   render() {
     
-    if(this.state.currentUser.role == 'Member (Operational)')
+    if(this.state.currentUser.role == 'MoCA')
     {
       console.log('Member Address',this.state.currentUser.address);
       return(
@@ -280,12 +281,6 @@ class Dashboard extends React.Component {
           apps={this.state.apps}
           docs = {this.state.docs}
           createApp={this.createApp}
-          issueApp = {this.issueApp}
-          assignApp = {this.assignApp}
-          approveApp = {this.approveApp}
-          rejectApp = {this.rejectApp}
-          grantApp = {this.grantApp}
-          renewApp = {this.renewApp}
           buffer = {this.state.buffer}
           returnDocs = {this.returnDocs}   
           />
@@ -293,21 +288,24 @@ class Dashboard extends React.Component {
       );
     }
     else{
-      if(this.state.currentUser.role == 'Head Of Department')
+      if(this.state.currentUser.role == 'DoAS')
       { console.log('Member Address',this.state.currentUser.role);
         return(
           <div>
           <Navbar account={this.state.currentUser} />
-          <MoCA 
+          <DoAS 
           account={this.state.account}
           apps={this.state.apps}
-          issueApp={this.issueApp}
+          
+          assignApp = {this.assignApp}
+          grantApp = {this.grantApp}
+          renewApp = {this.renewApp}
           buffer = {this.state.buffer}
           />
           </div>
         );
       }
-      else{
+      else if(this.state.currentUser.role == 'DGCA'){
         return(
           <div>
           <Navbar account={this.state.currentUser} />
@@ -316,6 +314,22 @@ class Dashboard extends React.Component {
           apps={this.state.apps}
           docs = {this.state.docs}
           issueApp = {this.issueApp}
+          />
+          </div>
+        );
+        
+      }
+      else{
+        console.log('Member Address',this.state.currentUser.role);
+        return(
+          <div>
+          <Navbar account={this.state.currentUser} />
+          <AI
+          account={this.state.account}
+          apps={this.state.apps}
+          docs = {this.state.docs}
+          approveApp = {this.approveApp}
+          rejectApp = {this.rejectApp}
           />
           </div>
         );

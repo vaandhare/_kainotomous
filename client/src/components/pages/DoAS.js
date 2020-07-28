@@ -24,6 +24,23 @@ class DoAS extends Component {
         const timestamp = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds
         return timestamp;
     }
+    assignApplication = (event) =>{
+        event.preventDefault()
+        const appId = event.target.id
+        const timestamp = this.get_timestamp()
+        console.log(appId, timestamp)
+        this.props.assignApp(appId, timestamp)
+        console.log("You have issued app!!")
+    }
+
+    grantApplication = (event) =>{
+        event.preventDefault()
+        const appId = event.target.id
+        const timestamp = this.get_timestamp()
+        console.log(appId, timestamp)
+        this.props.grantApp(appId, timestamp)
+        console.log("You have granted the license!!")
+    }
 
     render() {
         return (
@@ -39,18 +56,14 @@ class DoAS extends Component {
 
                     >
                         {this.props.apps.map((app, key) => {
-                            if (app.state === "issued"){
+                        console.log('APP ID', app.appId)
+                            if(app.state =="issued"){
                             return (
                                 <div className="card bg-dark mb-3 col-lg-12 ml-auto mr-auto" key={key} id="cardDIV" style={{ maxWidth: '700px' }}>
-                                    <div className="card-header ml-auto mr-auto">Licensing Application {key}</div>
+                                    <div className="card-header ml-auto mr-auto">Issued Application {key}</div>
                                     <div className="card-body ">
                                         <form onSubmit={(event) => {
                                             event.preventDefault()
-                                            const appId = app.appId
-                                            const timestamp = this.get_timestamp()
-                                            console.log(appId, timestamp)
-                                            this.props.assignApp(appId, timestamp)
-                                            console.log("You have issued app!!")
                                         }}>
                                             Author:
                                             <small className="text-white">{app.author}</small>
@@ -78,13 +91,17 @@ class DoAS extends Component {
                                                         required />
 
                                                 </li>
+                                                <li className="list-group-item-success">
                                                 <button
-                                                    type="submit"
+                                                    id={app.appId}
+                                                    type="button"
                                                     className="btn btn-danger btn-outline-light float-right"
-                                                    name="doc1Submit"
+                                                    name="assign"
+                                                    onClick = {this.assignApplication}
                                                 >
-                                                    Assign Application
+                                                    Assigned Application
                                                 </button>
+                                                </li>
                                             </ul>
 
                                         </form>
@@ -93,6 +110,59 @@ class DoAS extends Component {
 
                             );
                                     }
+                            else if(app.state =="approved"){
+                                        return (
+                                            <div className="card bg-dark mb-3 col-lg-12 ml-auto mr-auto" key={key} id="cardDIV" style={{ maxWidth: '700px' }}>
+                                                <div className="card-header ml-auto mr-auto">Licensing Application To Approve {key}</div>
+                                                <div className="card-body ">
+                                                    <form onSubmit={(event) => {
+                                                        event.preventDefault()
+                                                    }}>
+                                                        Author:
+                                                        <small className="text-white">{app.author}</small>
+            
+                                                        <ul id="postList" className="list-group list-group-flush">
+            
+                                                            <li className="list-group-item">
+                                                                <input
+                                                                    id="airportCode"
+                                                                    className="title "
+                                                                    type="text"
+                                                                    ref={(input) => { this.airportCode = input }}
+                                                                    value={this.props.value}
+                                                                    defaultValue={app.airportCode}
+                                                                    required />
+            
+                                                            </li>
+                                                            <li className="list-group-item " >
+                                                                <input
+                                                                    id="state"
+                                                                    type="text"
+                                                                    className="content"
+                                                                    ref={(input) => { this.state = input }}
+                                                                    defaultValue={app.state}
+                                                                    required />
+            
+                                                            </li>
+                                                            <li className="list-group-item-success">
+                                                            <button
+                                                                id={app.appId}
+                                                                type="button"
+                                                                className="btn btn-danger btn-outline-light float-right"
+                                                                name="issue"
+                                                                onClick = {this.grantApplication}
+                                                            >
+                                                                Grant Application
+                                                            </button>
+                                                            </li>
+                                                        </ul>
+            
+                                                    </form>
+                                                </div>
+                                            </div>
+            
+                                        );
+                        }
                         })}
                     </main>
                 </div >

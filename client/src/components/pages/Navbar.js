@@ -22,8 +22,9 @@ class Navbar extends Component {
   <div className="collapse navbar-collapse text-white" id="navbarSupportedContent">
   <ul className="navbar-nav mr-auto ">
   <li className="nav-item text-nowrap d-none d-sm-none d-sm-block text-white">
-          Welcome {this.props.account.fullname}
+          Welcome, {this.props.account.fullname}
         </li>
+        <li className="ml-2s">({this.props.account.role})</li>
         </ul>
         <ul className="navbar-nav py-2">
         

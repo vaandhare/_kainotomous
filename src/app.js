@@ -5,9 +5,9 @@ const {PORT,mongoUri} = require('../config')
 const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
-const bucketListItemRoutes = require('../routes/api/bucketListItems')
-const userRouter = require('../routes/api/users')
 
+const userRouter = require('../routes/api/users')
+const airportRouter = require('../routes/api/airports')
 
 app.use(cors())
 app.use(morgan('tiny'))
@@ -25,9 +25,6 @@ mongoose
     .catch((err)=> console.log(err))
 
 app.use('/api/Users',userRouter)
-
-app.get('/',(req,res)=>{
-    res.send("Hello World");
-})
+app.use('/api/airports',airportRouter)
 
 app.listen(PORT,()=>{console.log(`App listening to at http://localhost:${PORT}`)})

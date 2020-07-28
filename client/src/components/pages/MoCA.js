@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../../styles/Deputy.css'
-
+import axios from "axios";
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
 var statement = "Upload Your File"
@@ -8,16 +8,28 @@ var count = 0
 
 class MoCA extends Component {
   
+  async componentWillMount(){
+    await this.get_Airports();
+  }
+
+  async get_Airports(){
+     
+      const response = await axios.get(`http://localhost:5000/api/airports/`)
+      this.setState({airports:response.data})
+      // console.log(this.state.currentUser)
+    
+  }
+
   get_timestamp(){
     let date_ob = new Date();
     let year = date_ob.getFullYear();
     // current date
-// adjust 0 before single digit date
-let date = ("0" + date_ob.getDate()).slice(-2);
+    // adjust 0 before single digit date
+    let date = ("0" + date_ob.getDate()).slice(-2);
 
-// current month
-let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    let hours = date_ob.getHours();
+    // current month
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let hours = date_ob.getHours();
     // current minutes
     let minutes = date_ob.getMinutes();
     // current seconds
@@ -66,6 +78,21 @@ captureFile = (event) => {
     })
   }
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      airports:[],
+      airportCode:''
+    }
+  }
+
+  buildAirportSelect(){
+    var arr = [];
+    this.state.airports.map((airport)=>{
+      arr.push(<option value={airport.IATA_code}>{airport.airport_name}</option>)
+    })
+    return arr;
+  }
 
   render() {
     return (
@@ -89,13 +116,18 @@ captureFile = (event) => {
               <div className="form-group mr-sm-2 bg-transparent text-white" id="bg">
               <ul className="list-group list-group-flush text-white">  
                 <li className="list-group-item text-white">
-                  <input
+                  {/* <input
                     id="airportCode"
                     type="text"
                     ref={(input) => { this.airportCode = input }}
                     className="form-control"
                     placeholder="Enter the Airport Code"
-                    required />
+                    required /> */}
+                    <select value={this.state.role} onChange={(e)=>{this.setState({airportCode:e.target.value})}} className="form-control">
+                      <option value="" disabled selected>Select the Airport</option>
+                      { this.buildAirportSelect()}
+
+                    </select>
                     </li>
 
                     <br/>
@@ -219,6 +251,9 @@ captureFile = (event) => {
 
           >
             {this.props.apps.map((app, key) => {
+              
+              let doc = this.props.docs[key];
+              
               return (
                 <div className="card bg-dark mb-3 col-lg-12 ml-auto mr-auto" key={key} id="cardDIV" style={{ maxWidth: '700px' }}>
                   <div className="card-header ml-auto mr-auto">Licensing Application {key}</div>
@@ -240,9 +275,7 @@ captureFile = (event) => {
                             required />
 
                         </li>
-                        {/* {this.props.docs.map((doc, id) => {
-                          if (app.id === doc.id ){
-                            return(
+                        
                        <div>
                          <ul>
                         <li className="list-group-item ">
@@ -282,20 +315,19 @@ captureFile = (event) => {
                         <li className="list-group-item ">
                           <input
                             id="doc4"
-                            className="custom-file-input bg-dark"
+                            className="title"
                             type=""
                             ref={(input) => { this.doc4 = input }}
                             value={this.props.value}
-                            defaultValue={doc.extensionDocs}
+                            defaultValue={doc.exceptionsDoc}
                             required />
 
                         </li>
                         </ul>
                         </div>
-                            )
-                          }
-                        })
-                      } */}
+                            
+                          
+                        
                         <li className="list-group-item " >
                           <input
                             id="state"

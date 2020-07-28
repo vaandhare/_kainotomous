@@ -8,6 +8,7 @@
     align-self: center;
     align-content: center;
     text-align: left;
+    color:#ffffff;
 }
 
 #cardDIV{
@@ -15,6 +16,7 @@
     align-self: "center";
     align-self: center;
     align-content: center;
+    color:#ffffff !important;
 }
 
 #tracingTable{
