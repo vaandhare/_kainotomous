@@ -189,7 +189,7 @@ class Dashboard extends React.Component {
     
     let islogin = localStorage.getItem('isLogin');
     // ?console.log("Auth Status",islogin);
-    if(islogin === 'false'){
+    if(islogin !== 'true'){
       // console.log('Pushing Auth');
       this.props.history.push('/auth')
     }
