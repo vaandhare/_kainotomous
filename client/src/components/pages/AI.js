@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 import '../../styles/Deputy.css'
-
+import axios from 'axios'
 // const ipfsClient = require('ipfs-http-client')
 // const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
 
 class AI extends Component {
+
+    constructor(props){
+        super(props)
+
+        this.get_timestamp = this.get_timestamp.bind(this)
+        this.approveApplication = this.approveApplication.bind(this);
+        this.rejectApplication = this.rejectApplication.bind(this);
+    }
 
     get_timestamp() {
         let date_ob = new Date();
@@ -25,22 +33,28 @@ class AI extends Component {
         return timestamp;
     }
 
-    approveApplication = (event) =>{
-        event.preventDefault()
-        const appId = event.target.id
+    approveApplication = async (appId,airportCode) =>{
+        
         const timestamp = this.get_timestamp()
         console.log(appId, timestamp)
         this.props.approveApp(appId, timestamp)
         console.log("You have approved app!!")
+        const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`,{
+            IATA_code:airportCode,
+            status:'approved'
+        })
     }
 
-    rejectApplication = (event) =>{
-        event.preventDefault()
-        const appId = event.target.id
+    rejectApplication = async  (appId,airportCode) =>{
+        
         const timestamp = this.get_timestamp()
         console.log(appId, timestamp)
         this.props.rejectApp(appId, timestamp)
         console.log("You have rejected app!!")
+        const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`,{
+            IATA_code:airportCode,
+            status:'rejected'
+        })
     }
 
     render() {
@@ -57,7 +71,7 @@ class AI extends Component {
 
                     >
                         {this.props.apps.map((app, key) => {
-                        console.log('APP ID', app.appId)
+                        
                             if(app.state =="assigned"){
                             return (
                                 <div className="card bg-dark mb-3 col-lg-12 ml-auto mr-auto" key={key} id="cardDIV" style={{ maxWidth: '700px' }}>
@@ -71,34 +85,20 @@ class AI extends Component {
 
                                             <ul id="postList" className="list-group list-group-flush">
 
+                                            <li className="list-group-item">
+                                                    {app.airportCode}
+                                                </li>
                                                 <li className="list-group-item">
-                                                    <input
-                                                        id="airportCode"
-                                                        className="title "
-                                                        type="text"
-                                                        ref={(input) => { this.airportCode = input }}
-                                                        value={this.props.value}
-                                                        defaultValue={app.airportCode}
-                                                        required />
-
+                                                    {app.state}
                                                 </li>
-                                                <li className="list-group-item " >
-                                                    <input
-                                                        id="state"
-                                                        type="text"
-                                                        className="content"
-                                                        ref={(input) => { this.state = input }}
-                                                        defaultValue={app.state}
-                                                        required />
 
-                                                </li>
                                                 <li className="list-group-item-success">
                                                 <button
                                                     id={app.appId}
                                                     type="button"
                                                     className="btn btn-secondary btn-outline-light float-right"
                                                     name="approve"
-                                                    onClick = {this.rejectApplication}
+                                                    onClick = {(event) => this.rejectApplication(event.target.id,app.airportCode)}
                                                 >
                                                     Reject Application
                                                 </button>
@@ -107,7 +107,7 @@ class AI extends Component {
                                                     type="button"
                                                     className="btn btn-success btn-outline-light float-right"
                                                     name="approve"
-                                                    onClick = {this.approveApplication}
+                                                    onClick = {(event) => this.approveApplication(event.target.id,app.airportCode)}
                                                 >
                                                     Approve Application
                                                 </button>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import '../../styles/Deputy.css'
+import axios from 'axios'
+// import '../../styles/Deputy.css'
 
 // DGCA is going to issue applications and also grant applications
 
@@ -9,6 +10,13 @@ var statement = "Upload Your File"
 var count = 0
 
 class DGCA extends Component {
+
+    constructor(props){
+        super(props)
+
+        this.get_timestamp = this.get_timestamp.bind(this)
+        this.issueApplication = this.issueApplication.bind(this);
+    }
 
     get_timestamp() {
         let date_ob = new Date();
@@ -29,13 +37,18 @@ class DGCA extends Component {
         return timestamp;
     }
 
-    issueApplication = (event) =>{
-        event.preventDefault()
-        const appId = event.target.id
+     issueApplication = async (appId,airportCode) =>{
+        
+        // const appId = event.target.id
         const timestamp = this.get_timestamp()
         console.log(appId, timestamp)
+        console.log("Airport Code",airportCode)
         this.props.issueApp(appId, timestamp)
         console.log("You have issued app!!")
+        const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`,{
+            IATA_code:airportCode,
+            status:'issued'
+        })
     }
 
 
@@ -68,26 +81,12 @@ class DGCA extends Component {
 
                                             <ul id="postList" className="list-group list-group-flush">
 
+                                                
                                                 <li className="list-group-item">
-                                                    <input
-                                                        id="airportCode"
-                                                        className="title "
-                                                        type="text"
-                                                        ref={(input) => { this.airportCode = input }}
-                                                        value={this.props.value}
-                                                        defaultValue={app.airportCode}
-                                                        required />
-
+                                                    {app.airportCode}
                                                 </li>
-                                                <li className="list-group-item " >
-                                                    <input
-                                                        id="state"
-                                                        type="text"
-                                                        className="content"
-                                                        ref={(input) => { this.state = input }}
-                                                        defaultValue={app.state}
-                                                        required />
-
+                                                <li className="list-group-item">
+                                                    {app.state}
                                                 </li>
                                                 <li className="list-group-item-success">
                                                 <button
@@ -95,7 +94,7 @@ class DGCA extends Component {
                                                     type="button"
                                                     className="btn btn-danger btn-outline-light float-right"
                                                     name="issue"
-                                                    onClick = {this.issueApplication}
+                                                    onClick = {(event) => this.issueApplication(event.target.id,app.airportCode)}
                                                 >
                                                     Issue Application
                                                 </button>

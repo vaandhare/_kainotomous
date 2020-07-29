@@ -1,0 +1,17 @@
+
+const { Schema, model } = require('mongoose')
+
+const StatusSchema = new Schema({
+    IATA_code: {
+        type: String,
+        required: true,
+    },
+    status: {
+        type: String,
+        required: true,
+    }
+})
+
+const Status = model('status', StatusSchema)
+
+module.exports = Status

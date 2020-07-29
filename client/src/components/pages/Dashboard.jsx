@@ -88,6 +88,7 @@ class Dashboard extends React.Component {
       const docCount = await socialNetwork.methods.docCount().call()
       this.setState({ appCount })
       this.setState({ docCount})
+      
       // Load Posts
       for (var i = 1; i <= appCount; i++) {
         const app = await socialNetwork.methods.apps(i).call()
@@ -280,9 +281,7 @@ class Dashboard extends React.Component {
           account={this.state.account}
           apps={this.state.apps}
           docs = {this.state.docs}
-          createApp={this.createApp}
-          buffer = {this.state.buffer}
-          returnDocs = {this.returnDocs}   
+          createApp={this.createApp} 
           />
           </div>
       );

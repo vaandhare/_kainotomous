@@ -17,10 +17,6 @@ const AirportSchema = new Schema({
     city_name:{
         type:String,
         required:true
-    },
-    status:{
-        type:String,
-        required:true
     }
 })
 
