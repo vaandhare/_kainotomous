@@ -8,6 +8,7 @@
     align-self: center;
     align-content: center;
     text-align: left;
+    
 }
 
 #cardDIV{
@@ -15,6 +16,7 @@
     align-self: "center";
     align-self: center;
     align-content: center;
+    color:#ffffff 
 }
 
 #tracingTable{
@@ -24,19 +26,16 @@
 
 
 
-#articleName, #postContent, #fileinput, .title, .content, .custom-file-label{
-    color: #11998e !important;
+/* #articleName, #postContent, #fileinput, .title, .content, .custom-file-label{
+    color: #11998e !importan;
     font-weight:500; 
     width: 100%;
     border: 0;
-    /* outline: 0; */
-    font-size: 1rem;
-    padding: 7px 0;
-    /* background: transparent; */
-    transition: border-color 0.2s; 
+    
+    
 
     
-}
+} */
 
 /* #articleName::placeholder { color: gainsboro; }
 #postContent::placeholder { color: gainsboro; }

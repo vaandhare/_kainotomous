@@ -69,13 +69,14 @@ export class Register extends React.Component {
               <label htmlFor="address">Roles</label>
               <select value={this.state.role} onChange={(e)=>{this.setState({role:e.target.value})}}>
                 <option value="" disabled>Select Role</option>
-                <option value="Chairman">Chairman</option>
-                <option value="Head Of Department">Head Of Department</option>
-                <option value="Member (Operational)">Member</option>
+                <option value="DGCA">DGCA</option>
+                <option value="DoAS">Director of Aerodrome Standards</option>
+                <option value="AI">Aerodrome Inspector</option>
+                <option value="MoCA">Ministry of Civil Aviation</option>
                 
               </select>
             </div>
-            {
+            {/* {
               this.state.role !== "Chairman" ? (
                 <div className="form-group">
                 <label htmlFor="address">Department</label>
@@ -89,7 +90,7 @@ export class Register extends React.Component {
                 </select>
               </div>
               ):""
-            }
+            } */}
             <button type="button" className="btn" onClick={this.handleSubmit}>
             Register
           </button>

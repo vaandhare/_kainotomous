@@ -5,8 +5,11 @@ const {PORT,mongoUri} = require('../config')
 const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
-const bucketListItemRoutes = require('../routes/api/bucketListItems')
-const userRouter = require('../routes/api/users')
+
+const userRouter = require('../routes/api/userroute')
+const airportRouter = require('../routes/api/airportroute')
+const statusRouter = require('../routes/api/statusroute')
+const licenseRouter = require('../routes/api/licenseroute')
 
 
 app.use(cors())
@@ -25,9 +28,8 @@ mongoose
     .catch((err)=> console.log(err))
 
 app.use('/api/Users',userRouter)
-
-app.get('/',(req,res)=>{
-    res.send("Hello World");
-})
+app.use('/api/airports',airportRouter)
+app.use('/api/status',statusRouter)
+app.use('/api/licensetable',licenseRouter)
 
 app.listen(PORT,()=>{console.log(`App listening to at http://localhost:${PORT}`)})

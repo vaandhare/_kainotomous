@@ -8,7 +8,7 @@ import axios from "axios";
 export class Login extends React.Component {
 
   componentWillMount(){
-    this.clearLocalStorage()
+    // this.clearLocalStorage()
   }
 
   clearLocalStorage(){

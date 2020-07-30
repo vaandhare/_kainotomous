@@ -14,7 +14,7 @@ async function handleAccountsChanged () {
   const account = accounts[0];
   console.log(account)
   // const accounts = await web3.eth.getAccounts()
-  if (account === currentAccount.address && checked === 'false') {
+  if (account === currentAccount.address && checked != 'true') {
     localStorage.setItem('checkedMeta',true)
     console.log('It finally Match Yeepee');
     window.location.href = '/'; 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../../styles/Deputy.css'
-
+import axios from "axios";
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
 var statement = "Upload Your File"
@@ -8,16 +8,46 @@ var count = 0
 
 class MoCA extends Component {
   
+  async componentWillMount(){
+    await this.get_Airports();
+  }
+
+  buffer = '';
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      airports:[],
+      airportCode:'',
+      buffer:''
+    }
+
+    this.get_Airports = this.get_Airports.bind(this)
+    this.get_timestamp = this.get_timestamp.bind(this)
+    this.captureFile  = this.captureFile.bind(this)
+    this.submitFile  = this.submitFile.bind(this)
+    this.buildAirportSelect = this.buildAirportSelect.bind(this)
+    this.submitToBlockchain = this.submitToBlockchain.bind(this)
+  }
+
+  async get_Airports(){
+     
+      const response = await axios.get(`http://localhost:5000/api/airports/`)
+      this.setState({airports:response.data})
+      // console.log(this.state.currentUser)
+    
+  }
+
   get_timestamp(){
     let date_ob = new Date();
     let year = date_ob.getFullYear();
     // current date
-// adjust 0 before single digit date
-let date = ("0" + date_ob.getDate()).slice(-2);
+    // adjust 0 before single digit date
+    let date = ("0" + date_ob.getDate()).slice(-2);
 
-// current month
-let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    let hours = date_ob.getHours();
+    // current month
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let hours = date_ob.getHours();
     // current minutes
     let minutes = date_ob.getMinutes();
     // current seconds
@@ -33,13 +63,17 @@ captureFile = (event) => {
     const reader = new window.FileReader() // converts the file to a buffer
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
-      this.setState({ buffer: Buffer(reader.result) })
-      console.log('buffer', this.state.buffer)
+       
+      this.setState({buffer:Buffer(reader.result)},()=>{
+        console.log(this.state.buffer)
+      })
     }
+    
   }
   
   submitFile = (event) => {
     event.preventDefault();
+    console.log('buffer', this.state.buffer)
     console.log("File Captured")
     ipfs.add(this.state.buffer, (error, result) => {
       count = count+1
@@ -66,6 +100,34 @@ captureFile = (event) => {
     })
   }
 
+  
+
+  buildAirportSelect(){
+    var arr = [];
+    this.state.airports.map((airport,key)=>{
+      arr.push(<option value={airport.IATA_code} key={key}>{airport.airport_name}</option>)
+    })
+    return arr;
+  }
+
+  async submitToBlockchain(event){
+    event.preventDefault();
+    const airportCode = this.state.airportCode;
+    const timestamp = this.get_timestamp()
+  
+    const doc1 = this.state.doc1
+    const doc2 = this.state.doc2
+    const doc3 = this.state.doc3
+    const doc4 = this.state.doc4
+    console.log(airportCode,timestamp,doc1,doc2,doc3,doc4)
+    this.props.createApp(airportCode,doc1,doc2,doc3,doc4,timestamp)
+
+    // Save the status on the mongodb
+    const response = await axios.post(`http://localhost:5000/api/status/`,{
+      IATA_code:airportCode,
+      status:'created'
+    })
+  }
 
   render() {
     return (
@@ -74,28 +136,22 @@ captureFile = (event) => {
         <div className="card text-white bg-dark mb-3 col-lg-12 ml-auto mr-auto" style={{maxWidth: '700px'}}>
   <div className="card-header ml-auto mr-auto">Upload the Document Here</div>
   <div className="card-body text-white ">
-  <form onSubmit={this.submitToBlockchain= (event) => {
-    event.preventDefault();
-    const airportCode = this.airportCode.value
-    const timestamp = this.get_timestamp()
-    const doc1 = this.state.doc1
-    const doc2 = this.state.doc2
-    const doc3 = this.state.doc3
-    const doc4 = this.state.doc4
-    console.log(airportCode,timestamp,doc1,doc2,doc3,doc4)
-    this.props.createApp(airportCode,doc1,doc2,doc3,doc4,timestamp)
-  
-  }}>
+  <form onSubmit={this.submitToBlockchain}>
               <div className="form-group mr-sm-2 bg-transparent text-white" id="bg">
               <ul className="list-group list-group-flush text-white">  
                 <li className="list-group-item text-white">
-                  <input
+                  {/* <input
                     id="airportCode"
                     type="text"
                     ref={(input) => { this.airportCode = input }}
                     className="form-control"
                     placeholder="Enter the Airport Code"
-                    required />
+                    required /> */}
+                    <select value={this.state.role} onChange={(e)=>{this.setState({airportCode:e.target.value})}} className="form-control" defaultValue="">
+                      <option value="" disabled>Select the Airport</option>
+                      { this.buildAirportSelect()}
+
+                    </select>
                     </li>
 
                     <br/>
@@ -219,95 +275,46 @@ captureFile = (event) => {
 
           >
             {this.props.apps.map((app, key) => {
+              
+              let doc = this.props.docs[key];
+              
               return (
-                <div className="card bg-dark mb-3 col-lg-12 ml-auto mr-auto" key={key} id="cardDIV" style={{ maxWidth: '700px' }}>
+                <div className="card mb-3 col-lg-12 ml-auto mr-auto" key={key} id="" style={{ maxWidth: '700px' }}>
                   <div className="card-header ml-auto mr-auto">Licensing Application {key}</div>
                   <div className="card-body ">
                     <form >
                       Author:
                       <small className="text-white">{app.author}</small>
 
-                      <ul id="postList" className="list-group list-group-flush">
+                      <ul id="" className="list-group">
                        
                         <li className="list-group-item">
-                          <input
-                            id="airportCode"
-                            className="title "
-                            type="text"
-                            ref={(input) => { this.airportCode = input }}
-                            value={this.props.value}
-                            defaultValue={app.airportCode}
-                            required />
-
-                        </li>
-                        {/* {this.props.docs.map((doc, id) => {
-                          if (app.id === doc.id ){
-                            return(
-                       <div>
-                         <ul>
-                        <li className="list-group-item ">
-                          <input
-                            id="doc1"
-                            className="title"
-                            type="text"
-                            ref={(input) => { this.doc1 = input }}
-                            value={this.props.value}
-                            defaultValue={doc.aerodromeManual}
-                            required />
-
-                        </li>
-
-                        <li className="list-group-item ">
-                          <input
-                            id="doc2"
-                            className="title "
-                            type="text"
-                            ref={(input) => { this.doc2 = input }}
-                            value={this.props.value}
-                            defaultValue={doc.licensingFee}
-                            required />
-
+                          {app.airportCode}
+                          
                         </li>
                         <li className="list-group-item">
-                          <input
-                            id="doc3"
-                            className="title "
-                            type="text"
-                            ref={(input) => { this.doc3 = input }}
-                            value={this.props.value}
-                            defaultValue={doc.CARcompliance}
-                            required />
-
+                        {doc.aerodromeManual}
+                          
                         </li>
-                        <li className="list-group-item ">
-                          <input
-                            id="doc4"
-                            className="custom-file-input bg-dark"
-                            type=""
-                            ref={(input) => { this.doc4 = input }}
-                            value={this.props.value}
-                            defaultValue={doc.extensionDocs}
-                            required />
-
+                        <li className="list-group-item">
+                        {doc.CARcompliance}
+                          
                         </li>
+                        <li className="list-group-item">
+                        {doc.exceptionsDoc}
+                          
+                        </li>
+                        <li className="list-group-item">
+                        {doc.licensingFee}
+                          
+                        </li>
+                        <li className="list-group-item">
+                          {app.state}
+                          
+                        </li>
+                        
                         </ul>
-                        </div>
-                            )
-                          }
-                        })
-                      } */}
-                        <li className="list-group-item " >
-                          <input
-                            id="state"
-                            type="text"
-                            className="content"
-                            ref={(input) => { this.state = input }}
-                            defaultValue={app.state}
-                            required />
-
-                        </li>
-                      </ul>
-
+                         
                     </form>
                   </div>
                 </div>
