@@ -6,6 +6,10 @@ const StatusSchema = new Schema({
         type: String,
         required: true,
     },
+    appId:{
+        type:String,
+        required:true
+    },
     status: {
         type: String,
         required: true,
