@@ -4,6 +4,7 @@
   "private": true,
   "author": "MSA",
   "dependencies": {
+    "antd": "^4.5.1",
     "axios": "^0.19.2",
     "babel-polyfill": "6.26.0",
     "babel-preset-env": "1.7.0",

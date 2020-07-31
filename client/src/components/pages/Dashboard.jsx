@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import '../../styles/Dashboard.css';
 import Navbar from './Navbar'
 import SocialNetwork from '../../abis/SocialNetwork.json'
-import MoCA from './MoCA'
+import MoCA3 from './MoCA3'
 import DGCA from './DGCA'
 import DoAS from './DoAS'
 import AI from './AI'
@@ -276,14 +276,60 @@ class Dashboard extends React.Component {
       console.log('Member Address',this.state.currentUser.address);
       return(
         <div>
+         <Layout style={{ minHeight: "100vh" }}>
+        <Sider
+          collapsible
+          collapsed={this.state.collapsed}
+          onCollapse={this.onCollapse}
+        >
+          <div className="logo" />
+          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+            <Menu.Item key="1">
+            <AppstoreOutlined />
+              <span>Home Page</span>
+            </Menu.Item>
+            <Menu.Item key="2">
+              <Link to="/">
+              <FolderOpenOutlined />
+                <span>Projects</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <Link to="/">
+              <UserSwitchOutlined />
+              <span>Manage Users</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="4">
+            <Link to="/auth">
+            <LogoutOutlined />
+            <span>Logout</span></Link>
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout>
+          <Header>
+            <div>
+            <input 
+            style={{width: "100%", height: "150%", padding: "10px"}}
+            placeholder="Search Document or Project"
+            prefix={<SearchOutlined />}/>
+            </div>
+            </Header>
+          <Content style={{ margin: "0 16px" }}>
+            <div style={{ padding: 24, background: "#fff", minHeight: "100%",  margin: "16px 0" }}>
           <Navbar account={this.state.currentUser} />
-          <MoCA
+          <MoCA3
           account={this.state.account}
           apps={this.state.apps}
           docs = {this.state.docs}
           createApp={this.createApp} 
           />
           </div>
+           </Content>
+        </Layout>
+      </Layout>
+      </div>
       );
     }
     else{
