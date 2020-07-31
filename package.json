@@ -8,7 +8,7 @@
     "build":"cd client && npm run build",
     "install-client": "cd client && npm install",
     "heroku-postbuild":"npm run install-client && npm run build",
-    "start": "src/app.js'",
+    "start": "node src/app.js'",
     "server": "nodemon src/app.js --ignore './client",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
