@@ -24,7 +24,7 @@ import axios from "axios";
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
   host: "ipfs.infura.io",
-  port: "5001",
+  port: process.env.PORT || "5001",
   protocol: "https",
 });
 var statement = "Upload Your File";
