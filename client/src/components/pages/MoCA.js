@@ -46,6 +46,7 @@ class MoCA extends Component {
     };
 
     this.get_Airports = this.get_Airports.bind(this);
+    this.get_Airport = this.get_Airport.bind(this);
     this.get_timestamp = this.get_timestamp.bind(this);
     this.captureFile = this.captureFile.bind(this);
     this.submitFile = this.submitFile.bind(this);
@@ -59,6 +60,11 @@ class MoCA extends Component {
     this.setState({ airports: response.data });
     // console.log(this.state.currentUser)
   }
+
+  async get_Airport(airportCode){
+    return await axios.get(`http://localhost:5000/api/airports/${airportCode}`)
+  }
+
   toggle() {
     this.setState((prevState) => ({
       modal: !prevState.modal,
@@ -148,25 +154,6 @@ class MoCA extends Component {
   async submitToBlockchain(event) {
     event.preventDefault();
     const airportCode = this.state.airportCode;
-<<<<<<< HEAD
-    const timestamp = this.get_timestamp();
-    const applength = this.props.apps.length;
-
-    const doc1 = this.state.doc1;
-    const doc2 = this.state.doc2;
-    const doc3 = this.state.doc3;
-    const doc4 = this.state.doc4;
-    console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
-
-    this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
-
-    // Save the status on the mongodb
-    const response = await axios.post(`http://localhost:5000/api/status/`, {
-      IATA_code: airportCode,
-      appId: applength,
-      status: "created",
-    });
-=======
     const timestamp = this.get_timestamp()
     const applength = this.props.apps.length;
     
@@ -184,10 +171,10 @@ class MoCA extends Component {
       appId:applength,
       status:'created'
     })
->>>>>>> origin
   }
 
   render() {
+    const {currentUser} = this.props
     return (
       <Fragment>
         <br />
@@ -228,9 +215,8 @@ class MoCA extends Component {
               <br />
               <div className="card card-body">
                 {/* <h1>Hello</h1> */}
-                {this.props.apps.map((app, key) => {
-                  let doc = this.props.docs[key];
-                  let airport = this.state.airports;
+                {this.state.airports.map(async (airport, key) => {
+                  // let status = await this.get_Airport(airport.IATA_code)
                   return (
                     <Fragment>
                       <br></br>
@@ -238,6 +224,7 @@ class MoCA extends Component {
                         <div className="col-12">
                           <div className="card" style={{ padding: "18px" }}>
                             <table>
+                              <tbody>
                               <tr>
                                 <th
                                   className="h6"
@@ -268,6 +255,7 @@ class MoCA extends Component {
                                 </th>
                               </tr>
                               <tr>
+
                                 <td
                                   className="h6"
                                   style={{
@@ -275,7 +263,7 @@ class MoCA extends Component {
                                     textAlign: "center",
                                   }}
                                 >
-                                  {app.airportCode}
+                                  {airport.IATA_code}
                                 </td>
                                 <td
                                   className="h6"
@@ -301,10 +289,11 @@ class MoCA extends Component {
                                       fontSize: "15px",
                                     }}
                                   >
-                                    {app.state}
+                                    {/* {status.status} */}
                                   </span>
                                 </td>
                               </tr>
+                              </tbody>
                             </table>
                           </div>
                         </div>
@@ -331,8 +320,8 @@ class MoCA extends Component {
             </div>
             <div className="col-4">
               <div className="card card-body center" style={{marginTop: "65px"}}>
-                <h4 className="h5">David Boon</h4>
-                <h6 style={{ color: "grey" }}>Chairman</h6>
+              <h4 className="h5">{currentUser.fullname}</h4>
+                <h6 style={{ color: "grey" }}>{currentUser.role}</h6>
                 <Button color="primary" onClick={this.toggle} style={{ justifyContent: "center" }}>
                 <i className="fa fa-cloud-upload"></i>Upload New Document
                 </Button>

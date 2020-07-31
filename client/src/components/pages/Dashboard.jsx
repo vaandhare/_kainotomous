@@ -355,6 +355,7 @@ class Dashboard extends React.Component {
                   apps={this.state.apps}
                   docs={this.state.docs}
                   createApp={this.createApp}
+                  currentUser = {this.state.currentUser}
                 />
               </Content>
             </Layout>
