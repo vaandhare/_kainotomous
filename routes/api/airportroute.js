@@ -13,11 +13,29 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 })
-router.get('/:id', async (req, res) => {
-    const { id } = req.params
-    console.log(id);
+// router.get('/:id', async (req, res) => {
+//     const { id } = req.params
+//     console.log(id);
+//     try {
+//         const airport = await Airport.find({IATA_code:id})
+//         if (!airport) throw new Error('No Airport Found')
+        
+//         res.status(200).json(airport)
+//     } catch (error) {
+//         res.status(500).json({ message: error.message })
+//     }
+// })
+
+router.get('/search', async (req, res) => {
+    const q = req.query.query
+    
     try {
-        const airport = await Airport.find({IATA_code:id})
+        console.log("Query",q);
+        const airport = await Airport.find(
+                { city_name : {
+                    $regex:q,
+                    $options:"i"
+                }})
         if (!airport) throw new Error('No Airport Found')
         
         res.status(200).json(airport)
