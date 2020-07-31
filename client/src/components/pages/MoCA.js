@@ -148,25 +148,7 @@ class MoCA extends Component {
   async submitToBlockchain(event) {
     event.preventDefault();
     const airportCode = this.state.airportCode;
-<<<<<<< HEAD
-    const timestamp = this.get_timestamp();
-    const applength = this.props.apps.length;
 
-    const doc1 = this.state.doc1;
-    const doc2 = this.state.doc2;
-    const doc3 = this.state.doc3;
-    const doc4 = this.state.doc4;
-    console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
-
-    this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
-
-    // Save the status on the mongodb
-    const response = await axios.post(`http://localhost:5000/api/status/`, {
-      IATA_code: airportCode,
-      appId: applength,
-      status: "created",
-    });
-=======
     const timestamp = this.get_timestamp()
     const applength = this.props.apps.length;
     
@@ -184,7 +166,6 @@ class MoCA extends Component {
       appId:applength,
       status:'created'
     })
->>>>>>> origin
   }
 
   render() {
