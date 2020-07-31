@@ -51,6 +51,8 @@ class MoCA extends Component {
     this.captureFile = this.captureFile.bind(this);
     this.submitFile = this.submitFile.bind(this);
     this.buildAirportSelect = this.buildAirportSelect.bind(this);
+    this.showAirports = this.showAirports.bind(this);
+
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
   }
@@ -62,7 +64,7 @@ class MoCA extends Component {
   }
 
   async get_Airport(airportCode){
-    return await axios.get(`http://localhost:5000/api/airports/${airportCode}`)
+    return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
   }
 
   toggle() {
@@ -151,6 +153,61 @@ class MoCA extends Component {
     return arr;
   }
 
+  showAirports(){
+    var airportCard = [];
+    
+    this.state.airports.map( async (airport,key)=>{
+      // let state = await this.get_Airport(airport.IATA_code)
+      // let status = ""
+      // if(Array.isArray(state.data) && state.data.length){
+      //   console.log('Not Empty',state.data)
+      //   status = state.data[0].status;
+      // }
+      
+      airportCard.push(
+        <div className="row">
+          <div className="col-12">
+            <div className="card" style={{ padding: "18px" }}>
+            <div className="row">
+              <div className="col-3">
+                <p>Airport Code</p>
+              </div>
+              <div className="col-6">
+                <h6>Airport Name</h6>
+              </div>
+              <div className="col-3">
+                <h6>Status</h6>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-3">
+                <h6>{airport.IATA_code}</h6>
+              </div>
+              <div className="col-6">
+                <h6>{airport.airport_name}</h6>
+              </div>
+              <div className="col-3">
+              <span
+                      className="badge badge-primary"
+                      style={{
+                        padding: "8px",
+                        fontWeight: "bold",
+                        fontSize: "15px",
+                      }}
+                    >
+                     {/* { status === "" ? "Not Licensed": status} */}
+                    </span>
+              </div>
+            </div>
+              
+            </div>
+          </div>
+        </div>
+      )
+    })
+    return airportCard
+  }
+
   async submitToBlockchain(event) {
     event.preventDefault();
     const airportCode = this.state.airportCode;
@@ -214,93 +271,10 @@ class MoCA extends Component {
               </div>
               <br />
               <div className="card card-body">
-                {/* <h1>Hello</h1> */}
-                {this.state.airports.map(async (airport, key) => {
-                  // let status = await this.get_Airport(airport.IATA_code)
-                  return (
-                    <Fragment>
+                
                       <br></br>
-                      <div className="row">
-                        <div className="col-12">
-                          <div className="card" style={{ padding: "18px" }}>
-                            <table>
-                              <tbody>
-                              <tr>
-                                <th
-                                  className="h6"
-                                  style={{
-                                    color: "grey",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  Airport Code
-                                </th>
-                                <th
-                                  className="h6"
-                                  style={{
-                                    color: "grey",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  Airport Name
-                                </th>
-                                <th
-                                  className="h6"
-                                  style={{
-                                    color: "grey",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  Status
-                                </th>
-                              </tr>
-                              <tr>
-
-                                <td
-                                  className="h6"
-                                  style={{
-                                    fontWeight: "bold",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  {airport.IATA_code}
-                                </td>
-                                <td
-                                  className="h6"
-                                  style={{
-                                    fontWeight: "bold",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  {airport.airport_name}
-                                </td>
-                                <td
-                                  className="h6"
-                                  style={{
-                                    fontWeight: "bold",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  <span
-                                    className="badge badge-primary"
-                                    style={{
-                                      padding: "8px",
-                                      fontWeight: "bold",
-                                      fontSize: "15px",
-                                    }}
-                                  >
-                                    {/* {status.status} */}
-                                  </span>
-                                </td>
-                              </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </Fragment>
-                  );
-                })}
+                      {this.showAirports()}
+                    
               </div>
               <div>
                 <Card style={{padding: "10px", marginTop: "10px"}}>
