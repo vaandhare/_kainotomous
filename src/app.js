@@ -33,7 +33,7 @@ app.use('/api/status',statusRouter)
 app.use('/api/licensetable',licenseRouter)
 
 if (process.env.NODE_ENV === 'production') { 
-    app.use(express.static('client/public'))
+    app.use(express.static('client/build'))
 }
 
 app.listen(PORT,()=>{console.log(`App listening to at http://localhost:${PORT}`)})
