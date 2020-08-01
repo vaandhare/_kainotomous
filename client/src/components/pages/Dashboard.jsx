@@ -273,6 +273,7 @@ class Dashboard extends React.Component {
   returnDocs() {
     console.log(this.state.docs);
   }
+
   onCollapse = (collapsed) => {
     console.log(collapsed);
     this.setState({ collapsed });
@@ -314,6 +315,14 @@ class Dashboard extends React.Component {
           <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
             <Menu.Item key="1">
             <AppstoreOutlined />
+
+            <Menu.Item key="1">
+                  <span>
+                    {this.state.currentUser.fullname}(
+                    {this.state.currentUser.role})
+                  </span>
+                </Menu.Item>
+
               <span>Home Page</span>
             </Menu.Item>
             <Menu.Item key="2">
@@ -355,167 +364,302 @@ class Dashboard extends React.Component {
                   apps={this.state.apps}
                   docs={this.state.docs}
                   createApp={this.createApp}
+
+                  currentUser = {this.state.currentUser}
+
                 />
               </Content>
             </Layout>
           </Layout>
         </div>
       );
+
     } else {
+
       if (this.state.currentUser.role === "DoAS") {
         console.log("Member Address", this.state.currentUser.role);
         return (
           <div>
-            {/* <Navbar account={this.state.currentUser} /> */}
-            <Layout style={{ minHeight: "100vh" }}>
-              <Sider
-                collapsible
-                collapsed={this.state.collapsed}
-                onCollapse={this.onCollapse}
-              >
-                <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-                  <Menu.Item key="3">
-                    <Icon type="desktop"></Icon>
-                    <span>Home Page</span>
-                  </Menu.Item>
-                  <Menu.Item key="4">
-                    <Link to="/">
-                      <span>ABCD</span>
-                    </Link>
-                  </Menu.Item>
-                </Menu>
-              </Sider>
-              <Layout>
-                <Header style={{ background: "#000" }}>
-                  <input
-                    type="text"
-                    placeholder="Search Document or Project"
-                    prefix={<SearchOutlined style={{ color: "red" }} />}
-                    style={{
-                      width: "140%",
-                      height: "100%",
-                      padding: "9px",
-                      borderRadius: "3px",
-                    }}
-                  />
-                </Header>
-                <Content style={{ margin: "0 16px" }}>
-                  <DoAS
-                    account={this.state.account}
-                    apps={this.state.apps}
-                    assignApp={this.assignApp}
-                    grantApp={this.grantApp}
-                    renewApp={this.renewApp}
-                    buffer={this.state.buffer}
-                  />
-                </Content>
-              </Layout>
+          {/* <Navbar account={this.state.currentUser} /> */}
+          <Layout style={{ minHeight: "100vh" }}>
+        <Sider
+          collapsible
+          collapsed={this.state.collapsed}
+          onCollapse={this.onCollapse}
+        >
+          <div className="logo" />
+          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+          <Menu.Item key="1">
+                  <span>
+                    {this.state.currentUser.fullname}(
+                    {this.state.currentUser.role})
+                  </span>
+                </Menu.Item>
+            <Menu.Item key="1">
+            <AppstoreOutlined />
+              <span>Home Page</span>
+            </Menu.Item>
+            <Menu.Item key="2">
+              <Link to="/">
+              <FolderOpenOutlined />
+                <span>Projects</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <Link to="/">
+              <UserSwitchOutlined />
+              <span>Manage Users</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="4">
+            <Link to="/auth">
+            <LogoutOutlined />
+            <span>Logout</span></Link>
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout>
+              <Header style={{ background: "#000" }}>
+                <input
+                  type="text"
+                  placeholder="Search Document or Project"
+                  prefix={<SearchOutlined style={{ color: "red" }} />}
+                  style={{
+                    width: "100%",
+                    height: "80%",
+                    padding: "9px",
+                    borderRadius: "3px",
+                  }}
+                />
+              </Header>
+              <Content style={{ margin: "0 16px" }}>
+                <DoAS
+                  account={this.state.account}
+                  apps={this.state.apps}
+                  docs={this.state.docs}
+                  assignApp={this.assignApp}
+                  renewApp = {this.renewApp}
+                  grantApp = {this.grantApp}
+                />
+              </Content>
             </Layout>
-          </div>
+          </Layout>
+        </div>
         );
-      } else if (this.state.currentUser.role === "DGCA") {
+      } 
+      else{
+
+      if (this.state.currentUser.role === "DGCA") {
         return (
           <div>
-            {/* <Navbar account={this.state.currentUser} /> */}
-            <Layout style={{ minHeight: "100vh" }}>
-              <Sider
-                collapsible
-                collapsed={this.state.collapsed}
-                onCollapse={this.onCollapse}
-              >
-                <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-                  <Menu.Item key="5">
-                    <Icon type="desktop"></Icon>
-                    <span>Home Page</span>
-                  </Menu.Item>
-                  <Menu.Item key="6">
-                    <Link to="/">
-                      <span>ABCD</span>
-                    </Link>
-                  </Menu.Item>
-                </Menu>
-              </Sider>
-              <Layout>
-                <Header style={{ background: "#000" }}>
-                  <input
-                    type="text"
-                    placeholder="Search Document or Project"
-                    prefix={<SearchOutlined style={{ color: "red" }} />}
-                    style={{
-                      width: "140%",
-                      height: "100%",
-                      padding: "9px",
-                      borderRadius: "3px",
-                    }}
-                  />
-                </Header>
-                <Content style={{ margin: "0 16px" }}>
-                  <DGCA
-                    account={this.state.account}
-                    apps={this.state.apps}
-                    docs={this.state.docs}
-                    issueApp={this.issueApp}
-                  />
-                </Content>
-              </Layout>
+          {/* <Navbar account={this.state.currentUser} /> */}
+          <Layout style={{ minHeight: "100vh" }}>
+        <Sider
+          collapsible
+          collapsed={this.state.collapsed}
+          onCollapse={this.onCollapse}
+        >
+          <div className="logo" />
+          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+          <Menu.Item key="1">
+                  <span>
+                    {this.state.currentUser.fullname}(
+                    {this.state.currentUser.role})
+                  </span>
+                </Menu.Item>
+            <Menu.Item key="1">
+            <AppstoreOutlined />
+              <span>Home Page</span>
+            </Menu.Item>
+            <Menu.Item key="2">
+              <Link to="/">
+              <FolderOpenOutlined />
+                <span>Projects</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <Link to="/">
+              <UserSwitchOutlined />
+              <span>Manage Users</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="4">
+            <Link to="/auth">
+            <LogoutOutlined />
+            <span>Logout</span></Link>
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout>
+              <Header style={{ background: "#000" }}>
+                <input
+                  type="text"
+                  placeholder="Search Document or Project"
+                  prefix={<SearchOutlined style={{ color: "red" }} />}
+                  style={{
+                    width: "100%",
+                    height: "80%",
+                    padding: "9px",
+                    borderRadius: "3px",
+                  }}
+                />
+              </Header>
+              <Content style={{ margin: "0 16px" }}>
+                <DGCA
+                  account={this.state.account}
+                  apps={this.state.apps}
+                  docs={this.state.docs}
+                  issueApp={this.issueApp}
+                  grantApp = {this.grantApp}
+                />
+              </Content>
             </Layout>
-          </div>
+          </Layout>
+        </div>
         );
-      } else {
+      } 
+      else {
+        if (this.state.currentUser.role === "AI") { 
         console.log("Member Address", this.state.currentUser.role);
         return (
           <div>
-            {/* <Navbar account={this.state.currentUser} /> */}
-            <Layout style={{ minHeight: "100vh" }}>
-              <Sider
-                collapsible
-                collapsed={this.state.collapsed}
-                onCollapse={this.onCollapse}
-              >
-                <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-                  <Menu.Item key="7">
-                    <Icon type="desktop"></Icon>
-                    <span>Home Page</span>
-                  </Menu.Item>
-                  <Menu.Item key="8">
-                    <Link to="/">
-                      <span>ABCD</span>
-                    </Link>
-                  </Menu.Item>
-                </Menu>
-              </Sider>
-              <Layout>
-                <Header style={{ background: "#000" }}>
-                  <input
-                    type="text"
-                    placeholder="Search Document or Project"
-                    prefix={<SearchOutlined style={{ color: "red" }} />}
-                    style={{
-                      width: "140%",
-                      height: "100%",
-                      padding: "9px",
-                      borderRadius: "3px",
-                    }}
-                  />
-                </Header>
-                <Content style={{ margin: "0 16px" }}>
-                  <AI
-                    account={this.state.account}
-                    apps={this.state.apps}
-                    docs={this.state.docs}
-                    approveApp={this.approveApp}
-                    rejectApp={this.rejectApp}
-                  />
-                </Content>
-              </Layout>
+          {/* <Navbar account={this.state.currentUser} /> */}
+          <Layout style={{ minHeight: "100vh" }}>
+        <Sider
+          collapsible
+          collapsed={this.state.collapsed}
+          onCollapse={this.onCollapse}
+        >
+          <div className="logo" />
+          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+          <Menu.Item key="1">
+                  <span>
+                    {this.state.currentUser.fullname}(
+                    {this.state.currentUser.role})
+                  </span>
+                </Menu.Item>
+            <Menu.Item key="1">
+            <AppstoreOutlined />
+              <span>Home Page</span>
+            </Menu.Item>
+            <Menu.Item key="2">
+              <Link to="/">
+              <FolderOpenOutlined />
+                <span>Projects</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <Link to="/">
+              <UserSwitchOutlined />
+              <span>Manage Users</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="4">
+            <Link to="/auth">
+            <LogoutOutlined />
+            <span>Logout</span></Link>
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout>
+              <Header style={{ background: "#000" }}>
+                <input
+                  type="text"
+                  placeholder="Search Document or Project"
+                  prefix={<SearchOutlined style={{ color: "red" }} />}
+                  style={{
+                    width: "100%",
+                    height: "80%",
+                    padding: "9px",
+                    borderRadius: "3px",
+                  }}
+                />
+              </Header>
+              <Content style={{ margin: "0 16px" }}>
+                <AI
+                  account={this.state.account}
+                  apps={this.state.apps}
+                  docs={this.state.docs}
+                  approveApp={this.approveApp}
+                  rejectApp = {this.rejectApp}
+                />
+              </Content>
             </Layout>
-          </div>
+          </Layout>
+        </div>
         );
       }
-    }
+      else{
+        console.log("Member Address", this.state.currentUser.role);
+        return (
+          <div>
+          {/* <Navbar account={this.state.currentUser} /> */}
+          <Layout style={{ minHeight: "100vh" }}>
+        <Sider
+          collapsible
+          collapsed={this.state.collapsed}
+          onCollapse={this.onCollapse}
+        >
+          <div className="logo" />
+          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+          <Menu.Item key="1">
+                  <span>
+                    {this.state.currentUser.fullname}(
+                    {this.state.currentUser.role})
+                  </span>
+                </Menu.Item>
+            <Menu.Item key="1">
+            <AppstoreOutlined />
+              <span>Home Page</span>
+            </Menu.Item>
+            <Menu.Item key="2">
+              <Link to="/">
+              <FolderOpenOutlined />
+                <span>Projects</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <Link to="/">
+              <UserSwitchOutlined />
+              <span>Manage Users</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="4">
+            <Link to="/auth">
+            <LogoutOutlined />
+            <span>Logout</span></Link>
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout>
+              <Header style={{ background: "#000" }}>
+                <input
+                  type="text"
+                  placeholder="Search Document or Project"
+                  prefix={<SearchOutlined style={{ color: "red" }} />}
+                  style={{
+                    width: "100%",
+                    height: "80%",
+                    padding: "9px",
+                    borderRadius: "3px",
+                  }}
+                />
+              </Header>
+              <Content style={{ margin: "0 16px" }}>
+                <AI
+                  account={this.state.account}
+                  apps={this.state.apps}
+                  docs={this.state.docs}
+                  approveApp={this.approveApp}
+                  rejectApp = {this.rejectApp}
+                />
+              </Content>
+            </Layout>
+          </Layout>
+        </div>
+        );
+      }
+    }}}
   }
 }
 
