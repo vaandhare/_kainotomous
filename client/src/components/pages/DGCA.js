@@ -30,7 +30,9 @@ const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: process.env.PORT || '5001', protocol: 'https' })
 var statement = "Upload Your File"
 var count = 0
-
+var application=''
+var document=''
+var link = "https://ipfs.infura.io/ipfs/"
 
 class DGCA extends Component {
     async componentWillMount() {
@@ -89,18 +91,19 @@ class DGCA extends Component {
 
   displayModal = async(appId,airportCode) =>{
       console.log(appId,airportCode);
-    //   var application='';
-    //   var document='';
+      // var application='';
+      // var document='';
       this.props.apps.map((app,key) =>{
           if(app.appId == appId){
-              application = app
+               application = app
               console.log(application);
               document = this.props.docs[key];
               console.log(document)
+              // this.setState({app:application});
+              // this.setState({doc:document})
           }
       })
-    //   this.setState({app:application});
-    //   this.setState({doc:document})
+    //   
       this.toggle();
   }
 
