@@ -152,7 +152,7 @@ class DoAS extends Component {
         this.props.assignApp(appId, timestamp)
         console.log("You have issued app!!")
         const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
-            IATA_code: airportCode,
+            airport_code: airportCode,
             appId: appId,
             status: 'assigned'
         })
@@ -178,14 +178,14 @@ class DoAS extends Component {
         this.props.grantApp(appId, timestamp)
         console.log("You have granted the license!!")
         const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
-            IATA_code: airportCode,
+            airport_code: airportCode,
             appId: appId,
             status: 'granted'
         })
         let license_no = this.generateLicenseNumber()
         const expirydate = this.get_expirydate()
         const input = {
-            IATA_code: airportCode,
+            airport_code: airportCode,
             license_number: license_no,
             from: timestamp,
             to: expirydate

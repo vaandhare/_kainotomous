@@ -172,7 +172,7 @@ class MoCA extends Component {
     var arr = [];
     this.state.airports.map((airport, key) => {
       arr.push(
-        <option value={airport.IATA_code} key={key}>
+        <option value={airport.airport_code} key={key}>
           {airport.airport_name}
         </option>
       );
@@ -184,7 +184,7 @@ class MoCA extends Component {
     var airportCard = [];
     
     this.state.airports.map( async (airport,key)=>{
-      // let state = await this.get_Airport(airport.IATA_code)
+      // let state = await this.get_Airport(airport.airport_code)
       // let status = ""
       // if(Array.isArray(state.data) && state.data.length){
       //   console.log('Not Empty',state.data)
@@ -208,7 +208,7 @@ class MoCA extends Component {
             </div>
             <div className="row">
               <div className="col-3">
-                <h6>{airport.IATA_code}</h6>
+                <h6>{airport.airport_code}</h6>
               </div>
               <div className="col-6">
                 <h6>{airport.airport_name}</h6>
@@ -251,7 +251,7 @@ class MoCA extends Component {
 
     // Save the status on the mongodb
     const response = await axios.post(`http://localhost:5000/api/status/`, {
-      IATA_code: airportCode,
+      airport_code: airportCode,
       appId: applength,
       status: "created",
     });
