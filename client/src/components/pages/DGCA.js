@@ -137,7 +137,7 @@ class DGCA extends Component {
         this.props.issueApp(appId, timestamp)
         console.log("You have issued app!!")
         const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`,{
-            IATA_code:airportCode,
+            airport_code:airportCode,
             appId:appId,
             status:'issued'
         })

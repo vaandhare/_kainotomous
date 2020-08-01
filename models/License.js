@@ -2,7 +2,7 @@
 const { Schema, model } = require('mongoose')
 
 const LicenseSchema = new Schema({
-    IATA_code: {
+    airport_code: {
         type: String,
         required: true,
     },
