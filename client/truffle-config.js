@@ -68,7 +68,7 @@ module.exports = {
       // from: <address>,        // Account to send txs from (default: accounts[0])
       // websockets: true        // Enable EventEmitter interface for web3 (default: false)
     // },
-
+    
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
     ropsten: {

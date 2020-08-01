@@ -33,6 +33,7 @@ var count = 0;
 class MoCA extends Component {
   async componentWillMount() {
     await this.get_Airports();
+    await this.get_approved_count();
   }
 
   buffer = "";
@@ -42,11 +43,17 @@ class MoCA extends Component {
     this.state = {
       airports: [],
       airportCode: "",
+
+      approved_count: 0,
+      pending_count: 0,
+
       buffer: "",
     };
 
     this.get_Airports = this.get_Airports.bind(this);
+
     this.get_Airport = this.get_Airport.bind(this);
+
     this.get_timestamp = this.get_timestamp.bind(this);
     this.captureFile = this.captureFile.bind(this);
     this.submitFile = this.submitFile.bind(this);
@@ -55,6 +62,9 @@ class MoCA extends Component {
 
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
+
+    this.get_approved_count = this.get_approved_count.bind(this)
+
   }
 
   async get_Airports() {
@@ -63,14 +73,31 @@ class MoCA extends Component {
     // console.log(this.state.currentUser)
   }
 
+
   async get_Airport(airportCode){
     return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
   }
+
 
   toggle() {
     this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
+  }
+
+  async get_approved_count() {
+    var approved_count = 0;
+    var pending_count = 0;
+    this.props.apps.map((app, key) => {
+      if (app.state === "approved" || app.state === "granted") {
+        approved_count = approved_count + 1;
+      }
+      else {
+        pending_count = pending_count + 1;
+      }
+    })
+    this.setState({ approved_count: approved_count });
+    this.setState({ pending_count: pending_count });
   }
 
   get_timestamp() {
@@ -211,23 +238,23 @@ class MoCA extends Component {
   async submitToBlockchain(event) {
     event.preventDefault();
     const airportCode = this.state.airportCode;
-    const timestamp = this.get_timestamp()
+    const timestamp = this.get_timestamp();
     const applength = this.props.apps.length;
-    
-    const doc1 = this.state.doc1
-    const doc2 = this.state.doc2
-    const doc3 = this.state.doc3
-    const doc4 = this.state.doc4
-    console.log(airportCode,timestamp,doc1,doc2,doc3,doc4)
 
-    this.props.createApp(airportCode,doc1,doc2,doc3,doc4,timestamp)
+    const doc1 = this.state.doc1;
+    const doc2 = this.state.doc2;
+    const doc3 = this.state.doc3;
+    const doc4 = this.state.doc4;
+    console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
+
+    this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
 
     // Save the status on the mongodb
-    const response = await axios.post(`http://localhost:5000/api/status/`,{
-      IATA_code:airportCode,
-      appId:applength,
-      status:'created'
-    })
+    const response = await axios.post(`http://localhost:5000/api/status/`, {
+      IATA_code: airportCode,
+      appId: applength,
+      status: "created",
+    });
   }
 
   render() {
@@ -276,28 +303,20 @@ class MoCA extends Component {
                       {this.showAirports()}
                     
               </div>
-              <div>
-                <Card style={{padding: "10px", marginTop: "10px"}}>
-                  <Row>
-                    <Col>
-                      <h3 style={{color: "gray"}}>Licence Application</h3>
-                    </Col>
-                    <Col md={3}/>
-                    <Col md={3}>
-                      <Card style={{background: "gray", alignContent: "center"}}>
-                      <p>Licence Application</p>
-                      </Card>
-                    </Col>
-                  </Row>
-                </Card>
-              </div>
             </div>
             <div className="col-4">
-              <div className="card card-body center" style={{marginTop: "65px"}}>
-              <h4 className="h5">{currentUser.fullname}</h4>
-                <h6 style={{ color: "grey" }}>{currentUser.role}</h6>
-                <Button color="primary" onClick={this.toggle} style={{ justifyContent: "center" }}>
-                <i className="fa fa-cloud-upload"></i>Upload New Document
+              <br />
+              <br />
+              <br />
+              <div className="card card-body center">
+                <h4 className="h5">David Boon</h4>
+                <h6 style={{ color: "grey" }}>Chairman</h6>
+                <Button
+                  color="primary"
+                  onClick={this.toggle}
+                  style={{ justifyContent: "center" }}
+                >
+                  <i className="fa fa-cloud-upload"></i>Upload New Document
                 </Button>
                 <Modal isOpen={this.state.modal} toggle={this.toggle}>
                   <ModalHeader toggle={this.toggle}>
@@ -305,141 +324,161 @@ class MoCA extends Component {
                   </ModalHeader>
                   <ModalBody>
                     <form onSubmit={this.submitToBlockchain}>
-                      <select
-                        value={this.state.role}
-                        onChange={(e) => {
-                          this.setState({ airportCode: e.target.value });
-                        }}
-                        className="form-control"
-                        defaultValue=""
-                      >
-                        <option value="" disabled>
-                          Select the Airport
+                      <FormGroup>
+                        <select
+                          value={this.state.role}
+                          onChange={(e) => {
+                            this.setState({ airportCode: e.target.value });
+                          }}
+                          className="form-control"
+                          defaultValue=""
+                        >
+                          <option value="" disabled>
+                            Select the Airport
                         </option>
-                        {this.buildAirportSelect()}
-                      </select>
-
+                          {this.buildAirportSelect()}
+                        </select>
+                      </FormGroup>
                       <FormGroup>
                         <Label>Aerodrome Manual</Label>
-                        <div className="custom-file">
-                          <input
-                            id="doc1"
-                            type="file"
-                            className="custom-file-input"
-                            onChange={this.captureFile}
-                          />
-                          <label
-                            className="custom-file-label bg-dark text-white"
-                            id="uploadLabel1"
-                          >
-                            {statement}
-                          </label>
-                        </div>
-                        <Button
-                          type="button"
-                          className="btn btn-danger btn-outline-light float-right"
-                          name="doc1Submit"
-                          onClick={this.submitFile}
-                        >
-                          {" "}
+                        <Row>
+                          <Col md={9}>
+                            <div className="custom-file">
+                              <input
+                                id="doc1"
+                                type="file"
+                                className="custom-file-input"
+                                onChange={this.captureFile}
+                              />
+                              <label
+                                className="custom-file-label"
+                                id="uploadLabel1"
+                              >
+                                {statement}
+                              </label>
+                            </div>
+                          </Col>
+                          <Col md={3}>
+                            <Button
+                              type="button"
+                              color="primary"
+                              className="btn btn-outline-light float-right"
+                              name="doc1Submit"
+                              onClick={this.submitFile}
+                            >
+                              {" "}
                           Upload{" "}
-                        </Button>
+                            </Button>
+                          </Col>
+                        </Row>
                       </FormGroup>
 
                       <FormGroup>
                         <Label for="doc2">Licensing Fee</Label>
-                        <div className="custom-file">
-                          <input
-                            id="doc2"
-                            type="file"
-                            className="custom-file-input bg-dark"
-                            onChange={this.captureFile}
-                          />
-                          <label
-                            className="custom-file-label bg-dark text-white"
-                            id="uploadLabel1"
-                          >
-                            {statement}
-                          </label>
-                        </div>
-                        <Button
-                          type="button"
-                          className="btn btn-danger btn-outline-light float-right"
-                          name="doc1Submit"
-                          onClick={this.submitFile}
-                        >
-                          {" "}
+                        <Row>
+                          <Col md={9}>
+                            <div className="custom-file">
+                              <input
+                                id="doc2"
+                                type="file"
+                                className="custom-file-input"
+                                onChange={this.captureFile}
+                              />
+                              <label
+                                className="custom-file-label"
+                                id="uploadLabel1"
+                              >
+                                {statement}
+                              </label>
+                            </div>
+                          </Col>
+                          <Col md={3}>
+                            <Button
+                              type="button"
+                              color="primary"
+                              className="btn btn-outline-light float-right"
+                              name="doc1Submit"
+                              onClick={this.submitFile}
+                            >
+                              {" "}
                           Upload{" "}
-                        </Button>
+                            </Button>
+                          </Col>
+                        </Row>
                       </FormGroup>
 
                       <FormGroup>
                         <Label for="doc3">CAR Compliance Document</Label>
-                        <div className="custom-file">
-                          <input
-                            id="doc3"
-                            type="file"
-                            className="custom-file-input bg-dark"
-                            onChange={this.captureFile}
-                          />
-                          <label
-                            className="custom-file-label bg-dark text-white"
-                            id="uploadLabel1"
-                          >
-                            {statement}
-                          </label>
-                        </div>
-                        <Button
-                          type="button"
-                          className="btn btn-danger btn-outline-light float-right"
-                          name="doc1Submit"
-                          onClick={this.submitFile}
-                        >
-                          {" "}
+                        <Row>
+                          <Col md={9}>
+                            <div className="custom-file">
+                              <input
+                                id="doc3"
+                                type="file"
+                                className="custom-file-input"
+                                onChange={this.captureFile}
+                              />
+                              <label
+                                className="custom-file-label"
+                                id="uploadLabel1"
+                              >
+                                {statement}
+                              </label>
+                            </div>
+                          </Col>
+                          <Col md={3}>
+                            <Button
+                              type="button"
+                              color="primary"
+                              className="btn btn-outline-light float-right"
+                              name="doc1Submit"
+                              onClick={this.submitFile}
+                            >
+                              {" "}
                           Upload{" "}
-                        </Button>
+                            </Button>
+                          </Col>
+                        </Row>
                       </FormGroup>
 
                       <FormGroup>
                         <Label for="doc4">Exceptions Doc</Label>
-                        <div className="custom-file">
-                          <input
-                            id="doc4"
-                            type="file"
-                            className="custom-file-input bg-dark"
-                            onChange={this.captureFile}
-                          />
-                          <label
-                            className="custom-file-label bg-dark text-white"
-                            id="uploadLabel1"
-                          >
-                            {statement}
-                          </label>
-                        </div>
-                        <Button
-                          type="button"
-                          className="btn btn-danger btn-outline-light float-right"
-                          name="doc1Submit"
-                          onClick={this.submitFile}
-                        >
-                          {" "}
+                        <Row>
+                          <Col md={9}>
+                            <div className="custom-file">
+                              <input
+                                id="doc4"
+                                type="file"
+                                className="custom-file-input"
+                                onChange={this.captureFile}
+                              />
+                              <label
+                                className="custom-file-label"
+                                id="uploadLabel1"
+                              >
+                                {statement}
+                              </label>
+                            </div>
+                          </Col>
+                          <Col md={3}>
+                            <Button
+                              type="button"
+                              color="primary"
+                              className="btn btn-outline-light float-right"
+                              name="doc1Submit"
+                              onClick={this.submitFile}
+                            >
+                              {" "}
                           Upload{" "}
-                        </Button>
+                            </Button>
+                          </Col>
+                        </Row>
                       </FormGroup>
-                      <br />
-                      <FormGroup>
-                        <Input
-                          id="details"
-                          type="text"
-                          className="form-control"
-                          placeholder="Details for the application"
-                          required
-                        />
-                      </FormGroup>
-
+                      <FormGroup />
                       <Button
                         type="submit"
-                        className="btn btn-dark btn-outline-light btn-block"
+                        color="primary"
+                        className="btn btn-outline-light btn-block"
                       >
                         Upload
                       </Button>
@@ -456,3 +495,4 @@ class MoCA extends Component {
 }
 
 export default MoCA;
+
