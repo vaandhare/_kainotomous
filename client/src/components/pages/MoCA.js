@@ -202,7 +202,7 @@ class MoCA extends Component {
                       <h3 className="h5" style={{ color: "gray" }}>
                         Approved Documents
                       </h3>
-                      <h2 className="h4">000</h2>
+    <h2 className="h4">{this.state.approved_count}</h2>
                     </div>
                   </div>
                 </div>
@@ -217,7 +217,7 @@ class MoCA extends Component {
                       >
                         Pending Documents
                       </h3>
-                      <h2 className="h4">000</h2>
+                      <h2 className="h4">{this.state.pending_count}</h2>
                     </div>
                   </div>
                 </div>
