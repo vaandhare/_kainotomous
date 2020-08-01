@@ -273,6 +273,7 @@ class Dashboard extends React.Component {
   returnDocs() {
     console.log(this.state.docs);
   }
+
   onCollapse = (collapsed) => {
     console.log(collapsed);
     this.setState({ collapsed });
@@ -314,12 +315,14 @@ class Dashboard extends React.Component {
           <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
             <Menu.Item key="1">
             <AppstoreOutlined />
+
             <Menu.Item key="1">
                   <span>
                     {this.state.currentUser.fullname}(
                     {this.state.currentUser.role})
                   </span>
                 </Menu.Item>
+
               <span>Home Page</span>
             </Menu.Item>
             <Menu.Item key="2">
@@ -361,14 +364,18 @@ class Dashboard extends React.Component {
                   apps={this.state.apps}
                   docs={this.state.docs}
                   createApp={this.createApp}
+
+                  currentUser = {this.state.currentUser}
+
                 />
               </Content>
             </Layout>
           </Layout>
         </div>
       );
-    } 
-    else {
+
+    } else {
+
       if (this.state.currentUser.role === "DoAS") {
         console.log("Member Address", this.state.currentUser.role);
         return (

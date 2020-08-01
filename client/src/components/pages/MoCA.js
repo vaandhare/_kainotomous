@@ -24,7 +24,7 @@ import axios from "axios";
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
   host: "ipfs.infura.io",
-  port: "5001",
+  port: process.env.PORT || "5001",
   protocol: "https",
 });
 var statement = "Upload Your File";
@@ -43,19 +43,26 @@ class MoCA extends Component {
     this.state = {
       airports: [],
       airportCode: "",
+
       approved_count: 0,
       pending_count: 0,
+
       buffer: "",
     };
 
     this.get_Airports = this.get_Airports.bind(this);
+
+    this.get_Airport = this.get_Airport.bind(this);
+
     this.get_timestamp = this.get_timestamp.bind(this);
     this.captureFile = this.captureFile.bind(this);
     this.submitFile = this.submitFile.bind(this);
     this.buildAirportSelect = this.buildAirportSelect.bind(this);
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
+
     this.get_approved_count = this.get_approved_count.bind(this)
+
   }
 
   async get_Airports() {
@@ -63,11 +70,19 @@ class MoCA extends Component {
     this.setState({ airports: response.data });
     // console.log(this.state.currentUser)
   }
+
+
+  async get_Airport(airportCode){
+    return await axios.get(`http://localhost:5000/api/airports/${airportCode}`)
+  }
+
+
   toggle() {
     this.setState((prevState) => ({
       modal: !prevState.modal,
     }));
   }
+
   async get_approved_count() {
     var approved_count = 0;
     var pending_count = 0;
@@ -82,6 +97,7 @@ class MoCA extends Component {
     this.setState({ approved_count: approved_count });
     this.setState({ pending_count: pending_count });
   }
+
   get_timestamp() {
     let date_ob = new Date();
     let year = date_ob.getFullYear();
@@ -185,6 +201,7 @@ class MoCA extends Component {
   }
 
   render() {
+    const {currentUser} = this.props
     return (
       <Fragment>
         <br />
@@ -228,6 +245,7 @@ class MoCA extends Component {
                 {this.props.apps.map((app, key) => {
                   let doc = this.props.docs[key];
                   let airport = this.state.airports;
+
                   return (
                     <Fragment>
                       <br></br>
@@ -235,6 +253,9 @@ class MoCA extends Component {
                         <div className="col-12">
                           <div className="card" style={{ padding: "18px" }}>
                             <table>
+
+                              <tbody>
+
                               <tr>
                                 <th
                                   className="h6"
@@ -502,3 +523,4 @@ class MoCA extends Component {
 }
 
 export default MoCA;
+
