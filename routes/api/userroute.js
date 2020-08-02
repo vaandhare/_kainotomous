@@ -48,6 +48,7 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     const newUser = new User(req.body)
     try {
+        
         const user = await newUser.save()
         if (!user) throw new Error('Something went wrong saving the User')
         res.status(200).json(user)

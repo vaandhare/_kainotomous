@@ -1,25 +1,17 @@
+import axios from "axios";
 import React, { Component, Fragment } from "react";
 import {
-  Row,
-  Col,
-  Card,
-  CardBody,
   Button,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardText,
-  Form,
+  Col,
   FormGroup,
   Label,
-  Input,
   Modal,
-  ModalHeader,
   ModalBody,
-  ModalFooter,
+  ModalHeader,
+  Row,
 } from "reactstrap";
+import "../../styles/Deputy.css";
 
-import axios from "axios";
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
   host: "ipfs.infura.io",
@@ -55,10 +47,12 @@ class MoCA extends Component {
     this.captureFile = this.captureFile.bind(this);
     this.submitFile = this.submitFile.bind(this);
     this.buildAirportSelect = this.buildAirportSelect.bind(this);
+    this.showAirports = this.showAirports.bind(this);
+
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
-    this.get_approved_count = this.get_approved_count.bind(this)
 
+    this.get_approved_count = this.get_approved_count.bind(this)
   }
 
   async get_Airports() {
@@ -68,10 +62,10 @@ class MoCA extends Component {
   }
 
 
-  async get_Airport(airportCode){
-    return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
-  }
 
+  async get_Airport(airportCode){
+    return await axios.get(`http://localhost:5000/api/airports/${airportCode}`)
+  }
 
   toggle() {
     this.setState((prevState) => ({
@@ -85,11 +79,10 @@ class MoCA extends Component {
     this.props.apps.map((app, key) => {
       if (app.state === "approved" || app.state === "granted") {
         approved_count = approved_count + 1;
-      }
-      else {
+      } else {
         pending_count = pending_count + 1;
       }
-    })
+    });
     this.setState({ approved_count: approved_count });
     this.setState({ pending_count: pending_count });
   }
@@ -166,7 +159,7 @@ class MoCA extends Component {
     var arr = [];
     this.state.airports.map((airport, key) => {
       arr.push(
-        <option value={airport.IATA_code} key={key}>
+        <option value={airport.airport_code} key={key}>
           {airport.airport_name}
         </option>
       );
@@ -184,6 +177,60 @@ get_airportData(airportCode){
 }
  
 
+  showAirports() {
+    var airportCard = [];
+
+    this.state.airports.map(async (airport, key) => {
+      // let state = await this.get_Airport(airport.airport_code)
+      // let status = ""
+      // if(Array.isArray(state.data) && state.data.length){
+      //   console.log('Not Empty',state.data)
+      //   status = state.data[0].status;
+      // }
+
+      airportCard.push(
+        <div className="row" key={key}>
+          <div className="col-12">
+            <div className="card" style={{ padding: "18px" }}>
+              <div className="row">
+                <div className="col-3">
+                  <p>Airport Code</p>
+                </div>
+                <div className="col-6">
+                  <h6>Airport Name</h6>
+                </div>
+                <div className="col-3">
+                  <h6>Status</h6>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-3">
+                  <h6>{airport.airport_code}</h6>
+                </div>
+                <div className="col-6">
+                  <h6>{airport.airport_name}</h6>
+                </div>
+                <div className="col-3">
+                  <span
+                    className="badge badge-primary"
+                    style={{
+                      padding: "8px",
+                      fontWeight: "bold",
+                      fontSize: "15px",
+                    }}
+                  >
+                    {/* { status === "" ? "Not Licensed": status} */}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+    return airportCard;
+  }
+
   async submitToBlockchain(event) {
     event.preventDefault();
     const airportCode = this.state.airportCode;
@@ -200,14 +247,14 @@ get_airportData(airportCode){
 
     // Save the status on the mongodb
     const response = await axios.post(`http://localhost:5000/api/status/`, {
-      IATA_code: airportCode,
+      airport_code: airportCode,
       appId: applength,
       status: "created",
     });
   }
 
   render() {
-    const {currentUser} = this.props
+    const { currentUser } = this.props;
     return (
       <Fragment>
         <br />
@@ -471,6 +518,7 @@ get_airportData(airportCode){
                           <option value="" style={{ color: "grey" }}disabled>
                           Select the Airport
                         </option>
+
                           {this.buildAirportSelect()}
                         </select>
                       </FormGroup>
@@ -526,6 +574,7 @@ get_airportData(airportCode){
                           </div>
                         </div>
 
+
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
@@ -550,6 +599,7 @@ get_airportData(airportCode){
                                 </button>
                               </div>
                             </div>
+
                           </div>
                         </div>
                       </div>
@@ -561,7 +611,7 @@ get_airportData(airportCode){
                               <div className="col-9">
                               <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
-                              <input
+               <input
                                 id="doc1"
                                 type="file"
                                 className="custom-file-input"
@@ -587,6 +637,7 @@ get_airportData(airportCode){
                               <div className="col-9">
                               <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
+
                               <input
                                 id="doc1"
                                 type="file"
@@ -620,6 +671,7 @@ get_airportData(airportCode){
                     </Button>
                   </form>
                 </ModalBody>
+
                 </Modal>
             </div>
           </div>
@@ -630,3 +682,4 @@ get_airportData(airportCode){
 }
 
 export default MoCA;
+

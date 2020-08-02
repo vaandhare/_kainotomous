@@ -1,26 +1,17 @@
+
 import React, { Component, Fragment } from 'react';
 import axios from 'axios'
+
 import {
-    Row,
-    Col,
-    Card,
-    CardBody,
-    Button,
-    CardHeader,
-    CardFooter,
-    CardTitle,
-    CardText,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ListGroup,
-    ListGroupItem,
+  Button,
+  ListGroup,
+  ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
 } from "reactstrap";
+import "../../styles/Deputy.css";
+
 
 var application = ''
 var document = ''
@@ -28,35 +19,15 @@ var Airport = ''
 var airportData = ''
 var link = "https://ipfs.infura.io/ipfs/"
 
+
 class DoAS extends Component {
-    async componentWillMount() {
-        await this.get_Airports();
-        await this.get_approved_count();
-    }
+  async componentWillMount() {
+    await this.get_Airports();
+    await this.get_approved_count();
+  }
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            airports: [],
-            airportCode: "",
-            buffer: "",
-            approved_count: 0,
-            pending_count: 0,
-            buffer: "",
-            app: '',
-            doc: '',
-        };
-
-        this.displayModal = this.displayModal.bind(this)
-        this.get_approved_count = this.get_approved_count.bind(this)
-        this.toggle = this.toggle.bind(this);
-        this.get_timestamp = this.get_timestamp.bind(this)
-        this.get_expirydate = this.get_expirydate.bind(this)
-        this.assignApplication = this.assignApplication.bind(this);
-        this.grantApplication = this.grantApplication.bind(this);
-        this.generateLicenseNumber = this.generateLicenseNumber.bind(this);
-        this.get_airportData = this.get_airportData.bind(this);
-    }
+        
+ 
 
     toggle() {
         this.setState((prevState) => ({
@@ -106,100 +77,199 @@ class DoAS extends Component {
         })
         this.toggle();
     }
+  constructor(props) {
+    super(props);
+    this.state = {
+      airports: [],
+      airportCode: "",
+      buffer: "",
+      approved_count: 0,
+      pending_count: 0,
+      buffer: "",
+      app: "",
+      doc: "",
+      
+    };
+    this.displayModal = this.displayModal.bind(this)
+        this.get_approved_count = this.get_approved_count.bind(this)
+        this.toggle = this.toggle.bind(this);
+        this.get_timestamp = this.get_timestamp.bind(this)
+        this.get_expirydate = this.get_expirydate.bind(this)
+        this.assignApplication = this.assignApplication.bind(this);
+        this.grantApplication = this.grantApplication.bind(this);
+        this.generateLicenseNumber = this.generateLicenseNumber.bind(this);
+        this.get_airportData = this.get_airportData.bind(this);
+  }
 
-    get_expirydate() {
-        let d = new Date();
-        var y = d.getFullYear();
-        var m = d.getMonth();
-        var day = d.getDate();
-        let date_ob = new Date(y + 1, m, day);
-        let year = date_ob.getFullYear();
-        // current date
-        // adjust 0 before single digit date
-        let date = ("0" + date_ob.getDate()).slice(-2);
 
-        // current month
-        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-        let hours = date_ob.getHours();
-        // current minutes
-        let minutes = date_ob.getMinutes();
-        // current seconds
-        let seconds = date_ob.getSeconds();
-        // prints date in YYYY-MM-DD formatc
-        const timestamp = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds
-        return timestamp;
+  async get_Airports() {
+    const response = await axios.get(`http://localhost:5000/api/airports/`);
+    this.setState({ airports: response.data });
+    // console.log(this.state.currentUser)
+  }
+  async get_approved_count() {
+    var approved_count = 0;
+    var pending_count = 0;
+    this.props.apps.map((app, key) => {
+      if (app.state === "approved" || app.state === "granted") {
+        approved_count = approved_count + 1;
+      } else {
+        pending_count = pending_count + 1;
+      }
+    });
+    this.setState({ approved_count: approved_count });
+    this.setState({ pending_count: pending_count });
+  }
+
+  
+  get_expirydate() {
+    let d = new Date();
+    var y = d.getFullYear();
+    var m = d.getMonth();
+    var day = d.getDate();
+    let date_ob = new Date(y + 1, m, day);
+    let year = date_ob.getFullYear();
+    // current date
+    // adjust 0 before single digit date
+    let date = ("0" + date_ob.getDate()).slice(-2);
+
+    // current month
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let hours = date_ob.getHours();
+    // current minutes
+    let minutes = date_ob.getMinutes();
+    // current seconds
+    let seconds = date_ob.getSeconds();
+    // prints date in YYYY-MM-DD formatc
+    const timestamp =
+      year +
+      "-" +
+      month +
+      "-" +
+      date +
+      " " +
+      hours +
+      ":" +
+      minutes +
+      ":" +
+      seconds;
+    return timestamp;
+  }
+  get_timestamp() {
+    let date_ob = new Date();
+    let year = date_ob.getFullYear();
+    // current date
+    // adjust 0 before single digit date
+    let date = ("0" + date_ob.getDate()).slice(-2);
+
+    // current month
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let hours = date_ob.getHours();
+    // current minutes
+    let minutes = date_ob.getMinutes();
+    // current seconds
+    let seconds = date_ob.getSeconds();
+    // prints date in YYYY-MM-DD formatc
+    const timestamp =
+      year +
+      "-" +
+      month +
+      "-" +
+      date +
+      " " +
+      hours +
+      ":" +
+      minutes +
+      ":" +
+      seconds;
+    return timestamp;
+  }
+  async assignApplication(event) {
+    event.preventDefault();
+    const timestamp = this.get_timestamp();
+    const appId = application.appId;
+    const airportCode = application.airportCode;
+    console.log(appId, timestamp);
+    this.props.assignApp(appId, timestamp);
+    console.log("You have issued app!!");
+    const response = await axios.put(
+      `http://localhost:5000/api/status/${airportCode}`,
+      {
+        airport_code: airportCode,
+        appId: appId,
+        status: "assigned",
+      }
+    );
+  }
+
+  generateLicenseNumber() {
+    var result = "";
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < 10; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    get_timestamp() {
-        let date_ob = new Date();
-        let year = date_ob.getFullYear();
-        // current date
-        // adjust 0 before single digit date
-        let date = ("0" + date_ob.getDate()).slice(-2);
+    return result;
+  }
 
-        // current month
-        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-        let hours = date_ob.getHours();
-        // current minutes
-        let minutes = date_ob.getMinutes();
-        // current seconds
-        let seconds = date_ob.getSeconds();
-        // prints date in YYYY-MM-DD formatc
-        const timestamp = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds
-        return timestamp;
+  async grantApplication(event) {
+    event.preventDefault();
+    const timestamp = this.get_timestamp();
+    const appId = application.appId;
+    const airportCode = application.airportCode;
+    console.log(appId, timestamp);
+    this.props.grantApp(appId, timestamp);
+    console.log("You have granted the license!!");
+    const response = await axios.put(
+      `http://localhost:5000/api/status/${airportCode}`,
+      {
+        airport_code: airportCode,
+        appId: appId,
+        status: "granted",
+      }
+    );
+    let license_no = this.generateLicenseNumber();
+    const expirydate = this.get_expirydate();
+    const input = {
+      airport_code: airportCode,
+      license_number: license_no,
+      from: timestamp,
+      to: expirydate,
+    };
+    console.log(input);
+    const result = await axios.post(
+      `http://localhost:5000/api/licensetable/`,
+      input
+    );
+    this.componentWillMount();
+  }
+
+  displayButton() {
+    if (application.state === "issued") {
+      return (
+        <Button
+          type="submit"
+          color="primary"
+          className="btn btn-outline-light btn-block"
+          onClick={this.assignApplication}
+        >
+          Assign Application
+        </Button>
+      );
+    } else if (application.state === "approved") {
+      return (
+        <Button
+          type="submit"
+          color="primary"
+          className="btn btn-outline-light btn-block"
+          onClick={this.grantApplication}
+        >
+          Grant License
+        </Button>
+      );
     }
-    async assignApplication(event) {
+  }
 
-
-        event.preventDefault();
-        const timestamp = this.get_timestamp()
-        const appId = application.appId;
-        const airportCode = application.airportCode;
-        console.log(appId, timestamp)
-        this.props.assignApp(appId, timestamp)
-        console.log("You have issued app!!")
-        const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
-            IATA_code: airportCode,
-            appId: appId,
-            status: 'assigned'
-        })
-    }
-
-    generateLicenseNumber() {
-        var result = '';
-        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        var charactersLength = characters.length;
-        for (var i = 0; i < 10; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        return result;
-    }
-
-    async grantApplication(event) {
-
-        event.preventDefault();
-        const timestamp = this.get_timestamp()
-        const appId = application.appId;
-        const airportCode = application.airportCode;
-        console.log(appId, timestamp)
-        this.props.grantApp(appId, timestamp)
-        console.log("You have granted the license!!")
-        const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
-            IATA_code: airportCode,
-            appId: appId,
-            status: 'granted'
-        })
-        let license_no = this.generateLicenseNumber()
-        const expirydate = this.get_expirydate()
-        const input = {
-            IATA_code: airportCode,
-            license_number: license_no,
-            from: timestamp,
-            to: expirydate
-        }
-        console.log(input)
-        const result = await axios.post(`http://localhost:5000/api/licensetable/`, input)
-        this.componentWillMount()
-    }
 
     displayButton() {
         if (application.state === "issued") {
@@ -360,8 +430,11 @@ class DoAS extends Component {
                                         );
                                     }
                                 })}
+
                             </div>
+                          </div>
                         </div>
+
                         <div className="col-6">
                             <br />
                             <br />
@@ -595,3 +668,4 @@ class DoAS extends Component {
     }
 }
 export default DoAS;
+

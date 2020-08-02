@@ -1,27 +1,17 @@
+import axios from 'axios';
 import React, { Component, Fragment } from 'react';
-import '../../styles/Deputy.css'
-import axios from 'axios'
 import {
-    Row,
-    Col,
-    Card,
-    CardBody,
     Button,
-    CardHeader,
-    CardFooter,
-    CardTitle,
-    CardText,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     ListGroup,
-    ListGroupItem,
+    ListGroupItem, Modal,
+    ModalBody, ModalHeader
 } from "reactstrap";
+
+import '../../styles/Deputy.css';
+
+// const ipfsClient = require('ipfs-http-client')
+// const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
+
 var application = ''
 var document = ''
 var Airport = ''
@@ -144,7 +134,7 @@ class AI extends Component {
             this.props.approveApp(appId, timestamp)
             console.log("You have approved app!!")
             const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
-                IATA_code: airportCode,
+                airport_code: airportCode,
                 appId: appId,
                 status: 'approved'
             })
@@ -164,7 +154,7 @@ class AI extends Component {
             this.props.rejectApp(appId, timestamp)
             console.log("You have rejected app!!")
             const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
-                IATA_code: airportCode,
+                airport_code: airportCode,
                 appId: appId,
                 status: 'rejected'
             })

@@ -5,7 +5,9 @@ const router = Router()
 
 router.get('/', async (req, res) => {
     try {
+        
         const statuslist = await Status.find()
+        
         if (!statuslist) throw new Error('No Airports Found')
         
         res.status(200).json(statuslist)
@@ -15,9 +17,9 @@ router.get('/', async (req, res) => {
 })
 router.get('/:id', async (req, res) => {
     const { id } = req.params
-    console.log(id);
+   
     try {
-        const status = await Status.find({IATA_code:id})
+        const status = await Status.find({airport_code:id})
         if (!status) throw new Error('No Airport Found')
         
         res.status(200).json(status)
@@ -31,8 +33,8 @@ router.put('/:id', async (req, res) => {
     const status= req.body;
 
     try {
-        const oldstatus = await Status.findOne({IATA_code:id})
-        oldstatus.status = status
+        const oldstatus = await Status.findOne({airport_code:id})
+        
         const response = await Status.findByIdAndUpdate(oldstatus._id,status)
         if (!response) throw Error('Something went wrong ')
         const updated = { ...response._doc, ...req.body }

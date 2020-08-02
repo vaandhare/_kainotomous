@@ -13,18 +13,18 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 })
-// router.get('/:id', async (req, res) => {
-//     const { id } = req.params
-//     console.log(id);
-//     try {
-//         const airport = await Airport.find({IATA_code:id})
-//         if (!airport) throw new Error('No Airport Found')
+router.get('/:id', async (req, res) => {
+    const { id } = req.params
+    console.log(id);
+    try {
+        const airport = await Airport.find({airport_code:id})
+        if (!airport) throw new Error('No Airport Found')
         
-//         res.status(200).json(airport)
-//     } catch (error) {
-//         res.status(500).json({ message: error.message })
-//     }
-// })
+        res.status(200).json(airport)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
 
 router.get('/search', async (req, res) => {
     const q = req.query.query
@@ -44,18 +44,20 @@ router.get('/search', async (req, res) => {
     }
 })
 
-// router.put('/:id', async (req, res) => {
-//     const { id } = req.params
-
-//     try {
-//         const response = await BucketListItem.findByIdAndUpdate(id, req.body)
-//         if (!response) throw Error('Something went wrong ')
-//         const updated = { ...response._doc, ...req.body }
-//         res.status(200).json(updated)
-//     } catch (error) {
-//         res.status(500).json({ message: error.message })
-//     }
-// })
+router.put('/:id', async (req, res) => {
+    const { id } = req.params
+    const {operatorAddr} = req.body
+    
+    try {
+        
+        const updated = await Airport.findByIdAndUpdate(id,req.body)
+        if (!updated) throw new Error('No Airport Found')
+        
+        res.status(200).json(updated)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
 
 // router.delete('/:id', async (req, res) => {
 //     const { id } = req.params
