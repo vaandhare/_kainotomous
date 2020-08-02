@@ -85,7 +85,10 @@ class AD extends Component {
     const res = await axios.get(
       `http://localhost:5000/api/airports/${this.state.currentUser.airportCode}`
     );
-    this.setState({ airport: res.data[0] });
+    let airport = res.data[0];
+    console.log(airport);
+
+    this.setState({ airport});
   }
 
   constructor(props) {
