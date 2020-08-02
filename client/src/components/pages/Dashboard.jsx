@@ -322,7 +322,7 @@ class Dashboard extends React.Component {
                   </Link>
                 </Menu.Item>
                 <Menu.Item key="4">
-                  <Link to="/">
+                  <Link to="/useradmin">
                     <UserSwitchOutlined />
                     <span>Manage Users</span>
                   </Link>

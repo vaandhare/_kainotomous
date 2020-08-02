@@ -19,7 +19,10 @@ const ipfs = ipfsClient({
   protocol: "https",
 });
 var count = 0;
-var airportData = '';
+var application = ''
+var document = ''
+var Airport = ''
+var airportData = ''
 
 class MoCA extends Component {
   async componentWillMount() {
@@ -169,11 +172,25 @@ class MoCA extends Component {
 get_airportData(airportCode){
   this.state.airports.map((airport,key)=>{
     // console.log(airport.airport_name);
-    if(airport.airport_name === airportCode){
+    if(airport.airport_code === airportCode){
       airportData = airport;
-      console.log(airport);
+      
     }
   })
+}
+
+displayModal = async (app, airport) => {
+  Airport = airport;
+  console.log(airport);
+  application = app;
+  console.log(application);
+  this.props.docs.map((doc, key) => {
+    if (doc.id === application.id) {
+      document = doc;
+      console.log(document);
+    }
+  })
+  this.toggle();
 }
  
 
@@ -295,7 +312,7 @@ get_airportData(airportCode){
               <br />
               <div className="card card-body">
                       {this.props.apps.map((app, key) => {
-                        console.log(app.airportCode)
+                          
                         this.get_airportData(app.airportCode);
                                         let doc = this.props.docs[key];
                                         return (
