@@ -1,25 +1,48 @@
-import { Layout } from "antd";
-import axios from "axios";
-import React, { Component } from "react";
+
+import React, { Component, Fragment } from 'react';
+import Web3 from 'web3'
+import { Layout, Menu, Breadcrumb } from 'antd';
+import Icon from '@ant-design/icons';
 import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Col,
-  FormGroup,
-  Label,
-  Row,
-} from "reactstrap";
-import Web3 from "web3";
+    AppstoreOutlined,
+    UserSwitchOutlined,
+    FolderOpenOutlined,
+    SearchOutlined,
+    LogoutOutlined
+} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import axios from "axios";
+import {
+    Row,
+    Col,
+    Card,
+    CardBody,
+    Button,
+    CardHeader,
+    CardFooter,
+    CardTitle,
+    CardText,
+    Form,
+    FormGroup,
+    Label,
+    Input,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter
+} from 'reactstrap';
+import Title from 'antd/lib/skeleton/Title';
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
-  host: "ipfs.infura.io",
-  port: process.env.PORT || "5001",
-  protocol: "https",
+    host: "ipfs.infura.io",
+    port: process.env.PORT || "5001",
+    protocol: "https",
 });
-var link = "https://ipfs.infura.io/ipfs/";
+var statement = "Upload Your File";
 var count = 0;
+// var airportCode ='';
+var userAppId='';
+
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -81,21 +104,21 @@ class AD extends Component {
     //
   }
 
-  async get_Airport(airportCode) {
+  async get_Airport() {
     const res = await axios.get(
       `http://localhost:5000/api/airports/${this.state.currentUser.airportCode}`
     );
     let airport = res.data[0];
-    console.log(airport);
+    console.log("Airport is fetched",airport);
 
-    this.setState({ airport});
+    this.setState({airport});
   }
 
   constructor(props) {
     super(props);
     this.state = {
       collapsed: false,
-      airports: [],
+      airport:'',
       airportCode: "",
       userAppId: "",
       approved_count: 0,
@@ -398,9 +421,9 @@ class AD extends Component {
                 console.log(app)
                 const { airport, status, currentUser, state } = this.state;
                 return (
-                  <div class="card container m-2 p-3" key={key}>
-                    <div class="row">
-                      <div class="col-9">
+                  <div className="card container m-2 p-3" key={key}>
+                    <div className="row">
+                      <div className="col-9">
                         <h1 style={{ color: "grey" }}>License Application</h1>
                         <h4
                           className="h6"
@@ -419,9 +442,9 @@ class AD extends Component {
                           Uploaded Documents
                         </h4>
                       </div>
-                      <div class="col-3">
+                      <div className="col-3">
                         <span
-                          class="badge badge-secondary"
+                          className="badge badge-secondary"
                           style={{
                             marginTop: "10%",
                             padding: "20px",
@@ -526,3 +549,4 @@ class AD extends Component {
 }
 
 export default AD;
+
