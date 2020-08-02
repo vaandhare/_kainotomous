@@ -10,7 +10,7 @@ import {
   ModalHeader,
   Row,
 } from "reactstrap";
-import "../../styles/Deputy.css";
+
 
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
@@ -48,15 +48,14 @@ class MoCA extends Component {
     this.get_Airports = this.get_Airports.bind(this);
     this.get_airportData = this.get_airportData.bind(this);
     this.get_Airport = this.get_Airport.bind(this);
-    this.get_timestamp = this.get_timestamp.bind(this);
+  
     this.captureFile = this.captureFile.bind(this);
     this.submitFile = this.submitFile.bind(this);
     this.buildAirportSelect = this.buildAirportSelect.bind(this);
-    this.showAirports = this.showAirports.bind(this);
 
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
-
+    this.get_timestamp = this.get_timestamp.bind(this);
     this.get_approved_count = this.get_approved_count.bind(this)
   }
 
@@ -69,7 +68,7 @@ class MoCA extends Component {
 
 
   async get_Airport(airportCode){
-    return await axios.get(`http://localhost:5000/api/Akstatus/${airportCode}`)
+    return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
   }
 
   openModal = () => {
@@ -114,7 +113,6 @@ class MoCA extends Component {
     // current date
     // adjust 0 before single digit date
     let date = ("0" + date_ob.getDate()).slice(-2);
-
     // current month
     let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
     let hours = date_ob.getHours();
@@ -136,6 +134,25 @@ class MoCA extends Component {
       ":" +
       seconds;
     return timestamp;
+  }
+
+  async reviewApplication(event) {
+    event.preventDefault();
+    const timestamp = this.get_timestamp();
+    console.log(timestamp);
+    const appId = application.appId;
+    const airportCode = application.airportCode;
+    console.log(appId, timestamp);
+    this.props.reviewApp(appId, timestamp);
+    console.log("Application in review!!");
+    const response = await axios.put(
+      `http://localhost:5000/api/status/${airportCode}`,
+      {
+        airport_code: airportCode,
+        appId: appId,
+        status: "reviewed",
+      }
+    );
   }
 
   captureFile = (event) => {
@@ -189,68 +206,18 @@ class MoCA extends Component {
   }
 get_airportData(airportCode){
   this.state.airports.map((airport,key)=>{
+    console.log(airportCode)
     // console.log(airport.airport_name);
-    if(airport.airport_name === airportCode){
+    if(airport.airport_code === airportCode){
       airportData = airport;
       // console.log(airport);
     }
   })
 }
+
+
  
 
-  showAirports() {
-    var airportCard = [];
-
-    this.state.airports.map(async (airport, key) => {
-      // let state = await this.get_Airport(airport.airport_code)
-      // let status = ""
-      // if(Array.isArray(state.data) && state.data.length){
-      //   console.log('Not Empty',state.data)
-      //   status = state.data[0].status;
-      // }
-
-      airportCard.push(
-        <div className="row" key={key}>
-          <div className="col-12">
-            <div className="card" style={{ padding: "18px" }}>
-              <div className="row">
-                <div className="col-3">
-                  <p>Airport Code</p>
-                </div>
-                <div className="col-6">
-                  <h6>Airport Name</h6>
-                </div>
-                <div className="col-3">
-                  <h6>Status</h6>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-3">
-                  <h6>{airport.airport_code}</h6>
-                </div>
-                <div className="col-6">
-                  <h6>{airport.airport_name}</h6>
-                </div>
-                <div className="col-3">
-                  <span
-                    className="badge badge-primary"
-                    style={{
-                      padding: "8px",
-                      fontWeight: "bold",
-                      fontSize: "15px",
-                    }}
-                  >
-                    {/* { status === "" ? "Not Licensed": status} */}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    });
-    return airportCard;
-  }
 
   async submitToBlockchain(event) {
     event.preventDefault();
@@ -267,8 +234,8 @@ get_airportData(airportCode){
     this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
 
     // Save the status on the mongodb
-    const response = await axios.post(`http://localhost:5000/api/Akstatus/`, {
-      IATA_code: airportCode,
+    const response = await axios.post(`http://localhost:5000/api/status/`, {
+      airport_code: airportCode,
       appId: applength,
       status: "created",
     });
@@ -841,6 +808,15 @@ get_airportData(airportCode){
                       onClick={this.closeSecondModal}
                     >
                       Close
+                    </Button>
+                    <Button
+                      type="submit"
+                      color="primary"
+                      className="btn btn-outline-light float-left"
+                      style={{ marginLeft: "80%" }}
+                      onClick={this.reviewApplication}
+                    >
+                      Provide Feedback
                     </Button>
                       </div>
                     </div>

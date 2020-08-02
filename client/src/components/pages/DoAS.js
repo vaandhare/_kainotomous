@@ -77,7 +77,7 @@ class DoAS extends Component {
     get_airportData(airportCode) {
         this.state.airports.map((airport, key) => {
             // console.log(airport.airport_name);
-            if (airport.airport_name === airportCode) {
+            if (airport.airport_code === airportCode) {
                 airportData = airport;
                 // console.log(airport);
             }
@@ -222,7 +222,7 @@ class DoAS extends Component {
     this.props.assignApp(appId, timestamp);
     console.log("You have issued app!!");
     const response = await axios.put(
-      `http://localhost:5000/api/Akstatus/${airportCode}`,
+      `http://localhost:5000/api/status/${airportCode}`,
       {
         airport_code: airportCode,
         appId: appId,

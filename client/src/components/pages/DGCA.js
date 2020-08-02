@@ -62,7 +62,7 @@ class DGCA extends Component {
   get_airportData(airportCode) {
     this.state.airports.map((airport, key) => {
       // console.log(airport.airport_name);
-      if (airport.airport_name === airportCode) {
+      if (airport.airport_code === airportCode) {
         airportData = airport;
         // console.log(airport);
       }
@@ -161,7 +161,7 @@ class DGCA extends Component {
     console.log("Airport Code", airportCode)
     this.props.issueApp(appId, timestamp)
     console.log("You have issued app!!")
-    const response = await axios.put(`http://localhost:5000/api/Akstatus/${airportCode}`, {
+    const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
       IATA_code: airportCode,
       appId: appId,
       status: 'issued'

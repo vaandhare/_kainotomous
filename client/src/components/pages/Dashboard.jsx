@@ -13,7 +13,7 @@ import Web3 from "web3";
 import Navbar from "./Navbar";
 import SocialNetwork from "../../abis/SocialNetwork.json";
 import "../../styles/App.scss";
-import "../../styles/Dashboard.css";
+
 import AD from "./AD";
 import AI from "./AI";
 import DGCA from "./DGCA";
@@ -138,6 +138,34 @@ class Dashboard extends React.Component {
       });
   }
 
+  reviewApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .reviewApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
+
+  recreateApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .recreateApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
+
   issueApp(id, timestamp) {
     this.setState({ loading: true });
     this.state.socialNetwork.methods
@@ -259,6 +287,8 @@ class Dashboard extends React.Component {
     this.renewApp = this.renewApp.bind(this);
     this.checkAuth = this.checkAuth.bind(this);
     this.returnDocs = this.returnDocs.bind(this);
+    this.reviewApp = this.reviewApp.bind(this);
+    this.recreateApp = this.recreateApp.bind(this);
   }
   returnDocs() {
     console.log(this.state.docs);
@@ -355,6 +385,7 @@ class Dashboard extends React.Component {
                   apps={this.state.apps}
                   docs={this.state.docs}
                   createApp={this.createApp}
+                  reviewApp ={this.reviewApp}
                   currentUser={this.state.currentUser}
                 />
               </Content>
@@ -580,61 +611,12 @@ class Dashboard extends React.Component {
               </div>
             );
           } else if(this.state.currentUser.role === "AD") {
-            // console.log("Member Address", this.state.currentUser.role);
+            console.log("Member Address", this.state.currentUser.role);
             return (
               <div>
-                {/* <Navbar account={this.state.currentUser} /> */}
                 <Layout style={{ minHeight: "100vh" }}>
-                  <Sider
-                    collapsible
-                    collapsed={this.state.collapsed}
-                    onCollapse={this.onCollapse}
-                  >
-                    <div className="logo" />
-                    <Menu
-                      theme="dark"
-                      defaultSelectedKeys={["1"]}
-                      mode="inline"
-                    >
-                      <Menu.Item key="1">
-                        <span>
-                          {this.state.currentUser.fullname}(
-                          {this.state.currentUser.role})
-                        </span>
-                      </Menu.Item>
-                      <Menu.Item key="2">
-                        <AppstoreOutlined />
-                        <span>Home Page</span>
-                      </Menu.Item>
-                      <Menu.Item key="3">
-                        <Link to="/">
-                          <FolderOpenOutlined />
-                          <span>Projects</span>
-                        </Link>
-                      </Menu.Item>
-                      
-                      <Menu.Item key="4">
-                        <Link to="/auth">
-                          <LogoutOutlined />
-                          <span>Logout</span>
-                        </Link>
-                      </Menu.Item>
-                    </Menu>
-                  </Sider>
+                  
                   <Layout>
-                    {/* <Header style={{ background: "#000" }}>
-                <input
-                  type="text"
-                  placeholder="Search Document or Project"
-                  prefix={<SearchOutlined style={{ color: "red" }} />}
-                  style={{
-                    width: "100%",
-                    height: "80%",
-                    padding: "9px",
-                    borderRadius: "3px",
-                  }}
-                />
-              </Header> */}
                     <Header style={{ background: "#fff" }}>
                       <span>Welcome, Airport Director </span>
                     </Header>
@@ -646,6 +628,7 @@ class Dashboard extends React.Component {
                         createApp={this.createApp}
                         approveApp={this.approveApp}
                         rejectApp={this.rejectApp}
+                        recreateApp ={this.recreateApp}
                       />
                     </Content>
                   </Layout>

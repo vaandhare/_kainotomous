@@ -81,7 +81,7 @@ class AI extends Component {
     get_airportData(airportCode) {
         this.state.airports.map((airport, key) => {
             // console.log(airport.airport_name);
-            if (airport.airport_name === airportCode) {
+            if (airport.airport_code === airportCode) {
                 airportData = airport;
                 // console.log(airport);
             }
@@ -165,7 +165,7 @@ class AI extends Component {
         if (application.state === "assigned") {
             this.props.approveApp(appId, timestamp)
             console.log("You have approved app!!")
-            const response = await axios.put(`http://localhost:5000/api/Akstatus/${airportCode}`, {
+            const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
                 IATA_code: airportCode,
                 airport_code: airportCode,
                 appId: appId,
@@ -186,7 +186,7 @@ class AI extends Component {
         if (application.state === "assigned") {
             this.props.rejectApp(appId, timestamp)
             console.log("You have rejected app!!")
-            const response = await axios.put(`http://localhost:5000/api/Akstatus/${airportCode}`, {
+            const response = await axios.put(`http://localhost:5000/api/status/${airportCode}`, {
                 IATA_code: airportCode,
                 appId: appId,
                 status: 'rejected'
