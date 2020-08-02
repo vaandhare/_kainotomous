@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from "react";
-import "../../styles/Deputy.css";
 import {
   Row,
   Col,
@@ -27,8 +26,8 @@ const ipfs = ipfsClient({
   port: process.env.PORT || "5001",
   protocol: "https",
 });
-var statement = "Upload Your File";
 var count = 0;
+var airportData = '';
 
 class MoCA extends Component {
   async componentWillMount() {
@@ -43,7 +42,6 @@ class MoCA extends Component {
     this.state = {
       airports: [],
       airportCode: "",
-
       approved_count: 0,
       pending_count: 0,
 
@@ -51,16 +49,14 @@ class MoCA extends Component {
     };
 
     this.get_Airports = this.get_Airports.bind(this);
-
+    this.get_airportData = this.get_airportData.bind(this);
     this.get_Airport = this.get_Airport.bind(this);
-
     this.get_timestamp = this.get_timestamp.bind(this);
     this.captureFile = this.captureFile.bind(this);
     this.submitFile = this.submitFile.bind(this);
     this.buildAirportSelect = this.buildAirportSelect.bind(this);
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
-
     this.get_approved_count = this.get_approved_count.bind(this)
 
   }
@@ -73,7 +69,7 @@ class MoCA extends Component {
 
 
   async get_Airport(airportCode){
-    return await axios.get(`http://localhost:5000/api/airports/${airportCode}`)
+    return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
   }
 
 
@@ -177,6 +173,16 @@ class MoCA extends Component {
     });
     return arr;
   }
+get_airportData(airportCode){
+  this.state.airports.map((airport,key)=>{
+    // console.log(airport.airport_name);
+    if(airport.airport_name === airportCode){
+      airportData = airport;
+      console.log(airport);
+    }
+  })
+}
+ 
 
   async submitToBlockchain(event) {
     event.preventDefault();
@@ -207,7 +213,7 @@ class MoCA extends Component {
         <br />
         <div className="container">
           <div className="row">
-            <div className="col-8">
+            <div className="col-6">
               <h2 className="h3" style={{ color: "grey" }}>
                 Overview
               </h2>
@@ -219,7 +225,7 @@ class MoCA extends Component {
                       <h3 className="h5" style={{ color: "gray" }}>
                         Approved Documents
                       </h3>
-    <h2 className="h4">{this.state.approved_count}</h2>
+                      <h2 className="h4">{this.state.approved_count}</h2>
                     </div>
                   </div>
                 </div>
@@ -241,104 +247,104 @@ class MoCA extends Component {
               </div>
               <br />
               <div className="card card-body">
-                {/* <h1>Hello</h1> */}
-                {this.props.apps.map((app, key) => {
-                  let doc = this.props.docs[key];
-                  let airport = this.state.airports;
-
-                  return (
-                    <Fragment>
-                      <br></br>
-                      <div className="row">
-                        <div className="col-12">
-                          <div className="card" style={{ padding: "18px" }}>
-                            <table>
-
-                              <tbody>
-
-                              <tr>
-                                <th
-                                  className="h6"
-                                  style={{
-                                    color: "grey",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  Airport Code
+                      {this.props.apps.map((app, key) => {
+                        console.log(app.airportCode)
+                        this.get_airportData(app.airportCode);
+                                        let doc = this.props.docs[key];
+                                        return (
+                                            <Fragment>
+                                                <br></br>
+                                                <div className="row">
+                                                    <div className="col-12">
+                                                        <div className="card"
+                                                            style={{ padding: "18px" }}
+                                                            id={app.appId}
+                                                            >
+                                                            <table>
+                                                                <tr>
+                                                                    <th
+                                                                        className="h6"
+                                                                        style={{
+                                                                            color: "grey",
+                                                                            textAlign: "center",
+                                                                        }}
+                                                                    >
+                                                                        Airport Code
                                 </th>
-                                <th
-                                  className="h6"
-                                  style={{
-                                    color: "grey",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  Airport Name
+                                                                    <th
+                                                                        className="h6"
+                                                                        style={{
+                                                                            color: "grey",
+                                                                            textAlign: "center",
+                                                                        }}
+                                                                    >
+                                                                        Airport Name
                                 </th>
-                                <th
-                                  className="h6"
-                                  style={{
-                                    color: "grey",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  Status
+                                                                    <th
+                                                                        className="h6"
+                                                                        style={{
+                                                                            color: "grey",
+                                                                            textAlign: "center",
+                                                                        }}
+                                                                    >
+                                                                        Status
                                 </th>
-                              </tr>
-                              <tr>
-                                <td
-                                  className="h6"
-                                  style={{
-                                    fontWeight: "bold",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  {app.airportCode}
-                                </td>
-                                <td
-                                  className="h6"
-                                  style={{
-                                    fontWeight: "bold",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  {airport.airport_name}
-                                </td>
-                                <td
-                                  className="h6"
-                                  style={{
-                                    fontWeight: "bold",
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  <span
-                                    className="badge badge-primary"
-                                    style={{
-                                      padding: "8px",
-                                      fontWeight: "bold",
-                                      fontSize: "15px",
-                                    }}
-                                  >
-                                    {app.state}
-                                  </span>
-                                </td>
-                              </tr>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </Fragment>
-                  );
-                })}
+                                                                </tr>
+                                                                <tr>
+                                                                    <td
+                                                                        className="h6"
+                                                                        style={{
+                                                                            fontWeight: "bold",
+                                                                            textAlign: "center",
+                                                                        }}
+                                                                    >
+                                                                        {airportData.airport_code}
+                                                                    </td>
+                                                                    <td
+                                                                        className="h6"
+                                                                        style={{
+                                                                            fontWeight: "bold",
+                                                                            textAlign: "center",
+                                                                        }}
+                                                                    >
+                                                                        {airportData.airport_name}
+                                                                    </td>
+                                                                    <td
+                                                                        className="h6"
+                                                                        style={{
+                                                                            fontWeight: "bold",
+                                                                            textAlign: "center",
+                                                                        }}
+                                                                    >
+                                                                        <span
+                                                                            className="badge badge-primary"
+                                                                            style={{
+                                                                                padding: "8px",
+                                                                                fontWeight: "bold",
+                                                                                fontSize: "15px",
+                                                                            }}
+                                                                        >
+                                                                            {app.state}
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Fragment>
+                                        );
+                                })}
+                    
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-6">
+            
               <br />
-              <br />
-              <br />
-              <div className="card card-body center">
+              <br/>
+              <div className="card card-body center" style={{width:"250px"}}>
                 <h4 className="h5">David Boon</h4>
-                <h6 style={{ color: "grey" }}>Chairman</h6>
+                <h6 style={{ color: "grey" }}>Airport Director</h6>
                 <Button
                   color="primary"
                   onClick={this.toggle}
@@ -346,13 +352,114 @@ class MoCA extends Component {
                 >
                   <i className="fa fa-cloud-upload"></i>Upload New Document
                 </Button>
-                <Modal isOpen={this.state.modal} toggle={this.toggle}>
-                  <ModalHeader toggle={this.toggle}>
-                    Upload Document
-                  </ModalHeader>
+                </div>
+                <br/> 
+                
+                <div className="card card-body">
+                                {this.props.apps.map((app, key) => {
+                                    // console.log(app.airportCode)
+                                    this.get_airportData(app.airportCode);
+                                    let doc = this.props.docs[key];
+
+                                    return (
+                                        <Fragment>
+                                            <br></br>
+                                            <div className="row">
+                                                <div className="col-12">
+                                                    <div className="card"
+                                                        style={{ padding: "18px" }}
+                                                        id={app.appId}
+                                                        onClick={(event) => this.displayModal(app, airportData)}>
+                                                        <table>
+                                                            <tr>
+                                                                <th
+                                                                    className="h6"
+                                                                    style={{
+                                                                        color: "grey",
+                                                                        textAlign: "center",
+                                                                    }}
+                                                                >
+                                                                    Airport Code
+                                </th>
+                                                                <th
+                                                                    className="h6"
+                                                                    style={{
+                                                                        color: "grey",
+                                                                        textAlign: "center",
+                                                                    }}
+                                                                >
+                                                                    Airport Name
+                                </th>
+                                                                <th
+                                                                    className="h6"
+                                                                    style={{
+                                                                        color: "grey",
+                                                                        textAlign: "center",
+                                                                    }}
+                                                                >
+                                                                    Status
+                                </th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td
+                                                                    className="h6"
+                                                                    style={{
+                                                                        fontWeight: "bold",
+                                                                        textAlign: "center",
+                                                                    }}
+                                                                >
+                                                                    {airportData.airport_code}
+                                                                </td>
+                                                                <td
+                                                                    className="h6"
+                                                                    style={{
+                                                                        fontWeight: "bold",
+                                                                        textAlign: "center",
+                                                                    }}
+                                                                >
+                                                                    {airportData.airport_name}
+                                                                </td>
+                                                                <td
+                                                                    className="h6"
+                                                                    style={{
+                                                                        fontWeight: "bold",
+                                                                        textAlign: "center",
+                                                                    }}
+                                                                >
+                                                                    <span
+                                                                        className="badge badge-primary"
+                                                                        style={{
+                                                                            padding: "8px",
+                                                                            fontWeight: "bold",
+                                                                            fontSize: "15px",
+                                                                        }}
+                                                                    >
+                                                                        {app.state}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    );
+                                })}
+                            </div>
+                <Modal isOpen={this.state.modal} toggle={this.toggle} size="lg" style={{maxWidth: '800px', width: '80%'}}>
                   <ModalBody>
-                    <form onSubmit={this.submitToBlockchain}>
-                      <FormGroup>
+                  <form onSubmit={this.submitToBlockchain}>
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-9">
+                          <h1 style={{ color: "grey" }}>License Application</h1>
+                          <h4
+                            className="h6"
+                            style={{ color: "grey", marginTop: "5%" }}
+                          >
+                            Please Fill the Required Details
+                          </h4>
+                          <FormGroup>
                         <select
                           value={this.state.role}
                           onChange={(e) => {
@@ -361,17 +468,43 @@ class MoCA extends Component {
                           className="form-control"
                           defaultValue=""
                         >
-                          <option value="" disabled>
-                            Select the Airport
+                          <option value="" style={{ color: "grey" }}disabled>
+                          Select the Airport
                         </option>
                           {this.buildAirportSelect()}
                         </select>
                       </FormGroup>
-                      <FormGroup>
-                        <Label>Aerodrome Manual</Label>
-                        <Row>
-                          <Col md={9}>
-                            <div className="custom-file">
+                          <br />
+                          <h4
+                            className="h6"
+                            style={{ fontWeight: "bold", color: "grey" }}
+                          >
+                            Upload Documents
+                          </h4>
+                        </div>
+                        <div class="col-3">
+                          <span
+                            class="badge badge-secondary"
+                            style={{
+                              marginTop: "10%",
+                              padding: "20px",
+                              paddingRight: "1.2rem",
+                              marginRight: "10%",
+                              fontSize: "1rem",
+                            }}
+                          > 
+                          </span>
+                          <br />
+                          <br />
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-9">
+                                  <FormGroup>
+                                  {/* <Label>Aerodrome Manual</Label> */}
                               <input
                                 id="doc1"
                                 type="file"
@@ -381,33 +514,26 @@ class MoCA extends Component {
                               <label
                                 className="custom-file-label"
                                 id="uploadLabel1"
-                              >
-                                {statement}
-                              </label>
+                              >Aerodrome Manual</label>
+                              </FormGroup>
+                              </div>
+                              <div className="col-3">
+                                <button className="btn btn-secondary text-center" onClick={this.submitFile}>
+                                  Select
+                                </button>
+                              </div>
                             </div>
-                          </Col>
-                          <Col md={3}>
-                            <Button
-                              type="button"
-                              color="primary"
-                              className="btn btn-outline-light float-right"
-                              name="doc1Submit"
-                              onClick={this.submitFile}
-                            >
-                              {" "}
-                          Upload{" "}
-                            </Button>
-                          </Col>
-                        </Row>
-                      </FormGroup>
+                          </div>
+                        </div>
 
-                      <FormGroup>
-                        <Label for="doc2">Licensing Fee</Label>
-                        <Row>
-                          <Col md={9}>
-                            <div className="custom-file">
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-9">
+                              <FormGroup>
+                                  {/* <Label>Aerodrome Manual</Label> */}
                               <input
-                                id="doc2"
+                                id="doc1"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -415,33 +541,28 @@ class MoCA extends Component {
                               <label
                                 className="custom-file-label"
                                 id="uploadLabel1"
-                              >
-                                {statement}
-                              </label>
+                              >SMS Manual</label>
+                              </FormGroup>
+                              </div>
+                              <div className="col-3">
+                                <button className="btn btn-secondary text-center" onClick={this.submitFile}>
+                                  Select
+                                </button>
+                              </div>
                             </div>
-                          </Col>
-                          <Col md={3}>
-                            <Button
-                              type="button"
-                              color="primary"
-                              className="btn btn-outline-light float-right"
-                              name="doc1Submit"
-                              onClick={this.submitFile}
-                            >
-                              {" "}
-                          Upload{" "}
-                            </Button>
-                          </Col>
-                        </Row>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Label for="doc3">CAR Compliance Document</Label>
-                        <Row>
-                          <Col md={9}>
-                            <div className="custom-file">
+                          </div>
+                        </div>
+                      </div>
+                      <br />
+                      <div className="row">
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-9">
+                              <FormGroup>
+                                  {/* <Label>Aerodrome Manual</Label> */}
                               <input
-                                id="doc3"
+                                id="doc1"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -449,33 +570,25 @@ class MoCA extends Component {
                               <label
                                 className="custom-file-label"
                                 id="uploadLabel1"
-                              >
-                                {statement}
-                              </label>
+                              >CAR Compliance Document</label>
+                              </FormGroup>
+                              </div>
+                              <div className="col-3">
+                                <button className="btn btn-secondary" onClick={this.submitFile}>
+                                  Select
+                                </button>
+                              </div>
                             </div>
-                          </Col>
-                          <Col md={3}>
-                            <Button
-                              type="button"
-                              color="primary"
-                              className="btn btn-outline-light float-right"
-                              name="doc1Submit"
-                              onClick={this.submitFile}
-                            >
-                              {" "}
-                          Upload{" "}
-                            </Button>
-                          </Col>
-                        </Row>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Label for="doc4">Exceptions Doc</Label>
-                        <Row>
-                          <Col md={9}>
-                            <div className="custom-file">
+                          </div>
+                        </div>
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-9">
+                              <FormGroup>
+                                  {/* <Label>Aerodrome Manual</Label> */}
                               <input
-                                id="doc4"
+                                id="doc1"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -483,37 +596,31 @@ class MoCA extends Component {
                               <label
                                 className="custom-file-label"
                                 id="uploadLabel1"
-                              >
-                                {statement}
-                              </label>
+                              >Exceptions Document</label>
+                              </FormGroup>
+                              </div>
+                              <div className="col-3">
+                                <button className="btn btn-secondary" onClick={this.submitFile}>
+                                  Select
+                                </button>
+                              </div>
                             </div>
-                          </Col>
-                          <Col md={3}>
-                            <Button
-                              type="button"
-                              color="primary"
-                              className="btn btn-outline-light float-right"
-                              name="doc1Submit"
-                              onClick={this.submitFile}
-                            >
-                              {" "}
-                          Upload{" "}
-                            </Button>
-                          </Col>
-                        </Row>
-                      </FormGroup>
-                      <FormGroup />
-                      <Button
-                        type="submit"
-                        color="primary"
-                        className="btn btn-outline-light btn-block"
-                      >
-                        Upload
-                      </Button>
-                    </form>
-                  </ModalBody>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                    <Button
+                      type="submit"
+                      color="primary"
+                      className="btn btn-outline-light"
+                      style={{ marginLeft: "80%" }}
+                    >
+                      Submit Application
+                    </Button>
+                  </form>
+                </ModalBody>
                 </Modal>
-              </div>
             </div>
           </div>
         </div>
@@ -523,4 +630,3 @@ class MoCA extends Component {
 }
 
 export default MoCA;
-

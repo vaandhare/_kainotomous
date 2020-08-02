@@ -1,6 +1,5 @@
 import React from "react";
 import Web3 from "web3";
-import "../../styles/Dashboard.css";
 import Navbar from "./Navbar";
 import SocialNetwork from "../../abis/SocialNetwork.json";
 import MoCA from "./MoCA";
@@ -18,23 +17,7 @@ const { Header, Content, Footer, Sider } = Layout;
 
 // Get the current account value from Localstorage
 let currentAccount = localStorage.getItem("currentAccount");
-// let currentChainId = localStorage.getItem('currentChainId');
-// Listener to check chainchanged
-// window.ethereum.on('chainChanged', handleChainChanged)
 
-// function handleChainChanged (chainId) {
-
-//   if (currentChainId !== chainId) {
-
-//     currentChainId = chainId
-//     // Run any other necessary logic...
-//     localStorage.setItem('currentChainId',currentChainId);
-//     console.log('Chain is Changed to:',currentChainId);
-//     window.location.reload(true)
-//   }
-// }
-
-// On accounts change listner for etheruem
 window.ethereum.on("accountsChanged", handleAccountsChanged);
 
 // For now, 'eth_accounts' will continue to always return an array
