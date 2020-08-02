@@ -3,6 +3,8 @@
 # dependencies
 /node_modules
 client/node_modules
+client/src/abis
+client/truffle-config.js
 
 /.pnp
 .pnp.js
