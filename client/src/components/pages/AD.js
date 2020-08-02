@@ -1,6 +1,6 @@
 
 import React, { Component, Fragment } from 'react';
-
+import Web3 from 'web3'
 import { Layout, Menu, Breadcrumb } from 'antd';
 import Icon from '@ant-design/icons';
 import {
@@ -104,18 +104,21 @@ class AD extends Component {
     //
   }
 
-  async get_Airport(airportCode) {
+  async get_Airport() {
     const res = await axios.get(
       `http://localhost:5000/api/airports/${this.state.currentUser.airportCode}`
     );
-    this.setState({ airport: res.data[0] });
+    let airport = res.data[0];
+    console.log("Airport is fetched",airport);
+
+    this.setState({airport});
   }
 
   constructor(props) {
     super(props);
     this.state = {
       collapsed: false,
-      airports: [],
+      airport:'',
       airportCode: "",
       userAppId: "",
       approved_count: 0,
@@ -418,9 +421,9 @@ class AD extends Component {
                 console.log(app)
                 const { airport, status, currentUser, state } = this.state;
                 return (
-                  <div class="card container m-2 p-3" key={key}>
-                    <div class="row">
-                      <div class="col-9">
+                  <div className="card container m-2 p-3" key={key}>
+                    <div className="row">
+                      <div className="col-9">
                         <h1 style={{ color: "grey" }}>License Application</h1>
                         <h4
                           className="h6"
@@ -439,9 +442,9 @@ class AD extends Component {
                           Uploaded Documents
                         </h4>
                       </div>
-                      <div class="col-3">
+                      <div className="col-3">
                         <span
-                          class="badge badge-secondary"
+                          className="badge badge-secondary"
                           style={{
                             marginTop: "10%",
                             padding: "20px",
