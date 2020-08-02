@@ -1,25 +1,48 @@
-import { Layout } from "antd";
-import axios from "axios";
-import React, { Component } from "react";
+
+import React, { Component, Fragment } from 'react';
+
+import { Layout, Menu, Breadcrumb } from 'antd';
+import Icon from '@ant-design/icons';
 import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Col,
-  FormGroup,
-  Label,
-  Row,
-} from "reactstrap";
-import Web3 from "web3";
+    AppstoreOutlined,
+    UserSwitchOutlined,
+    FolderOpenOutlined,
+    SearchOutlined,
+    LogoutOutlined
+} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import axios from "axios";
+import {
+    Row,
+    Col,
+    Card,
+    CardBody,
+    Button,
+    CardHeader,
+    CardFooter,
+    CardTitle,
+    CardText,
+    Form,
+    FormGroup,
+    Label,
+    Input,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter
+} from 'reactstrap';
+import Title from 'antd/lib/skeleton/Title';
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
-  host: "ipfs.infura.io",
-  port: process.env.PORT || "5001",
-  protocol: "https",
+    host: "ipfs.infura.io",
+    port: process.env.PORT || "5001",
+    protocol: "https",
 });
-var link = "https://ipfs.infura.io/ipfs/";
+var statement = "Upload Your File";
 var count = 0;
+// var airportCode ='';
+var userAppId='';
+
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -523,3 +546,4 @@ class AD extends Component {
 }
 
 export default AD;
+
