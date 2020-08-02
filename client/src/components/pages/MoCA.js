@@ -28,6 +28,10 @@ const ipfs = ipfsClient({
 });
 var count = 0;
 var airportData = '';
+var Airport="";
+var application="";
+var document="";
+var link = "https://ipfs.infura.io/ipfs/"
 
 class MoCA extends Component {
   async componentWillMount() {
@@ -44,7 +48,8 @@ class MoCA extends Component {
       airportCode: "",
       approved_count: 0,
       pending_count: 0,
-
+      modalIsOpen:false,
+      secondModalIsOpen: false,
       buffer: "",
     };
 
@@ -72,6 +77,21 @@ class MoCA extends Component {
     return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
   }
 
+  openModal = () => {
+    this.setState({ modalIsOpen: true });
+  };
+
+  closeModal = () => {
+    this.setState({ modalIsOpen: false });
+  };
+
+  openSecondModal = () => {
+    this.setState({ secondModalIsOpen: true });
+  };
+
+  closeSecondModal = () => {
+    this.setState({ secondModalIsOpen: false });
+  };
 
   toggle() {
     this.setState((prevState) => ({
@@ -178,7 +198,7 @@ get_airportData(airportCode){
     // console.log(airport.airport_name);
     if(airport.airport_name === airportCode){
       airportData = airport;
-      console.log(airport);
+      // console.log(airport);
     }
   })
 }
@@ -204,6 +224,20 @@ get_airportData(airportCode){
       appId: applength,
       status: "created",
     });
+  }
+
+  async displayAppDetails(app,airport){
+    Airport = airport;
+    console.log(airport);
+    application = app;
+    console.log(application);
+    this.props.docs.map((doc, key) => {
+      if (doc.id === application.id) {
+        document = doc;
+        console.log(document);
+      }
+    })
+    this.setState({ secondModalIsOpen: true });
   }
 
   render() {
@@ -248,14 +282,15 @@ get_airportData(airportCode){
               <br />
               <div className="card card-body">
                       {this.props.apps.map((app, key) => {
-                        console.log(app.airportCode)
+                        if(app.state === "created"){
+                        // console.log(app.airportCode)
                         this.get_airportData(app.airportCode);
                                         let doc = this.props.docs[key];
                                         return (
                                             <Fragment>
                                                 <br></br>
                                                 <div className="row">
-                                                    <div className="col-12">
+                                                    <div className="col-12" onClick={(event)=>this.displayAppDetails(app,airportData)}>
                                                         <div className="card"
                                                             style={{ padding: "18px" }}
                                                             id={app.appId}
@@ -334,6 +369,7 @@ get_airportData(airportCode){
                                                 </div>
                                             </Fragment>
                                         );
+                                                                          }
                                 })}
                     
               </div>
@@ -347,7 +383,7 @@ get_airportData(airportCode){
                 <h6 style={{ color: "grey" }}>Airport Director</h6>
                 <Button
                   color="primary"
-                  onClick={this.toggle}
+                  onClick={this.openModal}
                   style={{ justifyContent: "center" }}
                 >
                   <i className="fa fa-cloud-upload"></i>Upload New Document
@@ -369,7 +405,7 @@ get_airportData(airportCode){
                                                     <div className="card"
                                                         style={{ padding: "18px" }}
                                                         id={app.appId}
-                                                        onClick={(event) => this.displayModal(app, airportData)}>
+                                                        onClick={(event)=>this.displayAppDetails(app,airportData)}>
                                                         <table>
                                                             <tr>
                                                                 <th
@@ -446,9 +482,10 @@ get_airportData(airportCode){
                                     );
                                 })}
                             </div>
-                <Modal isOpen={this.state.modal} toggle={this.toggle} size="lg" style={{maxWidth: '800px', width: '80%'}}>
+                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal}
+                toggle={this.openModal} size="lg" style={{maxWidth: '800px', width: '80%'}}>
                   <ModalBody>
-                  <form onSubmit={this.submitToBlockchain}>
+                  <form >
                     <div class="container">
                       <div class="row">
                         <div class="col-9">
@@ -610,17 +647,154 @@ get_airportData(airportCode){
                       </div>
                     </div>
                     <br />
+                    <div className="row">
+                      <div className="col-6">
+                        <Button
+                      type="submit"
+                      color="primary"
+                      className="btn btn-outline-light float-left"
+                      style={{ marginRight: "80%" }}
+                      onClick={this.closeModal}
+                    >
+                      Close
+                    </Button>
+                    </div>
+                    <div className="col-6">
                     <Button
                       type="submit"
                       color="primary"
-                      className="btn btn-outline-light"
+                      className="btn btn-outline-light float-right"
                       style={{ marginLeft: "80%" }}
+                      onClick={this.submitToBlockchain}
                     >
                       Submit Application
                     </Button>
+                    </div>
+                    </div>
+                    {/* <button onClick={this.closeModal}>close</button>  */}
                   </form>
                 </ModalBody>
                 </Modal>
+
+                <Modal isOpen={this.state.secondModalIsOpen}
+                onRequestClose={this.closeSecondModal}  
+                size="lg" 
+                style={{ maxWidth: '800px', width: '80%' }}>
+                <ModalBody>
+                  <form >
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-9">
+                          <h1 style={{ color: "grey" }}>License Application</h1>
+                          <h4
+                            className="h6"
+                            style={{ color: "grey", marginTop: "5%" }}
+                          >
+                            Airport Name: {Airport.airport_name}
+                          </h4>
+                          <h4 className="h6" style={{ color: "grey" }}>
+                            Airport Code:{Airport.airport_code}
+                          </h4>
+                          <br />
+                          <h4
+                            className="h6"
+                            style={{ fontWeight: "bold", color: "grey" }}
+                          >
+                            Uploaded Documents
+                          </h4>
+                        </div>
+                        <div class="col-3">
+                          <span
+                            class="badge badge-secondary"
+                            style={{
+                              marginTop: "10%",
+                              padding: "20px",
+                              paddingRight: "1.2rem",
+                              marginRight: "10%",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {application.state}
+                          </span>
+                          <br />
+                          <br />
+                          <h4 className="h5" style={{ color: "grey" }}>
+                            {application.state} at
+                          </h4>
+                          <h5 className="h6" style={{ color: "grey" }}>
+                            {application.timestamp}
+                          </h5>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-6">Aerodrome Manual</div>
+                              <div className="col-6">
+                                <a className="btn btn-secondary text-center"
+                                  href={link.concat(document.aerodromeManual)}>
+                                  View Document
+                                  </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-6">SMS Manual</div>
+                              <div className="col-6">
+                                <a className="btn btn-secondary text-center" href={link.concat(document.licensingFee)}>
+                                  View Document
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <br />
+                      <div className="row">
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-6">CAR Compliance</div>
+                              <div className="col-6">
+                                <a className="btn btn-secondary" href={link.concat(document.CARcompliance)}>
+                                  View Document
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-6">Exceptions Document</div>
+                              <div className="col-6">
+                                <a className="btn btn-secondary" href={link.concat(document.execeptionsDoc)}>
+                                  View Document
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      <Button
+                      type="submit"
+                      color="primary"
+                      className="btn btn-outline-light float-right"
+                      style={{ marginRight: "80%" }}
+                      onClick={this.closeSecondModal}
+                    >
+                      Close
+                    </Button>
+                      </div>
+                    </div>
+                    <br />
+                  </form>
+                </ModalBody>
+              </Modal>
             </div>
           </div>
         </div>
