@@ -32,7 +32,7 @@ const { Option } = Select;
 
 class UserAdmin extends Component {
   async componentWillMount() {
-    // await this.loadCurrentUser();
+    await this.loadCurrentUser();
     await this.loadAllUsers();
     await this.get_Airports();
   }

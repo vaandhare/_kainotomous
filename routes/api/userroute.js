@@ -28,6 +28,21 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 })
+router.get('/role', async (req, res) => {
+    const role = "AD"
+    try {
+        const user = await User.find({ role : {
+            $search:role,
+            $options:"i"
+        }})
+
+        if (!user) throw new Error('No User Found')
+        
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
 
 router.post('/login', async (req, res) => {
     const email = req.body.email;

@@ -318,7 +318,7 @@ class Dashboard extends React.Component {
                   <span>Home Page</span>
                 </Menu.Item>
                 <Menu.Item key="3">
-                  <Link to="/">
+                  <Link to="/project">
                     <FolderOpenOutlined />
                     <span>Projects</span>
                   </Link>
@@ -384,7 +384,7 @@ class Dashboard extends React.Component {
                     <span>Home Page</span>
                   </Menu.Item>
                   <Menu.Item key="3">
-                    <Link to="/">
+                    <Link to="/project">
                       <FolderOpenOutlined />
                       <span>Projects</span>
                     </Link>
@@ -450,7 +450,7 @@ class Dashboard extends React.Component {
                       <span>Home Page</span>
                     </Menu.Item>
                     <Menu.Item key="3">
-                      <Link to="/">
+                      <Link to="/project">
                         <FolderOpenOutlined />
                         <span>Projects</span>
                       </Link>
@@ -524,14 +524,9 @@ class Dashboard extends React.Component {
                         <AppstoreOutlined />
                         <span>Home Page</span>
                       </Menu.Item>
-                      <Menu.Item key="3">
-                        <Link to="/">
-                          <FolderOpenOutlined />
-                          <span>Projects</span>
-                        </Link>
-                      </Menu.Item>
                       
-                      <Menu.Item key="4">
+                      
+                      <Menu.Item key="3">
                         <Link to="/auth">
                           <LogoutOutlined />
                           <span>Logout</span>
@@ -594,7 +589,7 @@ class Dashboard extends React.Component {
                         <span>Home Page</span>
                       </Menu.Item>
                       <Menu.Item key="3">
-                        <Link to="/">
+                        <Link to="/project">
                           <FolderOpenOutlined />
                           <span>Projects</span>
                         </Link>
