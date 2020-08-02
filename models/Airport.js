@@ -2,21 +2,33 @@
 const { Schema, model } = require('mongoose')
 
 const AirportSchema = new Schema({
-    IATA_code: {
+    airport_code: {
         type: String,
         required: true,
     },
-    ICAO_code:{
+    airport_name:{
         type:String,
         required:true,
     },
-    airport_name: {
+    city_name: {
         type: String,
         required: true,
     },
-    city_name:{
+    lat:{
         type:String,
         required:true
+    },
+    long:{
+        type:String,
+        required:true
+    },
+    status:{
+        type:String,
+        required:true
+    },
+    operatorAddr:{
+        type:String,
+        required:false
     }
 })
 

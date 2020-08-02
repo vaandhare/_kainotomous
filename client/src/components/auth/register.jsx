@@ -1,7 +1,7 @@
-import React,{ Fragment } from "react";
-import loginImg from "../../login.svg";
-import "./style.scss";
 import axios from "axios";
+import React, { Fragment } from "react";
+import "./style.scss";
+
 export class Register extends React.Component {
   async componentWillMount() {
     await this.get_Airports();
@@ -36,6 +36,7 @@ export class Register extends React.Component {
       
     });
     return arr;
+
   }
 
   async get_Airports() {
@@ -43,8 +44,6 @@ export class Register extends React.Component {
     this.setState({ airports: response.data });
     // console.log(this.state.currentUser)
   }
-
-  
 
   async handleSubmit(event) {
     event.preventDefault();
@@ -69,6 +68,7 @@ export class Register extends React.Component {
       operatorAddr: address,
       status: airport.status,
     });
+
     // console.log(response.data);
     this.cleanInputs()
   }
@@ -114,7 +114,7 @@ export class Register extends React.Component {
                 <option value="DoAS">Director of Aerodrome Standards</option>
                 <option value="AI">Aerodrome Inspector</option>
                 <option value="ED">ED (Licensing)</option>
-                <option value="AD">Aerodrome Operator</option>
+                <option value="AD">Aerodrome Director</option>
                 
               </select>
             </div>

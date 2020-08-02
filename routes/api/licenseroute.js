@@ -17,7 +17,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params
     console.log(id);
     try {
-        const license = await License.find({IATA_code:id})
+        const license = await License.find({airport_code:id})
         if (!license) throw new Error('No License Found')
         
         res.status(200).json(license)
@@ -31,7 +31,7 @@ router.get('/:id', async (req, res) => {
 //     const status= req.body;
 
 //     try {
-//         const oldstatus = await Status.findOne({IATA_code:id})
+//         const oldstatus = await Status.findOne({airport_code:id})
 //         oldstatus.status = status
 //         const response = await Status.findByIdAndUpdate(oldstatus._id,status)
 //         if (!response) throw Error('Something went wrong ')

@@ -1,0 +1,45 @@
+
+/* Styles go here */
+#myDIV{
+    display: none;
+    margin: 0 auto;
+    align-self: "center";
+    width: 1000px;
+    align-self: center;
+    align-content: center;
+    text-align: left;
+    
+}
+
+#cardDIV{
+    margin: 0 auto;
+    align-self: "center";
+    align-self: center;
+    align-content: center;
+    color:#ffffff 
+}
+
+#tracingTable{
+    border: 1 px black solid;
+    border-collapse: collapse;
+}
+
+
+
+/* #articleName, #postContent, #fileinput, .title, .content, .custom-file-label{
+    color: #11998e !importan;
+    font-weight:500; 
+    width: 100%;
+    border: 0;
+    
+    
+
+    
+} */
+
+/* #articleName::placeholder { color: gainsboro; }
+#postContent::placeholder { color: gainsboro; }
+.list-group-item ::placeholder { color: gainsboro;}
+.custom-file-label ::placeholder{ color: gainsboro;}
+.content, .title ::placeholder{ color: white;}
+.title ::placeholder{color: white;} */
