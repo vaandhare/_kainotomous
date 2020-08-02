@@ -13,6 +13,11 @@ const StatusSchema = new Schema({
     status: {
         type: String,
         required: true,
+    },
+    feedback:{
+        type:String,
+        default:"",
+        required:false
     }
 })
 

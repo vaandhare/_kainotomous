@@ -1,27 +1,12 @@
+import axios from 'axios';
 import React, { Component, Fragment } from 'react';
-import '../../styles/Deputy.css'
-import axios from 'axios'
 import {
-    Row,
-    Col,
-    Card,
-    CardBody,
     Button,
-    CardHeader,
-    CardFooter,
-    CardTitle,
-    CardText,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     ListGroup,
-    ListGroupItem,
+    ListGroupItem, Modal,
+    ModalBody, ModalHeader
 } from "reactstrap";
+import '../../styles/Deputy.css';
 
 // const ipfsClient = require('ipfs-http-client')
 // const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
