@@ -19,6 +19,7 @@ import AI from "./AI";
 import DGCA from "./DGCA";
 import DoAS from "./DoAS";
 import MoCA from "./MoCA";
+import Chairman from "./Chairman";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -653,6 +654,79 @@ class Dashboard extends React.Component {
               </div>
             );
           }
+          // else if (this.state.currentUser.role === "Chairman") {
+          //   return (
+          //     <div>
+          //       {/* <Navbar account={this.state.currentUser} /> */}
+          //       <Layout style={{ minHeight: "100vh" }}>
+          //         <Sider
+          //           collapsible
+          //           collapsed={this.state.collapsed}
+          //           onCollapse={this.onCollapse}
+          //         >
+          //           <div className="logo" />
+          //           <Menu
+          //             theme="dark"
+          //             defaultSelectedKeys={["1"]}
+          //             mode="inline"
+          //           >
+          //             <Menu.Item key="1">
+          //               <span>
+          //                 {this.state.currentUser.fullname}(
+          //                 {this.state.currentUser.role})
+          //               </span>
+          //             </Menu.Item>
+          //             <Menu.Item key="2">
+          //               <AppstoreOutlined />
+          //               <span>Home Page</span>
+          //             </Menu.Item>
+          //             <Menu.Item key="3">
+          //               <Link to="/">
+          //                 <FolderOpenOutlined />
+          //                 <span>Projects</span>
+          //               </Link>
+          //             </Menu.Item>
+                      
+          //             <Menu.Item key="4">
+          //               <Link to="/auth">
+          //                 <LogoutOutlined />
+          //                 <span>Logout</span>
+          //               </Link>
+          //             </Menu.Item>
+          //           </Menu>
+          //         </Sider>
+          //         <Layout>
+          //           <Header style={{ background: "#000" }}>
+          //       <input
+          //         type="text"
+          //         placeholder="Search Document or Project"
+          //         prefix={<SearchOutlined style={{ color: "red" }} />}
+          //         style={{
+          //           width: "100%",
+          //           height: "80%",
+          //           padding: "9px",
+          //           borderRadius: "3px",
+          //         }}
+          //       />
+          //     </Header>
+          //           <Header style={{ background: "#fff" }}>
+          //             <span>Welcome, Airport Director </span>
+          //           </Header>
+          //           <Content style={{ margin: "0 16px" }}>
+          //             <Chairman
+          //               account={this.state.account}
+          //               apps={this.state.apps}
+          //               docs={this.state.docs}
+          //               createApp={this.createApp}
+          //               approveApp={this.approveApp}
+          //               rejectApp={this.rejectApp}
+          //             />
+          //           </Content>
+          //         </Layout>
+          //       </Layout>
+          //     </div>
+          //   );
+          // }
           else{
             return (
               <div>
