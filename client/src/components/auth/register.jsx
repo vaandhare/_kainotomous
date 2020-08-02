@@ -1,7 +1,6 @@
-import React,{ Fragment } from "react";
-import loginImg from "../../login.svg";
-import "./style.scss";
 import axios from "axios";
+import React, { Fragment } from "react";
+import "./style.scss";
 export class Register extends React.Component {
   async componentWillMount() {
     await this.get_Airports();
@@ -114,7 +113,7 @@ export class Register extends React.Component {
                 <option value="DoAS">Director of Aerodrome Standards</option>
                 <option value="AI">Aerodrome Inspector</option>
                 <option value="ED">ED (Licensing)</option>
-                <option value="AD">Aerodrome Operator</option>
+                <option value="AD">Aerodrome Director</option>
                 
               </select>
             </div>

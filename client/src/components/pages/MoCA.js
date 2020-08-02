@@ -1,26 +1,17 @@
+import axios from "axios";
 import React, { Component, Fragment } from "react";
-import "../../styles/Deputy.css";
 import {
-  Row,
-  Col,
-  Card,
-  CardBody,
   Button,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardText,
-  Form,
+  Col,
   FormGroup,
   Label,
-  Input,
   Modal,
-  ModalHeader,
   ModalBody,
-  ModalFooter,
+  ModalHeader,
+  Row,
 } from "reactstrap";
+import "../../styles/Deputy.css";
 
-import axios from "axios";
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
   host: "ipfs.infura.io",
@@ -63,8 +54,7 @@ class MoCA extends Component {
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
 
-    this.get_approved_count = this.get_approved_count.bind(this)
-
+    this.get_approved_count = this.get_approved_count.bind(this);
   }
 
   async get_Airports() {
@@ -73,11 +63,9 @@ class MoCA extends Component {
     // console.log(this.state.currentUser)
   }
 
-
-  async get_Airport(airportCode){
-    return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
+  async get_Airport(airportCode) {
+    return await axios.get(`http://localhost:5000/api/status/${airportCode}`);
   }
-
 
   toggle() {
     this.setState((prevState) => ({
@@ -91,11 +79,10 @@ class MoCA extends Component {
     this.props.apps.map((app, key) => {
       if (app.state === "approved" || app.state === "granted") {
         approved_count = approved_count + 1;
-      }
-      else {
+      } else {
         pending_count = pending_count + 1;
       }
-    })
+    });
     this.setState({ approved_count: approved_count });
     this.setState({ pending_count: pending_count });
   }
@@ -180,59 +167,58 @@ class MoCA extends Component {
     return arr;
   }
 
-  showAirports(){
+  showAirports() {
     var airportCard = [];
-    
-    this.state.airports.map( async (airport,key)=>{
+
+    this.state.airports.map(async (airport, key) => {
       // let state = await this.get_Airport(airport.airport_code)
       // let status = ""
       // if(Array.isArray(state.data) && state.data.length){
       //   console.log('Not Empty',state.data)
       //   status = state.data[0].status;
       // }
-      
+
       airportCard.push(
-        <div className="row">
+        <div className="row" key={key}>
           <div className="col-12">
             <div className="card" style={{ padding: "18px" }}>
-            <div className="row">
-              <div className="col-3">
-                <p>Airport Code</p>
+              <div className="row">
+                <div className="col-3">
+                  <p>Airport Code</p>
+                </div>
+                <div className="col-6">
+                  <h6>Airport Name</h6>
+                </div>
+                <div className="col-3">
+                  <h6>Status</h6>
+                </div>
               </div>
-              <div className="col-6">
-                <h6>Airport Name</h6>
+              <div className="row">
+                <div className="col-3">
+                  <h6>{airport.airport_code}</h6>
+                </div>
+                <div className="col-6">
+                  <h6>{airport.airport_name}</h6>
+                </div>
+                <div className="col-3">
+                  <span
+                    className="badge badge-primary"
+                    style={{
+                      padding: "8px",
+                      fontWeight: "bold",
+                      fontSize: "15px",
+                    }}
+                  >
+                    {/* { status === "" ? "Not Licensed": status} */}
+                  </span>
+                </div>
               </div>
-              <div className="col-3">
-                <h6>Status</h6>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-3">
-                <h6>{airport.airport_code}</h6>
-              </div>
-              <div className="col-6">
-                <h6>{airport.airport_name}</h6>
-              </div>
-              <div className="col-3">
-              <span
-                      className="badge badge-primary"
-                      style={{
-                        padding: "8px",
-                        fontWeight: "bold",
-                        fontSize: "15px",
-                      }}
-                    >
-                     {/* { status === "" ? "Not Licensed": status} */}
-                    </span>
-              </div>
-            </div>
-              
             </div>
           </div>
         </div>
-      )
-    })
-    return airportCard
+      );
+    });
+    return airportCard;
   }
 
   async submitToBlockchain(event) {
@@ -258,7 +244,7 @@ class MoCA extends Component {
   }
 
   render() {
-    const {currentUser} = this.props
+    const { currentUser } = this.props;
     return (
       <Fragment>
         <br />
@@ -298,10 +284,8 @@ class MoCA extends Component {
               </div>
               <br />
               <div className="card card-body">
-                
-                      <br></br>
-                      {this.showAirports()}
-                    
+                <br></br>
+                {this.showAirports()}
               </div>
             </div>
             <div className="col-4">
@@ -335,7 +319,7 @@ class MoCA extends Component {
                         >
                           <option value="" disabled>
                             Select the Airport
-                        </option>
+                          </option>
                           {this.buildAirportSelect()}
                         </select>
                       </FormGroup>
@@ -367,7 +351,7 @@ class MoCA extends Component {
                               onClick={this.submitFile}
                             >
                               {" "}
-                          Upload{" "}
+                              Upload{" "}
                             </Button>
                           </Col>
                         </Row>
@@ -401,7 +385,7 @@ class MoCA extends Component {
                               onClick={this.submitFile}
                             >
                               {" "}
-                          Upload{" "}
+                              Upload{" "}
                             </Button>
                           </Col>
                         </Row>
@@ -435,7 +419,7 @@ class MoCA extends Component {
                               onClick={this.submitFile}
                             >
                               {" "}
-                          Upload{" "}
+                              Upload{" "}
                             </Button>
                           </Col>
                         </Row>
@@ -469,7 +453,7 @@ class MoCA extends Component {
                               onClick={this.submitFile}
                             >
                               {" "}
-                          Upload{" "}
+                              Upload{" "}
                             </Button>
                           </Col>
                         </Row>
@@ -495,4 +479,3 @@ class MoCA extends Component {
 }
 
 export default MoCA;
-
