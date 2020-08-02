@@ -594,7 +594,7 @@ class Dashboard extends React.Component {
                 </Layout>
               </div>
             );
-          } else {
+          } else if(this.state.currentUser.role === "AD") {
             // console.log("Member Address", this.state.currentUser.role);
             return (
               <div>
@@ -627,13 +627,8 @@ class Dashboard extends React.Component {
                           <span>Projects</span>
                         </Link>
                       </Menu.Item>
+                      
                       <Menu.Item key="4">
-                        <Link to="/">
-                          <UserSwitchOutlined />
-                          <span>Manage Users</span>
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item key="5">
                         <Link to="/auth">
                           <LogoutOutlined />
                           <span>Logout</span>
@@ -670,6 +665,13 @@ class Dashboard extends React.Component {
                     </Content>
                   </Layout>
                 </Layout>
+              </div>
+            );
+          }
+          else{
+            return (
+              <div>
+                <h4>Changing Accounts...</h4>
               </div>
             );
           }

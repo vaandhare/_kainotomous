@@ -491,6 +491,7 @@ class AD extends Component {
                             </div> */}
                           </div>
                         </div>
+                        </div>
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
@@ -504,12 +505,13 @@ class AD extends Component {
                                   View Document
                                 </a>
                               </div> */}
+                              
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  
                 );
               }
             })}
