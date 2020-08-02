@@ -74,7 +74,7 @@ class MoCA extends Component {
 
 
   async get_Airport(airportCode){
-    return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
+    return await axios.get(`http://localhost:5000/api/Akstatus/${airportCode}`)
   }
 
   openModal = () => {
@@ -219,7 +219,7 @@ get_airportData(airportCode){
     this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
 
     // Save the status on the mongodb
-    const response = await axios.post(`http://localhost:5000/api/status/`, {
+    const response = await axios.post(`http://localhost:5000/api/Akstatus/`, {
       IATA_code: airportCode,
       appId: applength,
       status: "created",

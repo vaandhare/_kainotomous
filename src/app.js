@@ -29,7 +29,7 @@ mongoose
 
 app.use('/api/Users',userRouter)
 app.use('/api/airports',airportRouter)
-app.use('/api/status',statusRouter)
+app.use('/api/Akstatus',statusRouter)
 app.use('/api/licensetable',licenseRouter)
 
 app.listen(PORT,()=>{console.log(`App listening to at http://localhost:${PORT}`)})
