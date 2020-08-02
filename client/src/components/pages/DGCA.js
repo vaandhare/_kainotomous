@@ -1,47 +1,38 @@
-import React, { Component, Fragment } from 'react';
-import axios from 'axios'
+import axios from "axios";
+import React, { Component, Fragment } from "react";
 import {
-  Row,
-  Col,
-  Card,
-  CardBody,
+
   Button,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardText,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   ListGroup,
   ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalHeader,
 } from "reactstrap";
+// DGCA is going to issue applications and also grant applications
+
+const ipfsClient = require("ipfs-http-client");
 
 
-// DGCA is going to issue applications.
-
-const ipfsClient = require('ipfs-http-client')
-
-const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: process.env.PORT || '5001', protocol: 'https' })
-var statement = "Upload Your File"
-var count = 0
-var application = ''
-var document = ''
-var Airport = ''
-var airportData = ''
-var link = "https://ipfs.infura.io/ipfs/"
-
+const ipfs = ipfsClient({
+  host: "ipfs.infura.io",
+  port: process.env.PORT || "5001",
+  protocol: "https",
+});
+var statement = "Upload Your File";
+var count = 0;
+var application = "";
+var document = "";
+var link = "https://ipfs.infura.io/ipfs/";
+var airportData=""
+var Airport=""
 
 class DGCA extends Component {
   async componentWillMount() {
     await this.get_Airports();
     await this.get_approved_count();
   }
+
 
   buffer = "";
 
@@ -76,6 +67,7 @@ class DGCA extends Component {
         // console.log(airport);
       }
     })
+
   }
   openModal = () => {
     this.setState({ modalIsOpen: true });
@@ -109,11 +101,13 @@ class DGCA extends Component {
     this.props.apps.map((app, key) => {
       if (app.state === "approved" || app.state === "granted") {
         approved_count = approved_count + 1;
+
       }
       else {
         pending_count = pending_count + 1;
       }
     })
+
     this.setState({ approved_count: approved_count });
     this.setState({ pending_count: pending_count });
   }
@@ -196,10 +190,12 @@ class DGCA extends Component {
         <br />
         <div className="container">
           <div className="row">
+
             <div className="col-6">
               <h2 className="h3" style={{ color: "grey" }}>
                 Overview
                   </h2>
+
               <br />
               <div className="row">
                 <div className="col-6">
@@ -207,6 +203,7 @@ class DGCA extends Component {
                     <div>
                       <h3 className="h5" style={{ color: "gray" }}>
                         Approved Documents
+
                           </h3>
                       <h2 className="h4">{this.state.approved_count}</h2>
                     </div>
@@ -237,11 +234,13 @@ class DGCA extends Component {
                     this.get_airportData(app.airportCode);
                     let doc = this.props.docs[key];
 
+
                     return (
                       <Fragment>
                         <br></br>
                         <div className="row">
                           <div className="col-12">
+
                             <div className="card"
                               style={{ padding: "18px" }}
                               id={app.appId}
@@ -257,7 +256,9 @@ class DGCA extends Component {
                                     }}
                                   >
                                     Airport Code
+
                                 </th>
+
                                   <th
                                     className="h6"
                                     style={{
@@ -266,7 +267,7 @@ class DGCA extends Component {
                                     }}
                                   >
                                     Airport Name
-                                </th>
+                                  </th>
                                   <th
                                     className="h6"
                                     style={{
@@ -285,7 +286,9 @@ class DGCA extends Component {
                                       textAlign: "center",
                                     }}
                                   >
+
                                     {airportData.airport_code}
+
                                   </td>
                                   <td
                                     className="h6"
@@ -294,7 +297,9 @@ class DGCA extends Component {
                                       textAlign: "center",
                                     }}
                                   >
+
                                     {airportData.airport_name}
+
                                   </td>
                                   <td
                                     className="h6"
@@ -697,3 +702,4 @@ class DGCA extends Component {
 }
 
 export default DGCA;
+

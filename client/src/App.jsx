@@ -1,10 +1,11 @@
 import React, { Fragment } from "react";
-import "./styles/App.scss";
-import Dashboard from './components/pages/Dashboard'
-// import AD from './components/pages/AD'
-import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
+
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+
 import Auth from './components/auth/Auth';
+import Dashboard from './components/pages/Dashboard';
 import Usernotapproved from "./components/redirect/Usernotapproved";
+import "./styles/App.scss";
 // import MetamaskError from "./components/redirect/MetamaskError";
 
 

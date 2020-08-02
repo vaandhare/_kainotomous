@@ -1,7 +1,7 @@
+import axios from "axios";
 import React from "react";
 // import loginImg from "../../login.svg";
 import "./style.scss";
-import axios from "axios";
 // import { useHistory } from "react-router-dom";
 
 

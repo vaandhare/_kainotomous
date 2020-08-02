@@ -2,7 +2,7 @@
 const { Schema, model } = require('mongoose')
 
 const StatusSchema = new Schema({
-    IATA_code: {
+    airport_code: {
         type: String,
         required: true,
     },
@@ -13,6 +13,11 @@ const StatusSchema = new Schema({
     status: {
         type: String,
         required: true,
+    },
+    feedback:{
+        type:String,
+        default:"",
+        required:false
     }
 })
 

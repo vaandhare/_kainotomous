@@ -23,7 +23,7 @@ const UserSchema = new Schema({
         type:String,
         required:true,
     },
-    department:{
+    airportCode:{
         type:String,
         require:true,
     },
