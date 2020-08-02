@@ -1,16 +1,5 @@
-
-import React, { Component, Fragment } from 'react';
 import Web3 from 'web3'
-import { Layout, Menu, Breadcrumb } from 'antd';
-import Icon from '@ant-design/icons';
-import {
-    AppstoreOutlined,
-    UserSwitchOutlined,
-    FolderOpenOutlined,
-    SearchOutlined,
-    LogoutOutlined
-} from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Layout } from 'antd';
 import axios from "axios";
 import {
     Row,
@@ -19,34 +8,44 @@ import {
     CardBody,
     Button,
     CardHeader,
-    CardFooter,
-    CardTitle,
-    CardText,
-    Form,
     FormGroup,
     Label,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter
+    CardFooter
 } from 'reactstrap';
-import Title from 'antd/lib/skeleton/Title';
+import React, { Component, Fragment } from 'react'
+import { Input, Radio , Checkbox } from 'antd';
+
+const { TextArea } = Input;
+
+function onChange(checkedValues) {
+  console.log('checked = ', checkedValues);
+}
+
+const LicenseType = ['Public Use', 'Private Use'];
+const boolValues = ['Yes', 'No']
+
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
     host: "ipfs.infura.io",
     port: process.env.PORT || "5001",
     protocol: "https",
 });
-var statement = "Upload Your File";
 var count = 0;
-// var airportCode ='';
-var userAppId='';
-
 
 const { Header, Content, Footer, Sider } = Layout;
 
 class AD extends Component {
+
+  state = {
+    value: 1,
+  };
+
+  onChange = e => {
+    this.setState({
+      value: e.target.value,
+    });
+  };
+
   async componentWillMount() {
     await this.loadWeb3();
     await this.loadBlockchainData();
@@ -254,6 +253,146 @@ class AD extends Component {
     return (
       <div>
         {!this.state.isAppExist ? (
+          <div>
+          <Card style={{margin: "10px", padding: "10px"}}>
+          <h3 style={{ textAlign: "center", color: "gray", margin: "10px" }}>Application for an Aerodrome Application</h3>
+          <Row>
+            <Col md={6}>
+              <Card style={{margin: "10px", padding: "10px"}}>
+                <CardHeader>
+                  <h5 style={{ color: "gray", display:"inline"}}>Details of License</h5>
+                  <h6 style={{ color: "gray", display:"inline" }}>(As required to be shown on the License)</h6>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6}>
+                      <Input
+                        type="text"
+                        placeholder="Name of the Applicant"
+                      />
+                    </Col>
+                    <Col md={6}>
+                      <Input
+                        type="email"
+                        placeholder="Email of the Applicant"
+                      />
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop: "20px"}}>
+                    <Col md={6}>
+                      <Input
+                        type="text"
+                        placeholder="Telephone"
+                      />
+                    </Col>
+                    <Col md={6}>
+                      <Input
+                        text="email"
+                        placeholder="Nationality of the Applicant"
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col md={6}>
+              <Card style={{margin: "10px", padding: "10px"}}>
+                <CardHeader>
+                  <h5 style={{color: "gray", display:"inline" }}>Aerodrome Manual</h5>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6}>
+                      <Label>Is the Aerodrome Manual enclosed with this form.</Label>
+                    </Col>
+                    <Col md={6}>
+                      <Radio.Group onChange={this.onChange} value={this.state.value} style={{marginLeft: "50px"}}>
+                        <Radio value={1}>Yes</Radio>
+                        <Radio value={2}>No</Radio>
+                      </Radio.Group>                      
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>If No please specify when this is likely to be submitted to DGCA</p>
+                    </Col>
+                    <Col md={6}>
+                      <TextArea rows={2} type="text" />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <Card style={{margin: "10px", padding: "10px"}}>
+                <CardHeader>
+                  <h5 style={{ color: "gray", display:"inline"}}>Details of Aerodrome</h5>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6}>
+                      <p>Place name by which the Aerodrome is to be known in all future reference</p>
+                    </Col>
+                    <Col md={6}>
+                      <Input type="text" style={{padding: "5px"}} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>Name & Address of the Owner of Aerodrome</p>
+                    </Col>
+                    <Col md={6}>
+                      <Input type="text" style={{padding: "5px"}} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>Situation of the Aerodrome Site with reference to the nearest Airport, Railway Station & Town/Village</p>
+                    </Col>
+                    <Col md={6}>
+                      <TextArea row={4} type="text" style={{padding: "5px"}} />
+                    </Col>
+                  </Row>
+
+                </CardBody>
+              </Card>
+            </Col>
+            <Col md={6}>
+              <Card style={{margin: "10px", padding: "10px"}}>
+                <CardHeader>
+                  <h5 style={{color: "gray", display:"inline" }}>Aerodrome Activities</h5>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6}>
+                      <Label>State category of licence required as defined in Aircraft Rules 1937?</Label>
+                    </Col>
+                    <Col md={6}>
+                      <Checkbox.Group options={LicenseType} onChange={onChange} style={{marginLeft: "50px"}}/>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>Is a licence for NIGHT USE/ ALL WEATHER required?</p>
+                    </Col>
+                    <Col md={6}>
+                      <Checkbox.Group options={boolValues} onChange={onChange} style={{marginLeft: "50px"}}/>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>If the answer of above is YES, Please provide details of proposed lighting along with the lighting plan.</p>
+                    </Col>
+                    <Col md={6}>
+                      <TextArea row={4} type="text" style={{padding: "5px"}} />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
           <Col md={12}>
             <Card style={{ padding: "20px" }}>
               <form onSubmit={this.submitToBlockchain}>
@@ -268,7 +407,7 @@ class AD extends Component {
                 </Label>
                 <FormGroup>
                   <Row>
-                    <Col md={6}>
+                    <Col md={3}>
                       <Card>
                         <CardHeader>Aerodrome Manual</CardHeader>
                         <CardBody>
@@ -298,7 +437,7 @@ class AD extends Component {
                         </CardBody>
                       </Card>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
                       <Card>
                         <CardHeader>SMS Manual</CardHeader>
                         <CardBody>
@@ -328,12 +467,7 @@ class AD extends Component {
                         </CardBody>
                       </Card>
                     </Col>
-                  </Row>
-                </FormGroup>
-
-                <FormGroup>
-                  <Row>
-                    <Col md={6}>
+                    <Col md={3}>
                       <Card>
                         <CardHeader>CAR Complaince Document</CardHeader>
                         <CardBody>
@@ -363,7 +497,7 @@ class AD extends Component {
                         </CardBody>
                       </Card>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
                       <Card>
                         <CardHeader>Exeptions Document </CardHeader>
                         <CardBody>
@@ -395,17 +529,21 @@ class AD extends Component {
                     </Col>
                   </Row>
                 </FormGroup>
-                <Button
-                  type="submit"
-                  style={{ marginTop: "50px" }}
-                  color="success"
-                  className="btn btn-outline-light btn-block"
-                >
-                  Submit Application
-                </Button>
+                <FormGroup>
+                  <Button
+                    type="submit"
+                    style={{ marginTop: "50px" }}
+                    color="success"
+                    className="btn btn-outline-light btn-block"
+                  >
+                    Submit Application
+                  </Button>
+                </FormGroup>
               </form>
             </Card>
           </Col>
+            </Card>
+            </div>
         ) : (
           <div>
             {this.props.apps.map((app, key) => {
