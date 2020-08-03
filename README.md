@@ -91,11 +91,6 @@ npm start
  
  ### Hopefully , you can see the UI !! Congratulations! 
 
-13) your client will start  and you can see the login page in the browser (obviously after logging in your metamask wallet)
-14) register yourself first - use anyone of the address from your ganache client. 
-15) login 
-16) Hopefully , you can see the UI !! Congratulations! 
-  
 
 
 
