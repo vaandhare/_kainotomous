@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const User = require('../../models/User')
 
+
 const router = Router()
 
 router.get('/', async (req, res) => {
@@ -19,6 +20,21 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params
     try {
         const user = await User.findOne({address:id})
+
+        if (!user) throw new Error('No User Found')
+        
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
+router.get('/role', async (req, res) => {
+    const role = "AD"
+    try {
+        const user = await User.find({ role : {
+            $search:role,
+            $options:"i"
+        }})
 
         if (!user) throw new Error('No User Found')
         
@@ -48,6 +64,7 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     const newUser = new User(req.body)
     try {
+        
         const user = await newUser.save()
         if (!user) throw new Error('Something went wrong saving the User')
         res.status(200).json(user)
@@ -56,28 +73,28 @@ router.post('/register', async (req, res) => {
     }
 })
 
-// router.put('/:id', async (req, res) => {
-//     const { id } = req.params
+router.put('/:id', async (req, res) => {
+    const { id } = req.params
 
-//     try {
-//         const response = await BucketListItem.findByIdAndUpdate(id, req.body)
-//         if (!response) throw Error('Something went wrong ')
-//         const updated = { ...response._doc, ...req.body }
-//         res.status(200).json(updated)
-//     } catch (error) {
-//         res.status(500).json({ message: error.message })
-//     }
-// })
+    try {
+        const response = await User.findByIdAndUpdate(id, req.body)
+        if (!response) throw Error('Something went wrong ')
+        const updated = { ...response._doc, ...req.body }
+        res.status(200).json(updated)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
 
-// router.delete('/:id', async (req, res) => {
-//     const { id } = req.params
-//     try {
-//         const removed = await BucketListItem.findByIdAndDelete(id)
-//         if (!removed) throw Error('Something went wrong ')
-//         res.status(200).json(removed)
-//     } catch (error) {
-//         res.status(500).json({ message: error.message })
-//     }
-// })
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params
+    try {
+        const removed = await User.findByIdAndDelete(id)
+        if (!removed) throw Error('Something went wrong ')
+        res.status(200).json(removed)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
 
 module.exports = router

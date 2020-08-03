@@ -11,6 +11,11 @@ const airportRouter = require('../routes/api/airportroute')
 const statusRouter = require('../routes/api/statusroute')
 const licenseRouter = require('../routes/api/licenseroute')
 
+const projectRouter = require('../routes/api/projectroute')
+
+const appRouter = require('../routes/api/approute')
+
+
 
 app.use(cors())
 app.use(morgan('tiny'))
@@ -31,6 +36,10 @@ app.use('/api/Users',userRouter)
 app.use('/api/airports',airportRouter)
 app.use('/api/status',statusRouter)
 app.use('/api/licensetable',licenseRouter)
+
+app.use('/api/projects',projectRouter)
+
+app.use('/api/appform',appRouter)
 
 if (process.env.NODE_ENV === 'production') { 
     app.use(express.static('client/build'))
