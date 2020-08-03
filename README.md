@@ -22,7 +22,7 @@
 |Mongo DB| NoSQL database for Storing User Management System|
 |Ganache| Ethereum Ganache tool - Provides Ethers & gas for local deployment of blockchain for development and testing |
 |Metamask| An chrome extension for accessing Ethereum enabled applications, or "Dapps" in your browser  |
-
+# Aerodrome Licensing Application & Approval 
 ![licensing](https://user-images.githubusercontent.com/50493250/89174577-b61d9900-d5a3-11ea-83a7-94e8fd320846.JPG)
 
 
@@ -47,11 +47,14 @@ Prerequisites:
 5) Metamask
 6) IPFS API@3.1.1
 
-Steps:
-1) Delete the previous repo
-2) clone this repo again
-3) cd Knowledge-Management-System 
-4) "npm install"
+Installation Steps:
+1) clone this repo & go to the directory
+```sh 
+git clone https://github.com/vaandhare/_kainotomous/
+cd _kainotomous
+```
+2) Install all Required packages using NPM.
+```sh "npm install" ```
 5) "nodemon src/app.js"  ---  your server should start and mongodb should be connected. 
 6) open another terminal in Knowledge-Management-System/client
 7) "npm install"
