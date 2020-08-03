@@ -40,12 +40,10 @@ Features:
 6) Add user to Mongodb
 
 Prerequisites:
-1) Geth
-2) Ganache
-3) Truffle
-4) Node.js
-5) Metamask
-6) IPFS API@3.1.1
+1) NPM & Node must me installed 
+2) Truffle & Ganache must be installed 
+3) Metamask
+4) IPFS API@3.1.1
 
 Installation Steps:
 1) clone this repo & go to the directory
@@ -53,17 +51,46 @@ Installation Steps:
 git clone https://github.com/vaandhare/_kainotomous/
 cd _kainotomous
 ```
+
 2) Install all Required packages using NPM.
-```sh "npm install" ```
-5) "nodemon src/app.js"  ---  your server should start and mongodb should be connected. 
-6) open another terminal in Knowledge-Management-System/client
-7) "npm install"
+```sh 
+"npm install" 
+```
+
+3) After Installation . Run the nbelow command 
+```sh
+ nodemon src/app.js
+ ```
+ your server should start and terminal should say mongodb connected. 
+
+4) open another terminal in client Folder and run below command ( it may take a while )
+```sh
+npm install
+```
 *****[Check the truffle-config.json , change the port number according to your ganache client port! ]****
-8) delete the abis folder in client/src/ 
-9) in client terminal -- i.e cd Knowledge-Management-System/ client , "truffle compile"
-10) truffle test - check if all tests are passing , you can skip this step but its easier to know if there is anything wrong before migrating 
-11) truffle migrate --reset
-12) npm start
+
+5) in client terminal , Run Command - 
+```sh
+truffle compile
+```
+then
+```sh
+truffle test
+```
+check if all tests are passing , you can skip this step but its easier to know if there is anything wrong before migrating 
+6) If all tests are passed , Run Command - 
+```sh
+truffle migrate --reset
+```
+then 
+```sh
+npm start
+```
+7) your client will start  and you can see the login page in the browser ( after logging in your metamask wallet)
+ register yourself first - use anyone of the address from your ganache client. 
+ 
+ ### Hopefully , you can see the UI !! Congratulations! 
+
 13) your client will start  and you can see the login page in the browser (obviously after logging in your metamask wallet)
 14) register yourself first - use anyone of the address from your ganache client. 
 15) login 
