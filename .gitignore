@@ -25,5 +25,9 @@ yarn-debug.log*
 yarn-error.log*
 
 
+client/abis/
+client/truffle-config.js
+.gitignore
+
 
 

@@ -316,7 +316,7 @@ class Dashboard extends React.Component {
 	}
 
   render() {
-    if (this.state.currentUser.role === "ED") {
+    if (this.state.currentUser.role === "CHQ(ED)") {
       console.log("Member Address", this.state.currentUser.address);
       return (
         <div>
