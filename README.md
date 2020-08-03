@@ -26,10 +26,16 @@
 ![licensing](https://user-images.githubusercontent.com/50493250/89174577-b61d9900-d5a3-11ea-83a7-94e8fd320846.JPG)
 
 
-Entities:
-1) Deputy /Member - Upload files 
-2) Chief / Hod - Approve Files 
-3) Chairman - Monitor Files
+## Entities:
+
+|Entities|Description|
+|-----|-----|
+| Aerodrome Director (AD) | Under AAI Operator & Single Point of contact between Aerodrome & DGCA|
+|ED License| Reviews the Documents Sent by AD before sending to DGCA|
+|DGCA|Grants the license for the aerodrome operator . Has Multiple Entities Working under this body|
+|Aerodrome Inspector (AI)|Works Under DGCA . Does Onsite & Offite Document Verification Before granting License|
+|Directorate  of Aerodrome Standards (DOAS)| Works under DGCA , Responsible for issuing the License for AAI Operator |
+
 
 Features:
 1) Upload files to IPFS
@@ -78,6 +84,7 @@ then
 truffle test
 ```
 check if all tests are passing , you can skip this step but its easier to know if there is anything wrong before migrating 
+
 6) If all tests are passed , Run Command - 
 ```sh
 truffle migrate --reset
@@ -89,7 +96,7 @@ npm start
 7) your client will start  and you can see the login page in the browser ( after logging in your metamask wallet)
  register yourself first - use anyone of the address from your ganache client. 
  
- ### Hopefully , you can see the UI !! Congratulations! 
+ ### Hopefully , you can see the UI Now  !! Congratulations! 
 
 
 
