@@ -138,6 +138,8 @@ class Dashboard extends React.Component {
       });
   }
 
+  
+
   reviewApp(id, timestamp) {
     this.setState({ loading: true });
     this.state.socialNetwork.methods
@@ -244,21 +246,21 @@ class Dashboard extends React.Component {
       });
   }
 
-  renewApp(id, timestamp) {
-    this.setState({ loading: true });
-    this.state.socialNetwork.methods
-      .renewApp(id, timestamp)
-      .send({ from: this.state.account })
-      .on("confirmation", (reciept) => {
-        this.setState({ loading: false });
-        // console.log(reciept)
-        // window.location.reload()
-      })
-      .once("receipt", (receipt) => {
-        console.log(receipt);
-        this.setState({ loading: false });
-      });
-  }
+  // renewApp(id, timestamp) {
+  //   this.setState({ loading: true });
+  //   this.state.socialNetwork.methods
+  //     .renewApp(id, timestamp)
+  //     .send({ from: this.state.account })
+  //     .on("confirmation", (reciept) => {
+  //       this.setState({ loading: false });
+  //       // console.log(reciept)
+  //       // window.location.reload()
+  //     })
+  //     .once("receipt", (receipt) => {
+  //       console.log(receipt);
+  //       this.setState({ loading: false });
+  //     });
+  // }
 
   constructor(props) {
     super(props);
@@ -279,16 +281,16 @@ class Dashboard extends React.Component {
       collapsed: false,
     };
     this.createApp = this.createApp.bind(this);
+    this.reviewApp = this.reviewApp.bind(this);
+    this.recreateApp = this.recreateApp.bind(this);
     this.issueApp = this.issueApp.bind(this);
     this.assignApp = this.assignApp.bind(this);
     this.approveApp = this.approveApp.bind(this);
     this.rejectApp = this.rejectApp.bind(this);
     this.grantApp = this.grantApp.bind(this);
-    this.renewApp = this.renewApp.bind(this);
+    // this.renewApp = this.renewApp.bind(this);
     this.checkAuth = this.checkAuth.bind(this);
-    this.returnDocs = this.returnDocs.bind(this);
-    this.reviewApp = this.reviewApp.bind(this);
-    this.recreateApp = this.recreateApp.bind(this);
+    // this.returnDocs = this.returnDocs.bind(this);
   }
   returnDocs() {
     console.log(this.state.docs);
@@ -457,7 +459,7 @@ class Dashboard extends React.Component {
                     apps={this.state.apps}
                     docs={this.state.docs}
                     assignApp={this.assignApp}
-                    renewApp={this.renewApp}
+                    // renewApp={this.renewApp}
                     grantApp={this.grantApp}
                   />
                 </Content>
@@ -615,7 +617,45 @@ class Dashboard extends React.Component {
             return (
               <div>
                 <Layout style={{ minHeight: "100vh" }}>
-                  
+                <Sider
+              collapsible
+              collapsed={this.state.collapsed}
+              onCollapse={this.onCollapse}
+            >
+              <div className="logo" />
+              <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+                <Menu.Item key="1">
+                  <AppstoreOutlined />
+
+                  <Menu.Item key="2">
+                    <span>
+                      {this.state.currentUser.fullname}(
+                      {this.state.currentUser.role})
+                    </span>
+                  </Menu.Item>
+
+                  <span>Home Page</span>
+                </Menu.Item>
+                <Menu.Item key="3">
+                  <Link to="/">
+                    <FolderOpenOutlined />
+                    <span>Projects</span>
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="4">
+                  <Link to="/">
+                    <UserSwitchOutlined />
+                    <span>Manage Users</span>
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="5">
+                  <Link to="/auth">
+                    <LogoutOutlined />
+                    <span>Logout</span>
+                  </Link>
+                </Menu.Item>
+              </Menu>
+            </Sider>
                   <Layout>
                     <Header style={{ background: "#fff" }}>
                       <span>Welcome, Airport Director </span>
@@ -629,6 +669,8 @@ class Dashboard extends React.Component {
                         approveApp={this.approveApp}
                         rejectApp={this.rejectApp}
                         recreateApp ={this.recreateApp}
+                        // currentUser={this.state.currentUser}
+
                       />
                     </Content>
                   </Layout>

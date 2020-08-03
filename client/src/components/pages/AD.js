@@ -13,10 +13,15 @@ import {
     CardFooter
 } from 'reactstrap';
 import React, { Component, Fragment } from 'react'
-import { Input, Radio , Checkbox } from 'antd';
-
+import { PlusOutlined } from '@ant-design/icons';
+import {  Descriptions, Input, Radio, Checkbox } from 'antd';
+// import { Input, Radio , Checkbox } from 'antd';
+// import { replaceOne } from '../../../../models/User';
+var APPID = "";
+var AIRPORTCODE="";
+var STATUS=""
 const { TextArea } = Input;
-
+var link = "https://ipfs.infura.io/ipfs/";
 function onChange(checkedValues) {
   console.log('checked = ', checkedValues);
 }
@@ -30,9 +35,12 @@ const ipfs = ipfsClient({
     port: process.env.PORT || "5001",
     protocol: "https",
 });
-var count = 0;
 
+var count = 0;
+var aero_owner="";
+var Airport="";
 const { Header, Content, Footer, Sider } = Layout;
+var feedback ="";
 
 class AD extends Component {
 
@@ -40,11 +48,33 @@ class AD extends Component {
     value: 1,
   };
 
-  onChange = e => {
+  ShowForm = e => {
     this.setState({
-      value: e.target.value,
+      showApplication: e.target.showApplication,
     });
   };
+
+  toggleHidden = (prevState) => {
+		this.setState({
+			showApplication: !prevState.showApplication
+		});
+  };
+  
+  openModal = () => {
+    this.setState({ modalIsOpen: true });
+  };
+
+  closeApp = (prevState) => {
+		this.setState({
+			showApplication: false
+		});
+  };
+
+  toggleLicense = (prevState) => {
+		this.setState({
+			showLicense: !prevState.showLicense
+		});
+	};
 
   async componentWillMount() {
     await this.loadWeb3();
@@ -77,7 +107,7 @@ class AD extends Component {
   }
 
   async fetchUserData() {
-    console.log("Address", this.props.account);
+    // console.log("Address", this.props.account);
     const response = await axios.get(
       `http://localhost:5000/api/Users/${this.props.account}`
     );
@@ -85,20 +115,29 @@ class AD extends Component {
   }
 
   async fetchStatus() {
-    console.log("Already Fetched", this.state.currentUser);
+    // console.log("Already Fetched", this.state.currentUser);
     const res = await axios.get(
       `http://localhost:5000/api/status/${this.state.currentUser.airportCode}`
     );
     let status = res.data[0];
+    console.log(status);
     if (status == undefined) {
       console.log("Undefined");
       this.setState({ isAppExist: false });
     } else {
-      this.setState({ isAppExist: false });
-      console.log("Apps", this.props.apps);
-      console.log("Status", status);
+      this.setState({ isAppExist: true});
+      // console.log("Apps", this.props.apps);
+      // console.log("Status", status);
       this.setState({ appID: status.appId });
       this.setState({ state: status.status });
+      this.setState({feedback:status.feedback});
+      APPID=status.appId;
+      AIRPORTCODE=status.feedback;
+      STATUS=status.status;
+      console.log(APPID,STATUS,AIRPORTCODE);
+      feedback = status.feedback;
+      console.log(feedback);
+
     }
     //
   }
@@ -108,14 +147,18 @@ class AD extends Component {
       `http://localhost:5000/api/airports/${this.state.currentUser.airportCode}`
     );
     let airport = res.data[0];
-    console.log("Airport is fetched",airport);
+    // console.log("Airport is fetched",airport);
 
     this.setState({airport});
+    Airport=airport;
   }
 
   constructor(props) {
     super(props);
     this.state = {
+      appId:"",
+      state:"",
+      isAppExist:false,
       collapsed: false,
       airport:'',
       airportCode: "",
@@ -123,7 +166,6 @@ class AD extends Component {
       approved_count: 0,
       pending_count: 0,
       buffer: "",
-      isAppExist: false,
       fullname:"",
       email:"",
       tel:0,
@@ -137,16 +179,22 @@ class AD extends Component {
       category:"",
       isAllWeather:"",
       weatherDetails:"",
+      buffer1:"",
+      buffer2:"",
+      buffer3:"",
+      buffer4:"",
+     modalIsOpen:true,
+     feedback:"",
 
     };
 
     this.get_timestamp = this.get_timestamp.bind(this);
     this.captureFile = this.captureFile.bind(this);
-    this.submitFile = this.submitFile.bind(this);
-    // this.buildAirportSelect = this.buildAirportSelect.bind(this);
-    // this.showAirports = this.showAirports.bind(this);
-
-    this.submitToBlockchain = this.submitToBlockchain.bind(this);
+    this.handleSubmit= this.handleSubmit.bind(this);
+    this.closeApp = this.closeApp.bind(this);
+    this.fetchStatus = this.fetchStatus.bind(this);
+    this.fetchUserData = this.fetchUserData.bind(this);
+    this.loadBlockchainData = this.loadBlockchainData.bind(this);
   }
   onCollapse = (collapsed) => {
     console.log(collapsed);
@@ -185,81 +233,108 @@ class AD extends Component {
 
   captureFile = (event) => {
     event.preventDefault();
+    const docNumber = event.target.id;
+    console.log(docNumber);
     const file = event.target.files[0];
     const reader = new window.FileReader(); // converts the file to a buffer
     reader.readAsArrayBuffer(file);
-    reader.onloadend = () => {
-      this.setState({ buffer: Buffer(reader.result) }, () => {
-        console.log(this.state.buffer);
-      });
-    };
-  };
-
-  submitFile = (event) => {
-    event.preventDefault();
-    console.log("buffer", this.state.buffer);
-    console.log("File Captured");
-    ipfs.add(this.state.buffer, (error, result) => {
-      count = count + 1;
-      console.log("ipfs");
-      console.log("Ipfs result", result);
-      var filehash = result[0].hash;
-      console.log(filehash);
-      if (count === 1) {
-        this.setState({ doc1: filehash });
-        console.log(filehash);
-      } else if (count === 2) {
-        this.setState({ doc2: filehash });
-        console.log(filehash);
-      } else if (count === 3) {
-        this.setState({ doc3: filehash });
-        console.log(filehash);
-      } else if (count === 4) {
-        this.setState({ doc4: filehash });
-        console.log(filehash);
-      }
-      if (error) {
-        console.log(error);
-        return;
-      }
-    });
+    if(docNumber === "doc1"){
+      reader.onloadend = () => {
+        this.setState({ buffer1: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer1);
+        });
+      };
+    }
+    else if(docNumber ==="doc2"){
+      reader.onloadend = () => {
+        this.setState({ buffer2: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer2);
+        });
+      };
+    }
+    else if(docNumber === "doc3"){
+      reader.onloadend = () => {
+        this.setState({ buffer3: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer3);
+        });
+      };
+    }
+    else{
+      reader.onloadend = () => {
+        this.setState({ buffer4: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer4);
+        });
+      };
+    }
+    
   };
 
   async handleSubmit(event) {
     event.preventDefault();
     const {fullname,email,tel,nation,aero_name,aero_owner,loc,
         details,isEnclosed,enclosing_details,category,isAllWeather,weatherDetails} = this.state;
+        // console.log(fullname,email,tel,nation,aero_name,aero_owner,loc,
+        //   details,isEnclosed,enclosing_details,category,isAllWeather,weatherDetails);
+        console.log(aero_name);
+        console.log(aero_owner);
         const applength = this.props.apps.length;  
-        const response = await axios.post("http://localhost:5000/api/ApplicationForm/new", {
-        id:applength,
-        appId:applength,
-        fullname: fullname,
+        const response = await axios.post("http://localhost:5000/api/appform/", {
+        formid:applength,
+        appid:applength,
+        name: fullname,
         email:email,
         telephone:tel,
         nationality:nation,
         aerodrome_name:aero_name,
         aerodrome_owner:aero_owner,
-        location:loc,
         is_enclosed:isEnclosed,
         enclosing_details:enclosing_details,
         category:category,
         isAllWeather:isAllWeather,
         weatherDetails:weatherDetails
-    });
+    }).then((response) =>{
+      if (response.data.status === 'success'){
+        alert("Message Sent."); 
+        this.resetForm()
+      }else if(response.data.status === 'fail'){
+        alert("Message failed to send.")
+      }
+    } );
     
-    const airresponse = await axios.get(`http://localhost:5000/api/ApplicationForm/${applength}`)
+    const airresponse = await axios.get(`http://localhost:5000/api/appform/${applength}`)
     const application = airresponse.data[0];
     console.log(application);
-    // const putres = await axios.put(`http://localhost:5000/api/airports/${airport._id}`, {
-    //   airport_code: airport.airport_code,
-    //   airport_name: airport.airport_name,
-    //   city_name: airport.city_name,
-    //   lat: airport.lat,
-    //   long: airport.long,
-    //   operatorAddr: address,
-    //   status: airport.status,
-    // });
-    // console.log(response.data);
+    console.log("File Captured");
+    const file = await ipfs.add([this.state.buffer1,this.state.buffer2,this.state.buffer3,this.state.buffer4]);
+    console.log(file[0].hash);
+    console.log(file[1].hash);
+    console.log(file[2].hash);
+    console.log(file[3].hash);
+    const airportCode = Airport.airport_code;
+    console.log(airportCode);
+    const timestamp = this.get_timestamp();
+    console.log(timestamp);
+    if(file){
+      const doc1 = file[0].hash;
+      const doc2 = file[1].hash;
+      const doc3 = file[2].hash;
+      const doc4 = file[3].hash;
+      const timestamp = this.get_timestamp();
+      const applength = this.props.apps.length;
+      console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
+  
+      this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
+  
+      // Save the status on the mongodb
+      const response = await axios.post(`http://localhost:5000/api/status/`, {
+        airport_code: airportCode,
+        appId: applength,
+        status: "created",
+      });
+    }
+    else{
+      console.log("Error uploading files!");
+    }
     this.cleanInputs()
   }
 
@@ -279,49 +354,19 @@ class AD extends Component {
     this.setState({weatherDetails:""})
   }
 
-  async submitToBlockchain(event) {
-    event.preventDefault();
-    const airportCode = this.state.currentUser.airportCode;
-    const timestamp = this.get_timestamp();
-    const applength = this.props.apps.length;
-    const doc1 = this.state.doc1;
-    const doc2 = this.state.doc2;
-    const doc3 = this.state.doc3;
-    const doc4 = this.state.doc4;
-    console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
-
-    this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
-    let status = {
-      airport_code: airportCode,
-      appId: applength,
-      status: "created",
-      feedback: "",
-    };
-    console.log(status);
-    // // Save the status on the mongodb
-    const response = await axios.post(
-      `http://localhost:5000/api/status/`,
-      status
-    );
-  }
-
-  // get_Application(){
-  //     let application;
-  //     await this.fetchStatus();
-  //     let status = this.state.currStatus;
-  //     return this.state.apps.maps((app)=>{
-  //         if(app.appId == this.status.appId){
-  //             application = app
-  //         }
-  //     })
-  //     return application;
-  // }
-
   render() {
+    const {showApplication,showLicense} = this.state;
+    
     return (
       <div>
-        {!this.state.isAppExist ? (
+        {showApplication ? (
           <div>
+            <Button
+					onClick={this.closeApp}
+					style={{ marginRight: '85%', marginTop: '10px' }}
+				>
+					<PlusOutlined />Close
+				</Button>
           <Card style={{margin: "10px", padding: "10px"}}>
           <h3 style={{ textAlign: "center", color: "gray", margin: "10px" }}>Application for an Aerodrome Application</h3>
           <Row>
@@ -382,8 +427,6 @@ class AD extends Component {
                       <Label>Is the Aerodrome Manual enclosed with this form.</Label>
                     </Col>
                     <Col md={6}>
-                    value={this.state.fullname}
-                        onChange={(e)=>{this.setState({fullname:e.target.value})}}
                       <Radio.Group onChange={(e)=>{this.setState({isEnclosed:e.target.value})}} value={this.state.isEnclosed} 
                       style={{marginLeft: "50px"}}>
                         <Radio value={1}>Yes</Radio>
@@ -416,8 +459,8 @@ class AD extends Component {
                       <p>Place name by which the Aerodrome is to be known in all future reference</p>
                     </Col>
                     <Col md={6}>
-                      <Input type="text" style={{padding: "5px"}} value={this.state.loc}
-                        onChange={(e)=>{this.setState({loc:e.target.value})}}/>
+                      <Input type="text" style={{padding: "5px"}} value={this.state.aero_name}
+                        onChange={(e)=>{this.setState({aero_name:e.target.value})}}/>
                     </Col>
                   </Row>
                   <Row>
@@ -425,7 +468,7 @@ class AD extends Component {
                       <p>Name & Address of the Owner of Aerodrome</p>
                     </Col>
                     <Col md={6}>
-                      <Input type="text" style={{padding: "5px"}} value={this.state.aero_owner}
+                      <Input type="text" style={{padding: "5px"}} 
                         onChange={(e)=>{this.setState({aero_owner:e.target.value})}}/>
                     </Col>
                   </Row>
@@ -434,7 +477,7 @@ class AD extends Component {
                       <p>Situation of the Aerodrome Site with reference to the nearest Airport, Railway Station & Town/Village</p>
                     </Col>
                     <Col md={6}>
-                      <TextArea row={4} type="text" style={{padding: "5px"}} value={this.state.details}
+                      <TextArea row={4} type="text" style={{padding: "5px"}} 
                         onChange={(e)=>{this.setState({details:e.target.value})}} />
                     </Col>
                   </Row>
@@ -453,8 +496,10 @@ class AD extends Component {
                       <Label>State category of licence required as defined in Aircraft Rules 1937?</Label>
                     </Col>
                     <Col md={6}>
-                      <Checkbox.Group options={LicenseType} value={this.state.category}
-                        onChange={(e)=>{this.setState({category:e.target.value})}} style={{marginLeft: "50px"}}/>
+                         <Checkbox value="Public Use" style={{marginLeft: "50px"}} 
+                         onChange={(event)=>{this.setState({category:event.target.value})}}>Public Use</Checkbox>
+                         <Checkbox value="Private Use" style={{marginLeft: "50px"}} 
+                         onChange={(event)=>{this.setState({category:event.target.value})}}>Private Use</Checkbox>
                     </Col>
                   </Row>
                   <Row>
@@ -462,8 +507,10 @@ class AD extends Component {
                       <p>Is a licence for NIGHT USE/ ALL WEATHER required?</p>
                     </Col>
                     <Col md={6}>
-                      <Checkbox.Group options={boolValues} value={this.state.isAllWeather}
-                        onChange={(e)=>{this.setState({isAllWeather:e.target.value})}} style={{marginLeft: "50px"}}/>
+                    <Checkbox value="1" style={{marginLeft: "50px"}} 
+                         onChange={(event)=>{this.setState({isAllWeather:event.target.value})}}>Yes</Checkbox>
+                         <Checkbox value="0" style={{marginLeft: "50px"}} 
+                         onChange={(event)=>{this.setState({category:event.target.value})}}>No</Checkbox>
                     </Col>
                   </Row>
                   <Row>
@@ -475,24 +522,13 @@ class AD extends Component {
                         onChange={(e)=>{this.setState({weatherDetails:e.target.value})}}/>
                     </Col>
                   </Row>
-                  <FormGroup>
-                  <Button
-                    type="submit"
-                    style={{ marginTop: "50px" }}
-                    color="success"
-                    className="btn btn-outline-light btn-block"
-                    onClick={this.handleSubmit}
-                  >
-                    Submit Application
-                  </Button>
-                </FormGroup>
                 </CardBody>
               </Card>
             </Col>
           </Row>
           <Col md={12}>
             <Card style={{ padding: "20px" }}>
-              <form onSubmit={this.submitToBlockchain}>
+              <form>
                 <Label
                   style={{
                     display: "flex",
@@ -520,17 +556,6 @@ class AD extends Component {
                               id="uploadLabel1"
                             />
                           </div>
-                          <Button
-                            type="button"
-                            color="primary"
-                            style={{ width: "100%", marginTop: "10px" }}
-                            className="btn"
-                            name="doc1Submit"
-                            onClick={this.submitFile}
-                          >
-                            {" "}
-                            Upload{" "}
-                          </Button>
                         </CardBody>
                       </Card>
                     </Col>
@@ -550,17 +575,6 @@ class AD extends Component {
                               id="uploadLabel1"
                             />
                           </div>
-                          <Button
-                            style={{ width: "100%", marginTop: "10px" }}
-                            type="button"
-                            color="primary"
-                            className="btn"
-                            name="doc1Submit"
-                            onClick={this.submitFile}
-                          >
-                            {" "}
-                            Upload{" "}
-                          </Button>
                         </CardBody>
                       </Card>
                     </Col>
@@ -580,17 +594,6 @@ class AD extends Component {
                               id="uploadLabel3"
                             />
                           </div>
-                          <Button
-                            type="button"
-                            color="primary"
-                            style={{ width: "100%", marginTop: "10px" }}
-                            className="btn"
-                            name="doc3Submit"
-                            onClick={this.submitFile}
-                          >
-                            {" "}
-                            Upload{" "}
-                          </Button>
                         </CardBody>
                       </Card>
                     </Col>
@@ -610,17 +613,6 @@ class AD extends Component {
                               id="uploadLabel4"
                             />
                           </div>
-                          <Button
-                            style={{ width: "100%", marginTop: "10px" }}
-                            type="button"
-                            color="primary"
-                            className="btn"
-                            name="doc4Submit"
-                            onClick={this.submitFile}
-                          >
-                            {" "}
-                            Upload{" "}
-                          </Button>
                         </CardBody>
                       </Card>
                     </Col>
@@ -632,6 +624,7 @@ class AD extends Component {
                     style={{ marginTop: "50px" }}
                     color="success"
                     className="btn btn-outline-light btn-block"
+                    onClick={this.handleSubmit}
                   >
                     Submit Application
                   </Button>
@@ -643,69 +636,108 @@ class AD extends Component {
             </div>
         ) : (
           <div>
-            {this.props.apps.map((app, key) => {
-             let doc = this.props.docs[key];
+						<Row style={{ marginTop: '10px' }}>
+							<Col md={3} />
+							<Col md={6}>
+								<Card>
+									<Descriptions title="Application Info" style={{ padding: '10px' }} bordered>
+        <Descriptions.Item label="Airport Code">{Airport.airport_code}</Descriptions.Item>
+										<Descriptions.Item label="Airport Name" span={2}>
+											{Airport.airport_name}
+										</Descriptions.Item>
+										<Descriptions.Item label="Lattitude">{Airport.lat}</Descriptions.Item>
+										<Descriptions.Item label="Longitude" span={2}>
+											{Airport.long}
+										</Descriptions.Item>
+										<Descriptions.Item label="Status" span={3}>
+											<Button color="secondary" onClick={this.toggleHidden}>
+												Create Application
+											</Button>
+											{/* <Button color="info">Application Created & Sent to HQ</Button>
+											<Button color="info">Issued to DGCA</Button>
+											<Button color="info">Assigned to AI</Button>
+											<Button color="info">Approved & Sent to DoAS</Button> */}
+											<Button color="success" onClick={this.toggleLicense}>
+												License Granted
+											</Button>
+											{/* <Button color="warning">Application Need Improvements</Button>
+											<Button color="danger">Application Rejected</Button> */}
+										</Descriptions.Item>
+										<Descriptions.Item label="Feedback" span={3}>
+											{feedback}
+										</Descriptions.Item>
+									</Descriptions>
+									<div class="col text-center" />
+								</Card>
+								{showLicense ? (
+									<Card style={{ marginTop: '15px' }}>
+										<div style={{ textAlign: 'center', padding: '40px' }}>
+											<h5 style={{ padding: '10px' }}>
+												Congratulations your License is Granted!!
+											</h5>
+											<Button color="success" style={{ margin: '10px' }}>
+												DOWNLOAD LICENSE
+											</Button>
+										</div>
+									</Card>
+								) : null}
+							</Col>
+						</Row>
+           {this.props.apps.map((app, key) => {
               let application;
-              console.log("Key", key, "- APP ID:", this.state.appID);
-            //   let index = key+1;
-              if (key == (this.state.appID-1)) {
-                
-                console.log(doc);
-                console.log("Key", key, "- APP ID:", this.state.appID);
+              let doc;
+              if(app.appId === APPID ){
                 application = app;
-                console.log(app)
-                const { airport, status, currentUser, state } = this.state;
-                return (
-                  <div className="card container m-2 p-3" key={key}>
-                    <div className="row">
-                      <div className="col-9">
-                        <h1 style={{ color: "grey" }}>License Application</h1>
-                        <h4
-                          className="h6"
-                          style={{ color: "grey", marginTop: "5%" }}
-                        >
-                          Airport Name:{airport.airport_name}
-                        </h4>
-                        <h4 className="h6" style={{ color: "grey" }}>
-                          Airport Code:{airport.airport_code}
-                        </h4>
-                        <br />
-                        <h4
-                          className="h6"
-                          style={{ fontWeight: "bold", color: "grey" }}
-                        >
-                          Uploaded Documents
-                        </h4>
-                      </div>
-                      <div className="col-3">
-                        <span
-                          className="badge badge-secondary"
-                          style={{
-                            marginTop: "10%",
-                            padding: "20px",
-                            paddingRight: "1.2rem",
-                            marginRight: "10%",
-                            fontSize: "1rem",
-                          }}
-                        >
-                          {state}
-                        </span>
-                        <br />
-                        <br />
-                        <h4 className="h5" style={{ color: "grey" }}>
-                          Uploaded By
-                        </h4>
-                        <h5 className="h6" style={{ color: "grey" }}>
-                          {currentUser.fullname}
-                        </h5>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-6">
-                        <div className="card" style={{ padding: "15px" }}>
-                          <div className="row">
-                            <div className="col-6">Aerodrome Manual</div>
-                            {/* <div className="col-6">
+                doc = this.props.docs[key];
+              
+              console.log(application);
+              console.log(doc);
+								const { airport, status, currentUser, state } = this.state;
+								return (
+									<div className="card container m-2 p-3" key={key}>
+										<div className="row">
+											<div className="col-9">
+												<h1 style={{ color: 'grey' }}>License Application</h1>
+												<h4 className="h6" style={{ color: 'grey', marginTop: '5%' }}>
+													Airport Name:{airport.airport_name}
+												</h4>
+												<h4 className="h6" style={{ color: 'grey' }}>
+													Airport Code:{airport.airport_code}
+												</h4>
+												<br />
+												<h4 className="h6" style={{ fontWeight: 'bold', color: 'grey' }}>
+													Uploaded Documents
+												</h4>
+											</div>
+											<div className="col-3">
+												<span
+													className="badge badge-secondary"
+													style={{
+														marginTop: '10%',
+														padding: '20px',
+														paddingRight: '1.2rem',
+														marginRight: '10%',
+														fontSize: '1rem'
+													}}
+												>
+													{application.state}
+												</span>
+												<br />
+												<br />
+												<h4 className="h5" style={{ color: 'grey' }}>
+													Uploaded By
+												</h4>
+												<h5 className="h6" style={{ color: 'grey' }}>
+													{currentUser.fullname}
+												</h5>
+											</div>
+										</div>
+										<div className="row">
+											<div className="col-6">
+												<div className="card" style={{ padding: '15px' }}>
+													<div className="row">
+														<div className="col-6">Aerodrome Manual</div>
+														<div className="col-6">
                               <a
                                 href={link.concat(doc.aerodromeManual)}
                                 className="btn btn-secondary text-center"
@@ -713,16 +745,16 @@ class AD extends Component {
                               >
                                 View Document
                               </a>
-                            </div> */}
-                          </div>
-                        </div>
-                      </div>
+                            </div> 
+													</div>
+												</div>
+											</div>
 
-                      <div className="col-6">
-                        <div className="card" style={{ padding: "15px" }}>
-                          <div className="row">
-                            <div className="col-6">Licensing Fee</div>
-                            {/* <div className="col-6">
+											<div className="col-6">
+												<div className="card" style={{ padding: '15px' }}>
+													<div className="row">
+														<div className="col-6">Licensing Fee</div>
+														 <div className="col-6">
                               <a
                                 href={link.concat(doc.licensingFee)}
                                 className="btn btn-secondary text-center"
@@ -730,18 +762,18 @@ class AD extends Component {
                               >
                                 View Document
                               </a>
-                            </div> */}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <br />
-                    <div className="row">
-                      <div className="col-6">
-                        <div className="card" style={{ padding: "15px" }}>
-                          <div className="row">
-                            <div className="col-6">CAR Compliance</div>
-                            {/* <div className="col-6">
+                            </div> 
+													</div>
+												</div>
+											</div>
+										</div>
+										<br />
+										<div className="row">
+											<div className="col-6">
+												<div className="card" style={{ padding: '15px' }}>
+													<div className="row">
+														<div className="col-6">CAR Compliance</div>
+														<div className="col-6">
                               <a
                                 href={link.concat(doc.CARcompliance)}
                                 className="btn btn-secondary text-center"
@@ -749,15 +781,15 @@ class AD extends Component {
                               >
                                 View Document
                               </a>
-                            </div> */}
-                          </div>
-                        </div>
-                        </div>
-                        <div className="col-6">
-                          <div className="card" style={{ padding: "15px" }}>
-                            <div className="row">
-                              <div className="col-6">Exceptions Document</div>
-                              {/* <div className="col-6">
+                            </div> 
+													</div>
+												</div>
+											</div>
+											<div className="col-6">
+												<div className="card" style={{ padding: '15px' }}>
+													<div className="row">
+														<div className="col-6">Exceptions Document</div>
+													 <div className="col-6">
                                 <a
                                   href={link.concat(doc.exceptionsDoc)}
                                   className="btn btn-secondary text-center"
@@ -765,17 +797,20 @@ class AD extends Component {
                                 >
                                   View Document
                                 </a>
-                              </div> */}
-                              
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                              </div> 
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
                   
                 );
+                          
               }
-            })}
+            })
+
+        }
+        
           </div>
         )}
       </div>

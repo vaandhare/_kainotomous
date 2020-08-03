@@ -10,7 +10,9 @@ import {
   ModalHeader,
   Row,
 } from "reactstrap";
+import { Input, Radio , Checkbox } from 'antd';
 
+const { TextArea } = Input;
 
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
@@ -43,20 +45,23 @@ class MoCA extends Component {
       modalIsOpen:false,
       secondModalIsOpen: false,
       buffer: "",
+      buffer1:"",
+      buffer2:"",
+      buffer3:"",
+      buffer4:"",
+      feedback:""
     };
 
     this.get_Airports = this.get_Airports.bind(this);
     this.get_airportData = this.get_airportData.bind(this);
     this.get_Airport = this.get_Airport.bind(this);
-  
     this.captureFile = this.captureFile.bind(this);
-    this.submitFile = this.submitFile.bind(this);
     this.buildAirportSelect = this.buildAirportSelect.bind(this);
-
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
     this.get_timestamp = this.get_timestamp.bind(this);
     this.get_approved_count = this.get_approved_count.bind(this)
+    this.reviewApplication = this.reviewApplication.bind(this);
   }
 
   async get_Airports() {
@@ -138,12 +143,39 @@ class MoCA extends Component {
 
   async reviewApplication(event) {
     event.preventDefault();
-    const timestamp = this.get_timestamp();
+    const feedback = this.state.feedback;
+    // this.setState({feedback:feedback});
+    console.log(feedback);
+    let date_ob = new Date();
+    let year = date_ob.getFullYear();
+    // current date
+    // adjust 0 before single digit date
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    // current month
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let hours = date_ob.getHours();
+    // current minutes
+    let minutes = date_ob.getMinutes();
+    // current seconds
+    let seconds = date_ob.getSeconds();
+    // prints date in YYYY-MM-DD formatc
+    const timestamp =
+      year +
+      "-" +
+      month +
+      "-" +
+      date +
+      " " +
+      hours +
+      ":" +
+      minutes +
+      ":" +
+      seconds;
     console.log(timestamp);
     const appId = application.appId;
     const airportCode = application.airportCode;
     console.log(appId, timestamp);
-    this.props.reviewApp(appId, timestamp);
+    this.props.reviewApp(appId,timestamp);
     console.log("Application in review!!");
     const response = await axios.put(
       `http://localhost:5000/api/status/${airportCode}`,
@@ -151,46 +183,47 @@ class MoCA extends Component {
         airport_code: airportCode,
         appId: appId,
         status: "reviewed",
+        feedback:feedback
       }
     );
   }
 
   captureFile = (event) => {
     event.preventDefault();
+    const docNumber = event.target.id;
+    console.log(docNumber);
     const file = event.target.files[0];
     const reader = new window.FileReader(); // converts the file to a buffer
     reader.readAsArrayBuffer(file);
-    reader.onloadend = () => {
-      this.setState({ buffer: Buffer(reader.result) }, () => {
-        console.log(this.state.buffer);
-      });
-    };
-  };
-
-  submitFile = (event) => {
-    event.preventDefault();
-    console.log("buffer", this.state.buffer);
-    console.log("File Captured");
-    ipfs.add(this.state.buffer, (error, result) => {
-      count = count + 1;
-      console.log("ipfs");
-      console.log("Ipfs result", result);
-      var filehash = result[0].hash;
-      console.log(filehash);
-      if (count === 1) {
-        this.setState({ doc1: filehash });
-      } else if (count === 2) {
-        this.setState({ doc2: filehash });
-      } else if (count === 3) {
-        this.setState({ doc3: filehash });
-      } else if (count === 4) {
-        this.setState({ doc4: filehash });
-      }
-      if (error) {
-        console.log(error);
-        return;
-      }
-    });
+    if(docNumber === "doc1"){
+      reader.onloadend = () => {
+        this.setState({ buffer1: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer1);
+        });
+      };
+    }
+    else if(docNumber ==="doc2"){
+      reader.onloadend = () => {
+        this.setState({ buffer2: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer2);
+        });
+      };
+    }
+    else if(docNumber === "doc3"){
+      reader.onloadend = () => {
+        this.setState({ buffer3: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer3);
+        });
+      };
+    }
+    else{
+      reader.onloadend = () => {
+        this.setState({ buffer4: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer4);
+        });
+      };
+    }
+    
   };
 
   buildAirportSelect() {
@@ -214,31 +247,38 @@ get_airportData(airportCode){
     }
   })
 }
-
-
  
-
-
   async submitToBlockchain(event) {
     event.preventDefault();
-    const airportCode = this.state.airportCode;
-    const timestamp = this.get_timestamp();
-    const applength = this.props.apps.length;
-
-    const doc1 = this.state.doc1;
-    const doc2 = this.state.doc2;
-    const doc3 = this.state.doc3;
-    const doc4 = this.state.doc4;
-    console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
-
-    this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
-
-    // Save the status on the mongodb
-    const response = await axios.post(`http://localhost:5000/api/status/`, {
-      airport_code: airportCode,
-      appId: applength,
-      status: "created",
-    });
+    console.log("File Captured");
+    const file = await ipfs.add([this.state.buffer1,this.state.buffer2,this.state.buffer3,this.state.buffer4]);
+    console.log(file[0].hash);
+    console.log(file[1].hash);
+    console.log(file[2].hash);
+    console.log(file[3].hash);
+    if(file){
+      const doc1 = file[0].hash;
+      const doc2 = file[1].hash;
+      const doc3 = file[2].hash;
+      const doc4 = file[3].hash;
+      const airportCode = this.state.airportCode;
+      const timestamp = this.get_timestamp();
+      const applength = this.props.apps.length;
+      console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
+  
+      this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
+  
+      // Save the status on the mongodb
+      const response = await axios.post(`http://localhost:5000/api/status/`, {
+        airport_code: airportCode,
+        appId: applength,
+        status: "created",
+      });
+    }
+    else{
+      console.log("Error uploading files!");
+    }
+   
   }
 
   async displayAppDetails(app,airport){
@@ -497,7 +537,7 @@ get_airportData(airportCode){
                                     );
                                 })}
                             </div>
-                <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal}
+                <Modal isOpen={this.state.modalIsOpen} 
                 toggle={this.openModal} size="lg" style={{maxWidth: '800px', width: '80%'}}>
                   <ModalBody>
                   <form >
@@ -555,7 +595,7 @@ get_airportData(airportCode){
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
-                              <div className="col-9">
+                              <div className="col-12">
                                   <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
                               <input
@@ -570,11 +610,6 @@ get_airportData(airportCode){
                               >Aerodrome Manual</label>
                               </FormGroup>
                               </div>
-                              <div className="col-3">
-                                <button className="btn btn-secondary text-center" onClick={this.submitFile}>
-                                  Select
-                                </button>
-                              </div>
                             </div>
                           </div>
                         </div>
@@ -583,11 +618,11 @@ get_airportData(airportCode){
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
-                              <div className="col-9">
+                              <div className="col-12">
                               <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
                               <input
-                                id="doc1"
+                                id="doc2"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -598,10 +633,6 @@ get_airportData(airportCode){
                               >SMS Manual</label>
                               </FormGroup>
                               </div>
-                              <div className="col-3">
-                                <button className="btn btn-secondary text-center" onClick={this.submitFile}>
-                                  Select
-                                </button>
                               </div>
                             </div>
 
@@ -613,11 +644,11 @@ get_airportData(airportCode){
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
-                              <div className="col-9">
+                              <div className="col-12">
                               <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
                <input
-                                id="doc1"
+                                id="doc3"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -628,23 +659,18 @@ get_airportData(airportCode){
                               >CAR Compliance Document</label>
                               </FormGroup>
                               </div>
-                              <div className="col-3">
-                                <button className="btn btn-secondary" onClick={this.submitFile}>
-                                  Select
-                                </button>
-                              </div>
                             </div>
                           </div>
                         </div>
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
-                              <div className="col-9">
+                              <div className="col-12">
                               <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
 
                               <input
-                                id="doc1"
+                                id="doc4"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -655,16 +681,10 @@ get_airportData(airportCode){
                               >Exceptions Document</label>
                               </FormGroup>
                               </div>
-                              <div className="col-3">
-                                <button className="btn btn-secondary" onClick={this.submitFile}>
-                                  Select
-                                </button>
-                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
                     <br />
                     <div className="row">
                       <div className="col-6">
@@ -697,7 +717,7 @@ get_airportData(airportCode){
                 </Modal>
 
                 <Modal isOpen={this.state.secondModalIsOpen}
-                onRequestClose={this.closeSecondModal}  
+                 
                 size="lg" 
                 style={{ maxWidth: '800px', width: '80%' }}>
                 <ModalBody>
@@ -800,6 +820,15 @@ get_airportData(airportCode){
                             </div>
                           </div>
                         </div>
+                        </div>
+                        <br/><br/>
+                        <div className="row">
+                          <br/>
+                          <br/>
+                        <TextArea row={4} type="text" style={{padding: "5px"}} 
+                        onChange={(event)=>{this.setState({feedback:event.target.value})}} placeholder="Provide Feedback" />
+                        </div>
+                        <div className="row">
                       <Button
                       type="submit"
                       color="primary"
@@ -810,7 +839,7 @@ get_airportData(airportCode){
                       Close
                     </Button>
                     <Button
-                      type="submit"
+                      type="button"
                       color="primary"
                       className="btn btn-outline-light float-left"
                       style={{ marginLeft: "80%" }}

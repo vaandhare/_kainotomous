@@ -217,7 +217,7 @@ function rejectApp(uint _id, string memory timestamp) public {
        // }
 }
 
-function renewApp(uint _id, string memory timestamp) public {
+function recreateApp(uint _id, string memory airportCode, string memory doc1, string memory doc2, string memory doc3,string memory doc4, string memory timestamp) public {
    //Require valid ID
     require(_id > 0 && _id <= appCount);
     //fetch the application and document 
@@ -225,21 +225,11 @@ function renewApp(uint _id, string memory timestamp) public {
     Document memory doc = docs[app.id];
         // validation of state is not used here because this function is used twice. 
             //Change the state of the application
-             app.state="renewed";
-            //Update the application
-             apps[_id] = app;
-            //Trigger event
-             emit AppRecreated(app.appId,app.airportCode,doc.id,"renewed",timestamp,msg.sender);
-        }
-
-function recreateApp(uint _id, string memory timestamp) public {
-   //Require valid ID
-    require(_id > 0 && _id <= appCount);
-    //fetch the application and document 
-    Application memory app = apps[_id];
-    Document memory doc = docs[app.id];
-        // validation of state is not used here because this function is used twice. 
-            //Change the state of the application
+            app.airportCode = airportCode;
+            doc.aerodromeManual = doc1;
+            doc.licensingFee = doc2;
+            doc.CARcompliance =  doc3;
+            doc.exceptionsDoc = doc4;
              app.state="recreated";
             //Update the application
              apps[_id] = app;
@@ -255,11 +245,11 @@ function reviewApp(uint _id, string memory timestamp) public {
     Document memory doc = docs[app.id];
         // validation of state is not used here because this function is used twice. 
             //Change the state of the application
-             app.state="review";
+             app.state="reviewed";
             //Update the application
              apps[_id] = app;
             //Trigger event
-             emit AppReview(app.appId,app.airportCode,doc.id,"review",timestamp,msg.sender);
+             emit AppReview(app.appId,app.airportCode,doc.id,"reviewed",timestamp,msg.sender);
         }
 
 
