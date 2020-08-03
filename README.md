@@ -42,12 +42,13 @@ https://kainotomous.herokuapp.com/
 
 
 ## Features:
-- Upload files to IPFS
-- Approve Files 
-- List Files 
-- Login 
-- Register
-- Add user to Mongodb
+- Upload files to IPFS( Distributed File System )
+- Approve / Reject License Applications by Concerned Officers
+- Creation of  projects by concerned officers
+- Retrival & Listing of Projects/ Applications for License
+- Login & Register
+- User Management System (Add USer , Delete User , Manage Roles)
+- Issue Aerodrome License
 
 Prerequisites:
 1) NPM & Node must me installed 
