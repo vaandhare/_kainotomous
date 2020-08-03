@@ -1,26 +1,24 @@
 import {
-
-  AppstoreOutlined,
-  FolderOpenOutlined,
-  LogoutOutlined,
-  SearchOutlined,
-  UserSwitchOutlined,
+	AppstoreOutlined,
+	FolderOpenOutlined,
+	LogoutOutlined,
+	SearchOutlined,
+	UserSwitchOutlined
 } from "@ant-design/icons";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Descriptions } from "antd";
 import axios from "axios";
-import React, {Fragment} from "react";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import Web3 from "web3";
-import Navbar from "./Navbar";
 import SocialNetwork from "../../abis/SocialNetwork.json";
 import "../../styles/App.scss";
 import "../../styles/Dashboard.css";
+import LoaderPage from '../redirect/LoaderPage';
 import AD from "./AD";
 import AI from "./AI";
 import DGCA from "./DGCA";
 import DoAS from "./DoAS";
 import MoCA from "./MoCA";
-import LoaderPage from '../redirect/LoaderPage'
 
 
 
@@ -584,7 +582,7 @@ class Dashboard extends React.Component {
 										</Menu>
 									</Sider>
 									<Layout>
-										{/* <Header style={{ background: "#000" }}>
+										<Header style={{ background: "#000" }}>
                 <input
                   type="text"
                   placeholder="Search Document or Project"
@@ -609,272 +607,9 @@ class Dashboard extends React.Component {
             </Layout>
           </Layout>
         </div>
-      );
-    } else {
-      if (this.state.currentUser.role === "DoAS") {
-        console.log("Member Address", this.state.currentUser.role);
-        return (
-          <div>
-            {/* <Navbar account={this.state.currentUser} /> */}
-            <Layout style={{ minHeight: "100vh" }}>
-              <Sider
-                collapsible
-                collapsed={this.state.collapsed}
-                onCollapse={this.onCollapse}
-              >
-                <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-                  <Menu.Item key="1">
-                    <span>
-                      {this.state.currentUser.fullname}(
-                      {this.state.currentUser.role})
-                    </span>
-                  </Menu.Item>
-                  <Menu.Item key="2">
-                    <AppstoreOutlined />
-                    <span>Home Page</span>
-                  </Menu.Item>
-                  <Menu.Item key="3">
-                    <Link to="/project">
-                      <FolderOpenOutlined />
-                      <span>Projects</span>
-                    </Link>
-                  </Menu.Item>
-                  
-                  <Menu.Item key="4">
-                    <Link to="/auth">
-                      <LogoutOutlined />
-                      <span>Logout</span>
-                    </Link>
-                  </Menu.Item>
-                </Menu>
-              </Sider>
-              <Layout>
-                <Header style={{ background: "#000" }}>
-                  <input
-                    type="text"
-                    placeholder="Search Document or Project"
-                    prefix={<SearchOutlined style={{ color: "red" }} />}
-                    style={{
-                      width: "100%",
-                      height: "80%",
-                      padding: "9px",
-                      borderRadius: "3px",
-                    }}
-                  />
-                </Header>
-                <Content style={{ margin: "0 16px" }}>
-                  <DoAS
-                    account={this.state.account}
-                    apps={this.state.apps}
-                    docs={this.state.docs}
-                    assignApp={this.assignApp}
-                    renewApp={this.renewApp}
-                    grantApp={this.grantApp}
-                  />
-                </Content>
-              </Layout>
-            </Layout>
-          </div>
-        );
-      } else {
-        if (this.state.currentUser.role === "DGCA") {
-          return (
-            <div>
-              {/* <Navbar account={this.state.currentUser} /> */}
-              <Layout style={{ minHeight: "100vh" }}>
-                <Sider
-                  collapsible
-                  collapsed={this.state.collapsed}
-                  onCollapse={this.onCollapse}
-                >
-                  <div className="logo" />
-                  <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-                    <Menu.Item key="1">
-                      <span>
-                        {this.state.currentUser.fullname}(
-                        {this.state.currentUser.role})
-                      </span>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                      <AppstoreOutlined />
-                      <span>Home Page</span>
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                      <Link to="/project">
-                        <FolderOpenOutlined />
-                        <span>Projects</span>
-                      </Link>
-                    </Menu.Item>
-                    <Menu.Item key="4">
-                    <Link to="/useradmin">
-                    <UserSwitchOutlined />
-                    <span>Manage Users</span>
-                  </Link>
-                    </Menu.Item>
-                    <Menu.Item key="5">
-                      <Link to="/auth">
-                        <LogoutOutlined />
-                        <span>Logout</span>
-                      </Link>
-                    </Menu.Item>
-                  </Menu>
-                </Sider>
-                <Layout>
-                  <Header style={{ background: "#000" }}>
-                    <input
-                      type="text"
-                      placeholder="Search Document or Project"
-                      prefix={<SearchOutlined style={{ color: "red" }} />}
-                      style={{
-                        width: "100%",
-                        height: "80%",
-                        padding: "9px",
-                        borderRadius: "3px",
-                      }}
-                    />
-                  </Header>
-                  <Content style={{ margin: "0 16px" }}>
-                    <DGCA
-                      account={this.state.account}
-                      apps={this.state.apps}
-                      docs={this.state.docs}
-                      issueApp={this.issueApp}
-                      grantApp={this.grantApp}
-                    />
-                  </Content>
-                </Layout>
-              </Layout>
-            </div>
-          );
-        } else {
-          if (this.state.currentUser.role === "AI") {
-            console.log("Member Address", this.state.currentUser.role);
-            return (
-              <div>
-                {/* <Navbar account={this.state.currentUser} /> */}
-                <Layout style={{ minHeight: "100vh" }}>
-                  <Sider
-                    collapsible
-                    collapsed={this.state.collapsed}
-                    onCollapse={this.onCollapse}
-                  >
-                    <div className="logo" />
-                    <Menu
-                      theme="dark"
-                      defaultSelectedKeys={["1"]}
-                      mode="inline"
-                    >
-                      <Menu.Item key="1">
-                        <span>
-                          {this.state.currentUser.fullname}(
-                          {this.state.currentUser.role})
-                        </span>
-                      </Menu.Item>
-                      <Menu.Item key="2">
-                        <AppstoreOutlined />
-                        <span>Home Page</span>
-                      </Menu.Item>
-                      
-                      
-                      <Menu.Item key="3">
-                        <Link to="/auth">
-                          <LogoutOutlined />
-                          <span>Logout</span>
-                        </Link>
-                      </Menu.Item>
-                    </Menu>
-                  </Sider>
-                  <Layout>
-                    <Header style={{ background: "#000" }}>
-                      <input
-                        type="text"
-                        placeholder="Search Document or Project"
-                        prefix={<SearchOutlined style={{ color: "red" }} />}
-                        style={{
-                          width: "100%",
-                          height: "80%",
-                          padding: "9px",
-                          borderRadius: "3px",
-                        }}
-                      />
-                    </Header>
-                    <Content style={{ margin: "0 16px" }}>
-                      <AI
-                        account={this.state.account}
-                        apps={this.state.apps}
-                        docs={this.state.docs}
-                        approveApp={this.approveApp}
-                        rejectApp={this.rejectApp}
-                      />
-                    </Content>
-                  </Layout>
-                </Layout>
-              </div>
-            );
-          } else if(this.state.currentUser.role === "AD") {
-            // console.log("Member Address", this.state.currentUser.role);
-            return (
-              <div>
-                {/* <Navbar account={this.state.currentUser} /> */}
-                <Layout style={{ minHeight: "100vh" }}>
-                  <Sider
-                    collapsible
-                    collapsed={this.state.collapsed}
-                    onCollapse={this.onCollapse}
-                  >
-                    <div className="logo" />
-                    <Menu
-                      theme="dark"
-                      defaultSelectedKeys={["1"]}
-                      mode="inline"
-                    >
-                      <Menu.Item key="1">
-                        <span>
-                          {this.state.currentUser.fullname}(
-                          {this.state.currentUser.role})
-                        </span>
-                      </Menu.Item>
-                      <Menu.Item key="2">
-                        <AppstoreOutlined />
-                        <span>Home Page</span>
-                      </Menu.Item>
-                      <Menu.Item key="3">
-                        <Link to="/project">
-                          <FolderOpenOutlined />
-                          <span>Projects</span>
-                        </Link>
-                      </Menu.Item>
-                      
-                      <Menu.Item key="4">
-                        <Link to="/auth">
-                          <LogoutOutlined />
-                          <span>Logout</span>
-                        </Link>
-                      </Menu.Item>
-                    </Menu>
-                  </Sider>
-                  <Layout>
-                    
-                    <Header style={{ background: "#fff" }}>
-                      <span>Welcome, Airport Director </span>
-                    </Header>
-                    <Content style={{ margin: "0 16px" }}>
-                      <AD
-                        account={this.state.account}
-                        apps={this.state.apps}
-                        docs={this.state.docs}
-                        createApp={this.createApp}
-                        approveApp={this.approveApp}
-                        rejectApp={this.rejectApp}
-                      />
-                    </Content>
-                  </Layout>
-                </Layout>
-              </div>
-            );
-          }
-          
+      							);
+    				} 
+      
           else{
             return (
               <Fragment>

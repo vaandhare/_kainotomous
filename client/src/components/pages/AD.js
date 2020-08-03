@@ -1,6 +1,6 @@
 
 import Web3 from 'web3'
-import { Layout } from 'antd';
+import { Layout, Descriptions } from 'antd';
 import axios from "axios";
 import {
     Row,

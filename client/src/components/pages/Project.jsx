@@ -1,33 +1,30 @@
 import {
   AppstoreOutlined,
-  FolderOpenOutlined, InboxOutlined, LogoutOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  FolderOpenOutlined,
+  InboxOutlined,
+  LogoutOutlined,
   PlusOutlined,
   UserSwitchOutlined,
-  DeleteOutlined,
-  EditOutlined
 } from "@ant-design/icons";
 import {
   Button,
-
-
-
-
-
-
-  Descriptions, Drawer,
+  Card,
+  Drawer,
   Form,
   Input,
   Layout,
   Menu,
-
-
-
-
-
-
-  message, Row,
-  Select, Upload,
-  Skeleton, Switch, Card, Avatar
+  message,
+  Popconfirm,
+  Row,
+  Select,
+  Space,
+  Table,
+  Upload,
+  Skeleton,
+  Descriptions
 } from "antd";
 import axios from "axios";
 import React, { Component, Fragment } from "react";
@@ -48,7 +45,7 @@ const ipfs = ipfsClient({
 const { Header, Content, Footer, Sider } = Layout;
 
 const { Option } = Select;
-let fileList = []
+let fileList = [];
 class Project extends Component {
   async componentWillMount() {
     await this.loadCurrentUser();
@@ -58,23 +55,23 @@ class Project extends Component {
 
   async loadAllADUsers() {
     let res = await axios.get("http://localhost:5000/api/Users/");
-    
+
     let response = res.data;
     let users = [];
-    response.map((user)=>{
-        if(user.role == "AD"){
-            users.push(user)
-        }
-    })
-    
+    response.map((user) => {
+      if (user.role == "AD") {
+        users.push(user);
+      }
+    });
+
     this.setState({ users: users });
   }
 
-  async loadAllProjects(){
-    let res = await axios.get("http://localhost:5000/api/projects")
-    let projects = res.data
-    this.setState({projects})
-    this.setState({loading:false})
+  async loadAllProjects() {
+    let res = await axios.get("http://localhost:5000/api/projects");
+    let projects = res.data;
+    this.setState({ projects });
+    this.setState({ loading: false });
     console.log("Projects",this.state.projects)
   }
 
@@ -82,7 +79,6 @@ class Project extends Component {
     let currentUser = localStorage.getItem("currentAccount");
     let res = await axios.get(`http://localhost:5000/api/Users/${currentUser}`);
     this.setState({ currentUser: res.data });
-    
   }
 
   constructor(props) {
@@ -90,33 +86,45 @@ class Project extends Component {
     this.state = {
       collapsed: false,
       currentUser: "",
-      visible:"",
-      users:[],
-      editmode:false,
-      pname:"",
-      pdesc:"",
-      author:"",
-      files:"",
-      projects:"",
+      visible: "",
+      users: [],
+      editmode: false,
+      pname: "",
+      pdesc: "",
+      author: "",
+      files: "",
+      projects: [],
       loading: true,
+      editmode:false
     };
     this.buildshowProject = this.buildshowProject.bind(this)
+    this.confirm = this.confirm.bind(this);
   }
 
   buildADSelector() {
     var arr = [];
     this.state.users.map((user, key) => {
-      
-        arr.push(
-          <Option value={user.address} key={key}>
-            {user.fullname}
-          </Option>
-        );
-      
+      arr.push(
+        <Option value={user.address} key={key}>
+          {user.fullname}
+        </Option>
+      );
     });
     return arr;
   }
 
+  async deleteUser(record) {
+    let res = await axios.delete(
+      `http://localhost:5000/api/projects/${record._id}`
+    );
+    this.loadAllProjects();
+  }
+
+  async confirm(record) {
+    await this.deleteUser(record);
+    message.success("User is Deleted Successfully");
+  }
+  
   buildshowProject(){
     var arr = [];
     this.state.projects.map((project,key)=>{
@@ -152,11 +160,10 @@ class Project extends Component {
     })
     return arr;
   }
-
   captureFile = (event) => {
     event.preventDefault();
     const file = event.target.files[0];
-    console.log("console.log",file)
+    console.log("console.log", file);
     const reader = new window.FileReader(); // converts the file to a buffer
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
@@ -166,58 +173,54 @@ class Project extends Component {
     };
   };
 
-  findAirportCode = (address)=>{
-    let airportcode = ""
-    this.state.users.map((user)=>{
-      if(user.address == address){
-        airportcode = user.airportCode
+  findAirportCode = (address) => {
+    let airportcode = "";
+    this.state.users.map((user) => {
+      if (user.address == address) {
+        airportcode = user.airportCode;
       }
-    })
-    return airportcode
-  }
+    });
+    return airportcode;
+  };
 
-  handleSubmit = ()=>{
-      const {pname,pdesc,author} = this.state
-      let airportCode = this.findAirportCode(author);
-      let files = []
-      let size = fileList.length;
+  handleSubmit = async () => {
+    const { pname, pdesc, author } = this.state;
+    let airportCode = this.findAirportCode(author);
+    let files = [];
+    let size = fileList.length;
 
-      fileList.map(async(file,key)=>{
-          const originfile = file.originFileObj;
-          const reader = new window.FileReader(); // converts the file to a buffer
-          reader.readAsArrayBuffer(originfile);
-          reader.onloadend = async () => {
-            let buffer = Buffer(reader.result);
-            // Send to Ipfs
-            await ipfs.add(buffer, async (error, result) => {
-              console.log("Ipfs result", result);
-              let filehash = result[0].hash;
-              files.push({filename:file.name,fileaddr:filehash})
-              if(key == (size - 1)){
-                console.log(key,size);
-                console.log(files)
-                // Upload Here
-                let res = await axios.post("http://localhost:5000/api/projects",{
-                  pname:pname,
-                  pdesc: pdesc,
-                  author:author,
-                  airport_code: airportCode,
-                  attachment:files
-                }).then((res)=>console.log(res))               
-              }
-            })
-            
-          };
+    fileList.map(async (file, key) => {
+      const originfile = file.originFileObj;
+      const reader = new window.FileReader(); // converts the file to a buffer
+      reader.readAsArrayBuffer(originfile);
+      reader.onloadend = async () => {
+        let buffer = Buffer(reader.result);
+        // Send to Ipfs
+        await ipfs.add(buffer, async (error, result) => {
+          console.log("Ipfs result", result);
+          let filehash = result[0].hash;
+          files.push({ filename: file.name, fileaddr: filehash });
+          if (key == size - 1) {
+            console.log(key, size);
+            console.log(files);
+            // Upload Here
+            let res = await axios
+              .post("http://localhost:5000/api/projects", {
+                pname: pname,
+                pdesc: pdesc,
+                author: author,
+                airport_code: airportCode,
+                attachment: files,
+              })
+              .then((res) => console.log(res));
+          }
+        });
+      };
+    });
 
-          
-      })
-      
-  
-  
-  }
-
-
-  
+    // reload project
+    await this.loadAllProjects();
+  };
 
   onCollapse = (collapsed) => {
     console.log("collaspse");
@@ -238,35 +241,93 @@ class Project extends Component {
   };
 
   onChange = ({ target: { value } }) => {
-    console.log("Value",value)
-    this.setState({ pdesc:value });
+    console.log("Value", value);
+    this.setState({ pdesc: value });
   };
 
   render() {
+    const columns = [
+      {
+        title: "Project Name",
+        dataIndex: "pname",
+        key: "pnam",
+        render: (text) => <a>{text}</a>,
+        sorter: (a, b) => a.pname.length - b.pname.length,
+        sortDirections: ['descend', 'ascend']
+      },
+      {
+        title: "Description",
+        dataIndex: "pdesc",
+        key: "pdesc",
+        sorter: (a, b) => a.pdesc.length - b.pdesc.length,
+        sortDirections: ['descend', 'ascend']
+      },
+      {
+        title: "Author",
+        dataIndex: "author",
+        key: "author",
+      },
+      {
+        title: "Airport Code",
+        dataIndex: "airport_code",
+        key: "airport_code",
+        sorter: (a, b) => a.airport_code.length - b.airport_code.length,
+        sortDirections: ['descend', 'ascend']
+      },
+
+      {
+        title: "Action",
+        key: "action",
+        render: (text, record) => (
+          <Space size="middle">
+            <EditOutlined
+              onClick={(e) => {
+                e.preventDefault();
+                this.setState({ editmode: true });
+                this.fillDrawer(record);
+                this.showDrawer();
+              }}
+            />
+            <Popconfirm
+              title="Are you sure delete this task?"
+              onConfirm={() => this.confirm(record)}
+              onCancel={this.cancel}
+              okText="Yes"
+              cancelText="No"
+            >
+              <DeleteOutlined />
+            </Popconfirm>
+          </Space>
+        ),
+      },
+    ];
+
+    const data = [];
+    this.state.projects.map((user, key) => {
+      user.key = key;
+      data.push(user);
+    });
 
     const props = {
-        name: 'file',
-        multiple: true,
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        onChange(info) {
+      name: "file",
+      multiple: true,
+      action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+      onChange(info) {
+        const { status } = info.file;
+        if (status !== "uploading") {
+          console.log(info.file, info.fileList);
+        }
+        if (status === "done") {
+          fileList = info.fileList;
+          message.success(`${info.file.name} file uploaded successfully.`);
+        } else if (status === "removed") {
+          fileList = info.fileList;
+        } else if (status === "error") {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    };
 
-          const { status } = info.file;
-          if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
-          }
-          if (status === 'done') {
-            fileList = info.fileList
-            message.success(`${info.file.name} file uploaded successfully.`);
-          }
-          else if(status === 'removed'){
-            fileList = info.fileList
-          } else if (status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          }
-        },
-      };
-
-    
     return (
       <Fragment>
         <Layout style={{ minHeight: "100vh" }}>
@@ -316,10 +377,9 @@ class Project extends Component {
             <Content style={{ margin: "0 16px" }}>
               <Fragment>
                 <Card style={{ margin: "10px", padding: "10px" }}>
-                <Button
+                  <Button
                     type="primary"
                     onClick={(e) => {
-                    
                       this.showDrawer();
                     }}
                     style={{ margin: "10px" }}
@@ -328,14 +388,13 @@ class Project extends Component {
                     Add New Project
                   </Button>
 
-                  <Row gutter={18} style={{margin:"10px",padding:"10px"}}>
-                  {this.state.loading === false ? this.buildshowProject() : "loading Projects"}
-                  </Row>
-
+                  <Table columns={columns} dataSource={data} />
                   
                   <Drawer
                     title={
-                      this.state.editmode ? "Edit Project Details" : "Add New Project"
+                      this.state.editmode
+                        ? "Edit Project Details"
+                        : "Add New Project"
                     }
                     width={450}
                     onClose={this.onClose}
@@ -401,39 +460,38 @@ class Project extends Component {
                             onChange={this.onChange}
                             placeholder="Project Description"
                             autoSize={{ minRows: 3, maxRows: 5 }}
-                            />
+                          />
                         </Form.Item>
                       </Row>
-                      
-                      
-                    <Row gutter={16}>
+
+                      <Row gutter={16}>
                         <Form.Item
-                        name="address"
-                        label="User"
-                        rules={[
+                          name="address"
+                          label="User"
+                          rules={[
                             {
-                            required: true,
-                            message: "Please choose user",
+                              required: true,
+                              message: "Please choose user",
                             },
-                        ]}
-                        style={{ width: "100%" }}
+                          ]}
+                          style={{ width: "100%" }}
                         >
-                        <Select
+                          <Select
                             placeholder="Please choose user"
                             defaultValue={this.state.author}
                             onChange={(e) => {
-                            this.setState({ author: e });
+                              this.setState({ author: e });
                             }}
-                        >
+                          >
                             <Option value="" disabled>
-                            Select the Author
+                              Select the Author
                             </Option>
                             {this.buildADSelector()}
-                        </Select>
+                          </Select>
                         </Form.Item>
-                    </Row>
-                    <Row gutter={16}>
-                    <Form.Item
+                      </Row>
+                      <Row gutter={16}>
+                        <Form.Item
                           name="name"
                           label="Attachments"
                           rules={[
@@ -444,19 +502,21 @@ class Project extends Component {
                           ]}
                           style={{ width: "100%" }}
                         >
-                        <Dragger {...props}>
+                          <Dragger {...props}>
                             <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
+                              <InboxOutlined />
                             </p>
-                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                            <p className="ant-upload-text">
+                              Click or drag file to this area to upload
+                            </p>
                             <p className="ant-upload-hint">
-                            Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                            band files
+                              Support for a single or bulk upload. Strictly
+                              prohibit from uploading company data or other band
+                              files
                             </p>
-                        </Dragger>
-                    </Form.Item>
-                    </Row>
-                     
+                          </Dragger>
+                        </Form.Item>
+                      </Row>
                     </Form>
                   </Drawer>
                 </Card>
