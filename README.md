@@ -1,4 +1,27 @@
-###Knowledge-Management-System using Blockchain 
+### PSID_AK-15
+### TEAM KAINOTOMOUS
+# Knowledge Management System Using Blockchain
+
+#### Problem statement :
+>“A web based application using Block chain technology is sought from Airport Licensing to retrieve important and relevant Project Related information from pool of data source i.e. SAP, E-mail, E-office, Scan documents and Database. Below features are desired in an application: 
+> - Concerned Officers can upload relevant data related to Airport Licensing from 	Airports. 
+> - Seamless Approval process, Centralized Monitoring and Suggestion Mechanism. 
+> - Relevant information should be fetched from data source, linked to a 	particular project which can 	be used in the hour of need.”
+##### In short, a knowledge management system that runs blockchain at it’s core.
+
+### Technology Stack:
+
+| Name | Description |
+| ------ | ------ |
+| Etherium | Open Source Blockchain Featuring Smart Contracts |
+| Solidity | Programming language for writing SMART CONTRACTS for Etherium Blockchain |
+| Node JS |  JavaScript runtime environment (Backend) |
+| React JS |  JavaScript library for building Dynamic user interfaces (Frontend) |
+| IPFS |  InterPlanetary File System for storing uploaded documents in a distributed file system |
+|Mongo DB| NoSQL database for Storing User Management System|
+|Mongo DB| NoSQL database for Storing User Management System|
+|Ganache| Ethereum Ganache tool - Provides Ethers & gas for local deployment of blockchain for development and testing |
+|Metamask| An chrome extension for accessing Ethereum enabled applications, or "Dapps" in your browser  |
 
 Entities:
 1) Deputy /Member - Upload files 
