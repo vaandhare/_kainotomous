@@ -596,7 +596,7 @@ class Dashboard extends React.Component {
                 />
               </Header>
               <Content style={{ margin: "0 16px" }}>
-                <MoCA
+                <AD
                   account={this.state.account}
                   apps={this.state.apps}
                   docs={this.state.docs}

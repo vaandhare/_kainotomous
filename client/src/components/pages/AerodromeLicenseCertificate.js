@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import ashokSthambha from '../../assets/ashok_sthambha.png';
 import { Card, Col, Row } from 'antd';
-import { CardImg } from 'reactstrap';
+import { CardImg, Button } from 'reactstrap';
+import Pdf from "react-to-pdf";
+
+const ref = React.createRef();
 
 class AerodromeLicenseCertificate extends Component {
 	render() {
 		return (
 			<Row>
-				<Col md={6} />
 				<Col md={12}>
+				<div ref={ref}>
 					<Card style={{ borderWidth: '3px', borderColor: 'black', margin: '10px' }}>
 						<div style={{ width: '100%', textAlign: 'center' }}>
 							<CardImg
@@ -73,6 +76,16 @@ class AerodromeLicenseCertificate extends Component {
 						<br />
 						<h6 style={{ textAlign: 'center' }}>DIRECTOR GENERAL OF CIVIL AVIATION</h6>
 					</Card>
+					</div>
+				</Col>
+				<Col md={6}>
+					<Pdf targetRef={ref} filename="AerodromeLicense.pdf">
+        		{({ toPdf }) => 					<Button style={{ margin: '30px' }} color="success" onClick={toPdf}>
+						Download License
+					</Button>
+					}
+      		</Pdf>
+
 				</Col>
 			</Row>
 		);
