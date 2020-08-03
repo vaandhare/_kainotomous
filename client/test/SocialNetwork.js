@@ -105,18 +105,33 @@ assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
 
 })
 
-it('allows users to renew applications', async()=> {
+it('allows users to review applications', async()=> {
   const app = await socialNetwork.apps(appCount)
 
- result = await socialNetwork.renewApp(app.appId,'timestamp',{ from: moca})
+ result = await socialNetwork.reviewApp(app.appId,'timestamp',{ from: moca})
 
  //Success
 const event = result.logs[0].args
 assert.equal(event.appId.toNumber(), 1, 'id is correct')
 assert.equal(event.airportCode, '1', 'airport code is correct')
 assert.equal(event.id, '1', 'Doc id is correct' )
-assert.equal(event.state, 'renewed', 'state is correct')
+assert.equal(event.state, 'reviewed', 'state is correct')
 assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
+
+})
+
+it('allows users to recreate applications', async()=> {
+  const app = await socialNetwork.apps(appCount)
+
+ result = await socialNetwork.recreateApp(app.appId,'2','doc1','doc2','doc3','doc4', 'time',{ from: moca})
+
+ //Success
+const event = result.logs[0].args
+assert.equal(event.appId.toNumber(), 1, 'id is correct')
+assert.equal(event.airportCode, '2', 'airport code is correct')
+assert.equal(event.id, '1', 'Doc id is correct' )
+assert.equal(event.state, 'recreated', 'state is correct')
+assert.equal(event.timestamp, 'time', 'timestamp is correct')
 
 })
 
@@ -128,7 +143,7 @@ it('allows users to assign applications', async()=> {
  //Success
 const event = result.logs[0].args
 assert.equal(event.appId.toNumber(), 1, 'id is correct')
-assert.equal(event.airportCode, '1', 'airport code is correct')
+assert.equal(event.airportCode, '2', 'airport code is correct')
 assert.equal(event.id, '1', 'Doc id is correct' )
 assert.equal(event.state, 'assigned', 'state is correct')
 assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')
@@ -143,7 +158,7 @@ it('allows users to grant license to applications', async()=> {
  //Success
 const event = result.logs[0].args
 assert.equal(event.appId.toNumber(), 1, 'id is correct')
-assert.equal(event.airportCode, '1', 'airport code is correct')
+assert.equal(event.airportCode, '2', 'airport code is correct')
 assert.equal(event.id, '1', 'Doc id is correct' )
 assert.equal(event.state, 'granted', 'state is correct')
 assert.equal(event.timestamp, 'timestamp', 'timestamp is correct')

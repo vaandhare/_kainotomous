@@ -148,6 +148,7 @@ class AD extends Component {
     );
     let airport = res.data[0];
     console.log("Airport is fetched",airport);
+    // console.log("Airport is fetched",airport);
 
     this.setState({airport});
     Airport=airport;
