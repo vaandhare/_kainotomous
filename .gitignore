@@ -24,6 +24,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+<<<<<<< HEAD
+#abis of contracts
+client/src/abis
+.gitignore
+=======
 
 
 
+>>>>>>> 3cb00064d9db815e6d5f85d16039312d97e90f0d

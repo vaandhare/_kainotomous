@@ -14,6 +14,7 @@ router.get('/', async (req, res) => {
     }
 })
 
+
 router.get('/:id', async (req, res) => {
     const { id } = req.params
     console.log(id);
@@ -31,7 +32,6 @@ router.post('/', async (req, res) => {
     const newApplicationForm = new ApplicationForm(req.body)
     console.log(req.body)
     try {
-        
         const app_data = await newApplicationForm.save()
         if (!app_data) throw new Error('Something went wrong saving the Application')
         res.status(200).json(app_data)

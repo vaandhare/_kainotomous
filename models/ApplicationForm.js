@@ -35,10 +35,6 @@ const ApplicationSchema = new Schema({
         type: String,
         required: true,
     },
-    location: {
-        type: String,
-        required: true,
-    },
     is_enclosed: {
         type: Boolean,
         required: true,

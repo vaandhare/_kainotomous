@@ -10,7 +10,9 @@ import {
   ModalHeader,
   Row,
 } from "reactstrap";
-import "../../styles/Deputy.css";
+import { Input, Radio , Checkbox } from 'antd';
+
+const { TextArea } = Input;
 
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
@@ -19,10 +21,13 @@ const ipfs = ipfsClient({
   protocol: "https",
 });
 var count = 0;
-var application = ''
-var document = ''
-var Airport = ''
-var airportData = ''
+
+var airportData = '';
+var Airport="";
+var application="";
+var document="";
+var link = "https://ipfs.infura.io/ipfs/"
+
 
 class MoCA extends Component {
   async componentWillMount() {
@@ -39,23 +44,26 @@ class MoCA extends Component {
       airportCode: "",
       approved_count: 0,
       pending_count: 0,
-
+      modalIsOpen:false,
+      secondModalIsOpen: false,
       buffer: "",
+      buffer1:"",
+      buffer2:"",
+      buffer3:"",
+      buffer4:"",
+      feedback:""
     };
 
     this.get_Airports = this.get_Airports.bind(this);
     this.get_airportData = this.get_airportData.bind(this);
     this.get_Airport = this.get_Airport.bind(this);
-    this.get_timestamp = this.get_timestamp.bind(this);
     this.captureFile = this.captureFile.bind(this);
-    this.submitFile = this.submitFile.bind(this);
     this.buildAirportSelect = this.buildAirportSelect.bind(this);
-    this.showAirports = this.showAirports.bind(this);
-
     this.submitToBlockchain = this.submitToBlockchain.bind(this);
     this.toggle = this.toggle.bind(this);
-
+    this.get_timestamp = this.get_timestamp.bind(this);
     this.get_approved_count = this.get_approved_count.bind(this)
+    this.reviewApplication = this.reviewApplication.bind(this);
   }
 
   async get_Airports() {
@@ -67,8 +75,24 @@ class MoCA extends Component {
 
 
   async get_Airport(airportCode){
-    return await axios.get(`http://localhost:5000/api/airports/${airportCode}`)
+    return await axios.get(`http://localhost:5000/api/status/${airportCode}`)
   }
+
+  openModal = () => {
+    this.setState({ modalIsOpen: true });
+  };
+
+  closeModal = () => {
+    this.setState({ modalIsOpen: false });
+  };
+
+  openSecondModal = () => {
+    this.setState({ secondModalIsOpen: true });
+  };
+
+  closeSecondModal = () => {
+    this.setState({ secondModalIsOpen: false });
+  };
 
   toggle() {
     this.setState((prevState) => ({
@@ -96,7 +120,6 @@ class MoCA extends Component {
     // current date
     // adjust 0 before single digit date
     let date = ("0" + date_ob.getDate()).slice(-2);
-
     // current month
     let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
     let hours = date_ob.getHours();
@@ -120,43 +143,90 @@ class MoCA extends Component {
     return timestamp;
   }
 
+  async reviewApplication(event) {
+    event.preventDefault();
+    const feedback = this.state.feedback;
+    // this.setState({feedback:feedback});
+    console.log(feedback);
+    let date_ob = new Date();
+    let year = date_ob.getFullYear();
+    // current date
+    // adjust 0 before single digit date
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    // current month
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let hours = date_ob.getHours();
+    // current minutes
+    let minutes = date_ob.getMinutes();
+    // current seconds
+    let seconds = date_ob.getSeconds();
+    // prints date in YYYY-MM-DD formatc
+    const timestamp =
+      year +
+      "-" +
+      month +
+      "-" +
+      date +
+      " " +
+      hours +
+      ":" +
+      minutes +
+      ":" +
+      seconds;
+    console.log(timestamp);
+    const appId = application.appId;
+    const airportCode = application.airportCode;
+    console.log(appId, timestamp);
+    this.props.reviewApp(appId,timestamp);
+    console.log("Application in review!!");
+    const response = await axios.put(
+      `http://localhost:5000/api/status/${airportCode}`,
+      {
+        airport_code: airportCode,
+        appId: appId,
+        status: "reviewed",
+        feedback:feedback
+      }
+    );
+  }
+
   captureFile = (event) => {
     event.preventDefault();
+    const docNumber = event.target.id;
+    console.log(docNumber);
     const file = event.target.files[0];
     console.log("console.log",file)
     const reader = new window.FileReader(); // converts the file to a buffer
     reader.readAsArrayBuffer(file);
-    reader.onloadend = () => {
-      this.setState({ buffer: Buffer(reader.result) }, () => {
-        console.log(this.state.buffer);
-      });
-    };
-  };
-
-  submitFile = (event) => {
-    event.preventDefault();
-    console.log("buffer", this.state.buffer);
-    console.log("File Captured");
-    ipfs.add(this.state.buffer, (error, result) => {
-      count = count + 1;
-      console.log("ipfs");
-      console.log("Ipfs result", result);
-      var filehash = result[0].hash;
-      console.log(filehash);
-      if (count === 1) {
-        this.setState({ doc1: filehash });
-      } else if (count === 2) {
-        this.setState({ doc2: filehash });
-      } else if (count === 3) {
-        this.setState({ doc3: filehash });
-      } else if (count === 4) {
-        this.setState({ doc4: filehash });
-      }
-      if (error) {
-        console.log(error);
-        return;
-      }
-    });
+    if(docNumber === "doc1"){
+      reader.onloadend = () => {
+        this.setState({ buffer1: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer1);
+        });
+      };
+    }
+    else if(docNumber ==="doc2"){
+      reader.onloadend = () => {
+        this.setState({ buffer2: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer2);
+        });
+      };
+    }
+    else if(docNumber === "doc3"){
+      reader.onloadend = () => {
+        this.setState({ buffer3: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer3);
+        });
+      };
+    }
+    else{
+      reader.onloadend = () => {
+        this.setState({ buffer4: Buffer(reader.result) }, () => {
+          console.log(this.state.buffer4);
+        });
+      };
+    }
+    
   };
 
   buildAirportSelect() {
@@ -172,10 +242,13 @@ class MoCA extends Component {
   }
 get_airportData(airportCode){
   this.state.airports.map((airport,key)=>{
+    console.log(airportCode)
     // console.log(airport.airport_name);
     if(airport.airport_code === airportCode){
       airportData = airport;
-      
+
+      // console.log(airport);
+
     }
   })
 }
@@ -194,81 +267,51 @@ displayModal = async (app, airport) => {
   this.toggle();
 }
  
-
-  showAirports() {
-    var airportCard = [];
-
-    this.state.airports.map(async (airport, key) => {
-      // let state = await this.get_Airport(airport.airport_code)
-      // let status = ""
-      // if(Array.isArray(state.data) && state.data.length){
-      //   console.log('Not Empty',state.data)
-      //   status = state.data[0].status;
-      // }
-
-      airportCard.push(
-        <div className="row" key={key}>
-          <div className="col-12">
-            <div className="card" style={{ padding: "18px" }}>
-              <div className="row">
-                <div className="col-3">
-                  <p>Airport Code</p>
-                </div>
-                <div className="col-6">
-                  <h6>Airport Name</h6>
-                </div>
-                <div className="col-3">
-                  <h6>Status</h6>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-3">
-                  <h6>{airport.airport_code}</h6>
-                </div>
-                <div className="col-6">
-                  <h6>{airport.airport_name}</h6>
-                </div>
-                <div className="col-3">
-                  <span
-                    className="badge badge-primary"
-                    style={{
-                      padding: "8px",
-                      fontWeight: "bold",
-                      fontSize: "15px",
-                    }}
-                  >
-                    {/* { status === "" ? "Not Licensed": status} */}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    });
-    return airportCard;
-  }
-
   async submitToBlockchain(event) {
     event.preventDefault();
-    const airportCode = this.state.airportCode;
-    const timestamp = this.get_timestamp();
-    const applength = this.props.apps.length;
+    console.log("File Captured");
+    const file = await ipfs.add([this.state.buffer1,this.state.buffer2,this.state.buffer3,this.state.buffer4]);
+    console.log(file[0].hash);
+    console.log(file[1].hash);
+    console.log(file[2].hash);
+    console.log(file[3].hash);
+    if(file){
+      const doc1 = file[0].hash;
+      const doc2 = file[1].hash;
+      const doc3 = file[2].hash;
+      const doc4 = file[3].hash;
+      const airportCode = this.state.airportCode;
+      const timestamp = this.get_timestamp();
+      const applength = this.props.apps.length;
+      console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
+  
+      this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
+  
+      // Save the status on the mongodb
+      const response = await axios.post(`http://localhost:5000/api/status/`, {
+        airport_code: airportCode,
+        appId: applength,
+        status: "created",
+      });
+    }
+    else{
+      console.log("Error uploading files!");
+    }
+   
+  }
 
-    const doc1 = this.state.doc1;
-    const doc2 = this.state.doc2;
-    const doc3 = this.state.doc3;
-    const doc4 = this.state.doc4;
-    console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
-
-    this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
-
-    // Save the status on the mongodb
-    const response = await axios.post(`http://localhost:5000/api/status/`, {
-      airport_code: airportCode,
-      appId: applength,
-      status: "created",
-    });
+  async displayAppDetails(app,airport){
+    Airport = airport;
+    console.log(airport);
+    application = app;
+    console.log(application);
+    this.props.docs.map((doc, key) => {
+      if (doc.id === application.id) {
+        document = doc;
+        console.log(document);
+      }
+    })
+    this.setState({ secondModalIsOpen: true });
   }
 
   render() {
@@ -313,14 +356,16 @@ displayModal = async (app, airport) => {
               <br />
               <div className="card card-body">
                       {this.props.apps.map((app, key) => {
-                          
+                        if(app.state === "created"){
+                        // console.log(app.airportCode)
+
                         this.get_airportData(app.airportCode);
                                         let doc = this.props.docs[key];
                                         return (
                                             <Fragment>
                                                 <br></br>
                                                 <div className="row">
-                                                    <div className="col-12">
+                                                    <div className="col-12" onClick={(event)=>this.displayAppDetails(app,airportData)}>
                                                         <div className="card"
                                                             style={{ padding: "18px" }}
                                                             id={app.appId}
@@ -399,6 +444,7 @@ displayModal = async (app, airport) => {
                                                 </div>
                                             </Fragment>
                                         );
+                                                                          }
                                 })}
                     
               </div>
@@ -412,7 +458,7 @@ displayModal = async (app, airport) => {
                 <h6 style={{ color: "grey" }}>Airport Director</h6>
                 <Button
                   color="primary"
-                  onClick={this.toggle}
+                  onClick={this.openModal}
                   style={{ justifyContent: "center" }}
                 >
                   <i className="fa fa-cloud-upload"></i>Upload New Document
@@ -434,7 +480,7 @@ displayModal = async (app, airport) => {
                                                     <div className="card"
                                                         style={{ padding: "18px" }}
                                                         id={app.appId}
-                                                        onClick={(event) => this.displayModal(app, airportData)}>
+                                                        onClick={(event)=>this.displayAppDetails(app,airportData)}>
                                                         <table>
                                                             <tr>
                                                                 <th
@@ -511,9 +557,10 @@ displayModal = async (app, airport) => {
                                     );
                                 })}
                             </div>
-                <Modal isOpen={this.state.modal} toggle={this.toggle} size="lg" style={{maxWidth: '800px', width: '80%'}}>
+                <Modal isOpen={this.state.modalIsOpen} 
+                toggle={this.openModal} size="lg" style={{maxWidth: '800px', width: '80%'}}>
                   <ModalBody>
-                  <form onSubmit={this.submitToBlockchain}>
+                  <form >
                     <div class="container">
                       <div class="row">
                         <div class="col-9">
@@ -568,7 +615,7 @@ displayModal = async (app, airport) => {
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
-                              <div className="col-9">
+                              <div className="col-12">
                                   <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
                               <input
@@ -583,11 +630,6 @@ displayModal = async (app, airport) => {
                               >Aerodrome Manual</label>
                               </FormGroup>
                               </div>
-                              <div className="col-3">
-                                <button className="btn btn-secondary text-center" onClick={this.submitFile}>
-                                  Select
-                                </button>
-                              </div>
                             </div>
                           </div>
                         </div>
@@ -596,11 +638,11 @@ displayModal = async (app, airport) => {
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
-                              <div className="col-9">
+                              <div className="col-12">
                               <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
                               <input
-                                id="doc1"
+                                id="doc2"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -611,10 +653,6 @@ displayModal = async (app, airport) => {
                               >SMS Manual</label>
                               </FormGroup>
                               </div>
-                              <div className="col-3">
-                                <button className="btn btn-secondary text-center" onClick={this.submitFile}>
-                                  Select
-                                </button>
                               </div>
                             </div>
 
@@ -626,11 +664,11 @@ displayModal = async (app, airport) => {
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
-                              <div className="col-9">
+                              <div className="col-12">
                               <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
                <input
-                                id="doc1"
+                                id="doc3"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -641,23 +679,18 @@ displayModal = async (app, airport) => {
                               >CAR Compliance Document</label>
                               </FormGroup>
                               </div>
-                              <div className="col-3">
-                                <button className="btn btn-secondary" onClick={this.submitFile}>
-                                  Select
-                                </button>
-                              </div>
                             </div>
                           </div>
                         </div>
                         <div className="col-6">
                           <div className="card" style={{ padding: "15px" }}>
                             <div className="row">
-                              <div className="col-9">
+                              <div className="col-12">
                               <FormGroup>
                                   {/* <Label>Aerodrome Manual</Label> */}
 
                               <input
-                                id="doc1"
+                                id="doc4"
                                 type="file"
                                 className="custom-file-input"
                                 onChange={this.captureFile}
@@ -668,29 +701,178 @@ displayModal = async (app, airport) => {
                               >Exceptions Document</label>
                               </FormGroup>
                               </div>
-                              <div className="col-3">
-                                <button className="btn btn-secondary" onClick={this.submitFile}>
-                                  Select
-                                </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    <br />
+                    <div className="row">
+                      <div className="col-6">
+                        <Button
+                      type="submit"
+                      color="primary"
+                      className="btn btn-outline-light float-left"
+                      style={{ marginRight: "80%" }}
+                      onClick={this.closeModal}
+                    >
+                      Close
+                    </Button>
+                    </div>
+                    <div className="col-6">
+                    <Button
+                      type="submit"
+                      color="primary"
+                      className="btn btn-outline-light float-right"
+                      style={{ marginLeft: "80%" }}
+                      onClick={this.submitToBlockchain}
+                    >
+                      Submit Application
+                    </Button>
+                    </div>
+                    </div>
+                    {/* <button onClick={this.closeModal}>close</button>  */}
+                  </form>
+                </ModalBody>
+
+                </Modal>
+
+                <Modal isOpen={this.state.secondModalIsOpen}
+                 
+                size="lg" 
+                style={{ maxWidth: '800px', width: '80%' }}>
+                <ModalBody>
+                  <form >
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-9">
+                          <h1 style={{ color: "grey" }}>License Application</h1>
+                          <h4
+                            className="h6"
+                            style={{ color: "grey", marginTop: "5%" }}
+                          >
+                            Airport Name: {Airport.airport_name}
+                          </h4>
+                          <h4 className="h6" style={{ color: "grey" }}>
+                            Airport Code:{Airport.airport_code}
+                          </h4>
+                          <br />
+                          <h4
+                            className="h6"
+                            style={{ fontWeight: "bold", color: "grey" }}
+                          >
+                            Uploaded Documents
+                          </h4>
+                        </div>
+                        <div class="col-3">
+                          <span
+                            class="badge badge-secondary"
+                            style={{
+                              marginTop: "10%",
+                              padding: "20px",
+                              paddingRight: "1.2rem",
+                              marginRight: "10%",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            {application.state}
+                          </span>
+                          <br />
+                          <br />
+                          <h4 className="h5" style={{ color: "grey" }}>
+                            {application.state} at
+                          </h4>
+                          <h5 className="h6" style={{ color: "grey" }}>
+                            {application.timestamp}
+                          </h5>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-6">Aerodrome Manual</div>
+                              <div className="col-6">
+                                <a className="btn btn-secondary text-center"
+                                  href={link.concat(document.aerodromeManual)}>
+                                  View Document
+                                  </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-6">SMS Manual</div>
+                              <div className="col-6">
+                                <a className="btn btn-secondary text-center" href={link.concat(document.licensingFee)}>
+                                  View Document
+                                </a>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <br />
-                    <Button
+                      <br />
+                      <div className="row">
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-6">CAR Compliance</div>
+                              <div className="col-6">
+                                <a className="btn btn-secondary" href={link.concat(document.CARcompliance)}>
+                                  View Document
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-6">
+                          <div className="card" style={{ padding: "15px" }}>
+                            <div className="row">
+                              <div className="col-6">Exceptions Document</div>
+                              <div className="col-6">
+                                <a className="btn btn-secondary" href={link.concat(document.execeptionsDoc)}>
+                                  View Document
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                        <br/><br/>
+                        <div className="row">
+                          <br/>
+                          <br/>
+                        <TextArea row={4} type="text" style={{padding: "5px"}} 
+                        onChange={(event)=>{this.setState({feedback:event.target.value})}} placeholder="Provide Feedback" />
+                        </div>
+                        <div className="row">
+                      <Button
                       type="submit"
                       color="primary"
-                      className="btn btn-outline-light"
-                      style={{ marginLeft: "80%" }}
+                      className="btn btn-outline-light float-right"
+                      style={{ marginRight: "80%" }}
+                      onClick={this.closeSecondModal}
                     >
-                      Submit Application
+                      Close
                     </Button>
+                    <Button
+                      type="button"
+                      color="primary"
+                      className="btn btn-outline-light float-left"
+                      style={{ marginLeft: "80%" }}
+                      onClick={this.reviewApplication}
+                    >
+                      Provide Feedback
+                    </Button>
+                      </div>
+                    </div>
+                    <br />
                   </form>
                 </ModalBody>
-
-                </Modal>
+              </Modal>
             </div>
           </div>
         </div>

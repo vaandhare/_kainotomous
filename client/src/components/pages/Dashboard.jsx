@@ -14,7 +14,7 @@ import Web3 from "web3";
 import Navbar from "./Navbar";
 import SocialNetwork from "../../abis/SocialNetwork.json";
 import "../../styles/App.scss";
-import "../../styles/Dashboard.css";
+
 import AD from "./AD";
 import AI from "./AI";
 import DGCA from "./DGCA";
@@ -134,132 +134,163 @@ class Dashboard extends React.Component {
 				// this.setState({ loading: false })
 			});
 	}
+  
 
-	issueApp(id, timestamp) {
-		this.setState({ loading: true });
-		this.state.socialNetwork.methods
-			.issueApp(id, timestamp)
-			.send({ from: this.state.account })
-			.on('confirmation', (reciept) => {
-				this.setState({ loading: false });
-			})
-			.once('receipt', (receipt) => {
-				console.log(receipt);
-				this.setState({ loading: false });
-			});
-	}
+  reviewApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .reviewApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
 
-	assignApp(id, timestamp) {
-		this.setState({ loading: true });
-		this.state.socialNetwork.methods
-			.assignApp(id, timestamp)
-			.send({ from: this.state.account })
-			.on('confirmation', (reciept) => {
-				this.setState({ loading: false });
-				// console.log(reciept)
-				// window.location.reload()
-			})
-			.once('receipt', (receipt) => {
-				console.log(receipt);
-				this.setState({ loading: false });
-			});
-	}
+  recreateApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .recreateApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
 
-	approveApp(id, timestamp) {
-		this.setState({ loading: true });
-		this.state.socialNetwork.methods
-			.approveApp(id, timestamp)
-			.send({ from: this.state.account })
-			.on('confirmation', (reciept) => {
-				this.setState({ loading: false });
-				// console.log(reciept)
-				// window.location.reload()
-			})
-			.once('receipt', (receipt) => {
-				console.log(receipt);
-				this.setState({ loading: false });
-			});
-	}
+  issueApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .issueApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
 
-	rejectApp(id, timestamp) {
-		this.setState({ loading: true });
-		this.state.socialNetwork.methods
-			.rejectApp(id, timestamp)
-			.send({ from: this.state.account })
-			.on('confirmation', (reciept) => {
-				this.setState({ loading: false });
-				// console.log(reciept)
-				// window.location.reload()
-			})
-			.once('receipt', (receipt) => {
-				console.log(receipt);
-				this.setState({ loading: false });
-			});
-	}
+  assignApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .assignApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+        // console.log(reciept)
+        // window.location.reload()
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
 
-	grantApp(id, timestamp) {
-		this.setState({ loading: true });
-		this.state.socialNetwork.methods
-			.grantApp(id, timestamp)
-			.send({ from: this.state.account })
-			.on('confirmation', (reciept) => {
-				this.setState({ loading: false });
-				// console.log(reciept)
-				// window.location.reload()
-			})
-			.once('receipt', (receipt) => {
-				console.log(receipt);
-				this.setState({ loading: false });
-			});
-	}
+  approveApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .approveApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+        // console.log(reciept)
+        // window.location.reload()
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
 
-	renewApp(id, timestamp) {
-		this.setState({ loading: true });
-		this.state.socialNetwork.methods
-			.renewApp(id, timestamp)
-			.send({ from: this.state.account })
-			.on('confirmation', (reciept) => {
-				this.setState({ loading: false });
-				// console.log(reciept)
-				// window.location.reload()
-			})
-			.once('receipt', (receipt) => {
-				console.log(receipt);
-				this.setState({ loading: false });
-			});
-	}
+  rejectApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .rejectApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+        // console.log(reciept)
+        // window.location.reload()
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			account: '',
-			socialNetwork: null,
-			appCount: 0,
-			docCount: 0,
-			apps: [],
-			docs: [],
-			loading: true,
-			doc1: '',
-			doc2: '',
-			doc3: '',
-			doc4: '',
-			buffer: null,
-			currentUser: {},
-			collapsed: false
-		};
-		this.createApp = this.createApp.bind(this);
-		this.issueApp = this.issueApp.bind(this);
-		this.assignApp = this.assignApp.bind(this);
-		this.approveApp = this.approveApp.bind(this);
-		this.rejectApp = this.rejectApp.bind(this);
-		this.grantApp = this.grantApp.bind(this);
-		this.renewApp = this.renewApp.bind(this);
-		this.checkAuth = this.checkAuth.bind(this);
-		this.returnDocs = this.returnDocs.bind(this);
-	}
-	returnDocs() {
-		console.log(this.state.docs);
-	}
+  grantApp(id, timestamp) {
+    this.setState({ loading: true });
+    this.state.socialNetwork.methods
+      .grantApp(id, timestamp)
+      .send({ from: this.state.account })
+      .on("confirmation", (reciept) => {
+        this.setState({ loading: false });
+        // console.log(reciept)
+        // window.location.reload()
+      })
+      .once("receipt", (receipt) => {
+        console.log(receipt);
+        this.setState({ loading: false });
+      });
+  }
+
+  // renewApp(id, timestamp) {
+  //   this.setState({ loading: true });
+  //   this.state.socialNetwork.methods
+  //     .renewApp(id, timestamp)
+  //     .send({ from: this.state.account })
+  //     .on("confirmation", (reciept) => {
+  //       this.setState({ loading: false });
+  //       // console.log(reciept)
+  //       // window.location.reload()
+  //     })
+  //     .once("receipt", (receipt) => {
+  //       console.log(receipt);
+  //       this.setState({ loading: false });
+  //     });
+  // }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      account: "",
+      socialNetwork: null,
+      appCount: 0,
+      docCount: 0,
+      apps: [],
+      docs: [],
+      loading: true,
+      doc1: "",
+      doc2: "",
+      doc3: "",
+      doc4: "",
+      buffer: null,
+      currentUser: {},
+      collapsed: false,
+    };
+    this.createApp = this.createApp.bind(this);
+    this.reviewApp = this.reviewApp.bind(this);
+    this.recreateApp = this.recreateApp.bind(this);
+    this.issueApp = this.issueApp.bind(this);
+    this.assignApp = this.assignApp.bind(this);
+    this.approveApp = this.approveApp.bind(this);
+    this.rejectApp = this.rejectApp.bind(this);
+    this.grantApp = this.grantApp.bind(this);
+    // this.renewApp = this.renewApp.bind(this);
+    this.checkAuth = this.checkAuth.bind(this);
+    // this.returnDocs = this.returnDocs.bind(this);
+  }
+  returnDocs() {
+    console.log(this.state.docs);
+  }
 
 	onCollapse = (collapsed) => {
 		console.log(collapsed);
@@ -286,18 +317,23 @@ class Dashboard extends React.Component {
 		}
 	}
 
-	render() {
-		if (this.state.currentUser.role === 'CHQ(ED)') {
-			console.log('Member Address', this.state.currentUser.address);
-			return (
-				<div>
-					{/* <Navbar account={this.state.currentUser} /> */}
-					<Layout style={{ minHeight: '100vh' }}>
-						<Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-							<div className="logo" />
-							<Menu theme="dark" defaultSelectedKeys={[ '1' ]} mode="inline">
-								<Menu.Item key="1">
-									<AppstoreOutlined />
+  render() {
+    if (this.state.currentUser.role === "ED") {
+      console.log("Member Address", this.state.currentUser.address);
+      return (
+        <div>
+          {/* <Navbar account={this.state.currentUser} /> */}
+          <Layout style={{ minHeight: "100vh" }}>
+            <Sider
+              collapsible
+              collapsed={this.state.collapsed}
+              onCollapse={this.onCollapse}
+            >
+              <div className="logo" />
+              <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+                <Menu.Item key="1">
+                  <AppstoreOutlined />
+
 
 									<Menu.Item key="2">
 										<span>
@@ -549,275 +585,12 @@ class Dashboard extends React.Component {
 								</Layout>
 							</div>
 						);
-					} else if (this.state.currentUser.role === 'AD') {
-						// console.log("Member Address", this.state.currentUser.role);
-						return (
-							<div>
-								{/* <Navbar account={this.state.currentUser} /> */}
-								<Layout style={{ minHeight: '100vh' }}>
-									<Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-										<div className="logo" />
-										<Menu theme="dark" defaultSelectedKeys={[ '1' ]} mode="inline">
-											<Menu.Item key="1">
-												<span>
-													{this.state.currentUser.fullname}(
-													{this.state.currentUser.role})
-												</span>
-											</Menu.Item>
-											<Menu.Item key="2">
-												<AppstoreOutlined />
-												<span>Home Page</span>
-											</Menu.Item>
-											<Menu.Item key="3">
-												<Link to="/">
-													<FolderOpenOutlined />
-													<span>Projects</span>
-												</Link>
-											</Menu.Item>
-
-											<Menu.Item key="4">
-												<Link to="/auth">
-													<LogoutOutlined />
-													<span>Logout</span>
-												</Link>
-											</Menu.Item>
-										</Menu>
-									</Sider>
-									<Layout>
-										{/* <Header style={{ background: "#000" }}>
-                <input
-                  type="text"
-                  placeholder="Search Document or Project"
-                  prefix={<SearchOutlined style={{ color: "red" }} />}
-                  style={{
-                    width: "100%",
-                    height: "80%",
-                    padding: "9px",
-                    borderRadius: "3px",
-                  }}
-                />
-              </Header>
-              <Content style={{ margin: "0 16px" }}>
-                <MoCA
-                  account={this.state.account}
-                  apps={this.state.apps}
-                  docs={this.state.docs}
-                  createApp={this.createApp}
-                  currentUser={this.state.currentUser}
-                />
-              </Content>
-            </Layout>
-          </Layout>
-        </div>
-      );
-    } else {
-      if (this.state.currentUser.role === "DoAS") {
-        console.log("Member Address", this.state.currentUser.role);
-        return (
-          <div>
-            {/* <Navbar account={this.state.currentUser} /> */}
-            <Layout style={{ minHeight: "100vh" }}>
-              <Sider
-                collapsible
-                collapsed={this.state.collapsed}
-                onCollapse={this.onCollapse}
-              >
-                <div className="logo" />
-                <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-                  <Menu.Item key="1">
-                    <span>
-                      {this.state.currentUser.fullname}(
-                      {this.state.currentUser.role})
-                    </span>
-                  </Menu.Item>
-                  <Menu.Item key="2">
-                    <AppstoreOutlined />
-                    <span>Home Page</span>
-                  </Menu.Item>
-                  <Menu.Item key="3">
-                    <Link to="/project">
-                      <FolderOpenOutlined />
-                      <span>Projects</span>
-                    </Link>
-                  </Menu.Item>
-                  
-                  <Menu.Item key="4">
-                    <Link to="/auth">
-                      <LogoutOutlined />
-                      <span>Logout</span>
-                    </Link>
-                  </Menu.Item>
-                </Menu>
-              </Sider>
-              <Layout>
-                <Header style={{ background: "#000" }}>
-                  <input
-                    type="text"
-                    placeholder="Search Document or Project"
-                    prefix={<SearchOutlined style={{ color: "red" }} />}
-                    style={{
-                      width: "100%",
-                      height: "80%",
-                      padding: "9px",
-                      borderRadius: "3px",
-                    }}
-                  />
-                </Header>
-                <Content style={{ margin: "0 16px" }}>
-                  <DoAS
-                    account={this.state.account}
-                    apps={this.state.apps}
-                    docs={this.state.docs}
-                    assignApp={this.assignApp}
-                    renewApp={this.renewApp}
-                    grantApp={this.grantApp}
-                  />
-                </Content>
-              </Layout>
-            </Layout>
-          </div>
-        );
-      } else {
-        if (this.state.currentUser.role === "DGCA") {
-          return (
-            <div>
-              {/* <Navbar account={this.state.currentUser} /> */}
-              <Layout style={{ minHeight: "100vh" }}>
-                <Sider
-                  collapsible
-                  collapsed={this.state.collapsed}
-                  onCollapse={this.onCollapse}
-                >
-                  <div className="logo" />
-                  <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-                    <Menu.Item key="1">
-                      <span>
-                        {this.state.currentUser.fullname}(
-                        {this.state.currentUser.role})
-                      </span>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                      <AppstoreOutlined />
-                      <span>Home Page</span>
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                      <Link to="/project">
-                        <FolderOpenOutlined />
-                        <span>Projects</span>
-                      </Link>
-                    </Menu.Item>
-                    <Menu.Item key="4">
-                    <Link to="/useradmin">
-                    <UserSwitchOutlined />
-                    <span>Manage Users</span>
-                  </Link>
-                    </Menu.Item>
-                    <Menu.Item key="5">
-                      <Link to="/auth">
-                        <LogoutOutlined />
-                        <span>Logout</span>
-                      </Link>
-                    </Menu.Item>
-                  </Menu>
-                </Sider>
-                <Layout>
-                  <Header style={{ background: "#000" }}>
-                    <input
-                      type="text"
-                      placeholder="Search Document or Project"
-                      prefix={<SearchOutlined style={{ color: "red" }} />}
-                      style={{
-                        width: "100%",
-                        height: "80%",
-                        padding: "9px",
-                        borderRadius: "3px",
-                      }}
-                    />
-                  </Header>
-                  <Content style={{ margin: "0 16px" }}>
-                    <DGCA
-                      account={this.state.account}
-                      apps={this.state.apps}
-                      docs={this.state.docs}
-                      issueApp={this.issueApp}
-                      grantApp={this.grantApp}
-                    />
-                  </Content>
-                </Layout>
-              </Layout>
-            </div>
-          );
-        } else {
-          if (this.state.currentUser.role === "AI") {
+					} else if(this.state.currentUser.role === "AD") {
             console.log("Member Address", this.state.currentUser.role);
             return (
               <div>
-                {/* <Navbar account={this.state.currentUser} /> */}
                 <Layout style={{ minHeight: "100vh" }}>
-                  <Sider
-                    collapsible
-                    collapsed={this.state.collapsed}
-                    onCollapse={this.onCollapse}
-                  >
-                    <div className="logo" />
-                    <Menu
-                      theme="dark"
-                      defaultSelectedKeys={["1"]}
-                      mode="inline"
-                    >
-                      <Menu.Item key="1">
-                        <span>
-                          {this.state.currentUser.fullname}(
-                          {this.state.currentUser.role})
-                        </span>
-                      </Menu.Item>
-                      <Menu.Item key="2">
-                        <AppstoreOutlined />
-                        <span>Home Page</span>
-                      </Menu.Item>
-                      
-                      
-                      <Menu.Item key="3">
-                        <Link to="/auth">
-                          <LogoutOutlined />
-                          <span>Logout</span>
-                        </Link>
-                      </Menu.Item>
-                    </Menu>
-                  </Sider>
-                  <Layout>
-                    <Header style={{ background: "#000" }}>
-                      <input
-                        type="text"
-                        placeholder="Search Document or Project"
-                        prefix={<SearchOutlined style={{ color: "red" }} />}
-                        style={{
-                          width: "100%",
-                          height: "80%",
-                          padding: "9px",
-                          borderRadius: "3px",
-                        }}
-                      />
-                    </Header>
-                    <Content style={{ margin: "0 16px" }}>
-                      <AI
-                        account={this.state.account}
-                        apps={this.state.apps}
-                        docs={this.state.docs}
-                        approveApp={this.approveApp}
-                        rejectApp={this.rejectApp}
-                      />
-                    </Content>
-                  </Layout>
-                </Layout>
-              </div>
-            );
-          } else if(this.state.currentUser.role === "AD") {
-            // console.log("Member Address", this.state.currentUser.role);
-            return (
-              <div>
-                {/* <Navbar account={this.state.currentUser} /> */}
-                <Layout style={{ minHeight: "100vh" }}>
+
                   <Sider
                     collapsible
                     collapsed={this.state.collapsed}
@@ -867,6 +640,9 @@ class Dashboard extends React.Component {
                         createApp={this.createApp}
                         approveApp={this.approveApp}
                         rejectApp={this.rejectApp}
+                        recreateApp ={this.recreateApp}
+                        // currentUser={this.state.currentUser}
+
                       />
                     </Content>
                   </Layout>
