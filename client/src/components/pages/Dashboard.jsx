@@ -341,13 +341,8 @@ class Dashboard extends React.Component {
 									</Menu.Item>
 									<span>Home Page</span>
 								</Menu.Item>
+								
 								<Menu.Item key="3">
-									<Link to="/aerodromeLicense">
-										<FolderOpenOutlined />
-										<span>Generate Certificate</span>
-									</Link>
-								</Menu.Item>
-								<Menu.Item key="5">
 									<Link to="/auth">
 										<LogoutOutlined />
 										<span>Logout</span>
@@ -408,13 +403,8 @@ class Dashboard extends React.Component {
 											<span>Projects</span>
 										</Link>
 									</Menu.Item>
+									
 									<Menu.Item key="4">
-										<Link to="/">
-											<UserSwitchOutlined />
-											<span>Manage Users</span>
-										</Link>
-									</Menu.Item>
-									<Menu.Item key="5">
 										<Link to="/auth">
 											<LogoutOutlined />
 											<span>Logout</span>
@@ -470,13 +460,13 @@ class Dashboard extends React.Component {
 											<span>Home Page</span>
 										</Menu.Item>
 										<Menu.Item key="3">
-											<Link to="/">
+											<Link to="/project">
 												<FolderOpenOutlined />
 												<span>Projects</span>
 											</Link>
 										</Menu.Item>
 										<Menu.Item key="4">
-											<Link to="/">
+											<Link to="/useradmin">
 												<UserSwitchOutlined />
 												<span>Manage Users</span>
 											</Link>
@@ -536,19 +526,8 @@ class Dashboard extends React.Component {
 												<AppstoreOutlined />
 												<span>Home Page</span>
 											</Menu.Item>
+											
 											<Menu.Item key="3">
-												<Link to="/">
-													<FolderOpenOutlined />
-													<span>Projects</span>
-												</Link>
-											</Menu.Item>
-											<Menu.Item key="4">
-												<Link to="/">
-													<UserSwitchOutlined />
-													<span>Manage Users</span>
-												</Link>
-											</Menu.Item>
-											<Menu.Item key="5">
 												<Link to="/auth">
 													<LogoutOutlined />
 													<span>Logout</span>

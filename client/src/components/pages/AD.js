@@ -151,7 +151,7 @@ class AD extends Component {
     // console.log("Airport is fetched",airport);
 
     this.setState({airport});
-    Airport=airport;
+    Airport = airport;
   }
 
   constructor(props) {
@@ -353,6 +353,30 @@ class AD extends Component {
     this.setState({category:""})
     this.setState({isAllWeather:""})
     this.setState({weatherDetails:""})
+  }
+
+  showStatus = () =>{
+    console.log("Showing Status")
+    switch(STATUS){
+      case '' : return(<Button color="primary">Create New Application</Button>)
+                break;
+      case 'reviewed': return(<Button color="info">Application Need Improvements</Button>)
+                        break;
+      case 'issued':return(<Button color="info">Issued to DGCA</Button>)
+                    break;
+      case 'created': return(<Button color="info">Application Created and Sent to HQ</Button>)
+                      break;
+      case 'assigned': return(<Button color="info">Assigned to AI</Button>)
+                      break;
+      case 'approved':return(<Button color="info">Approved By AI</Button>)
+                  break;
+      case 'granted': return(<div><Button color="success">Granted License</Button>
+                       <Button color="success">Download License</Button></div>)
+                    break;  
+      case 'rejected':return(<Button color="info">Rejected Create Again</Button>)
+                    break;        
+
+    }
   }
 
   render() {
@@ -642,27 +666,20 @@ class AD extends Component {
 							<Col md={6}>
 								<Card>
 									<Descriptions title="Application Info" style={{ padding: '10px' }} bordered>
-        <Descriptions.Item label="Airport Code">{Airport.airport_code}</Descriptions.Item>
+        <Descriptions.Item label="Airport Code">{this.state.airport.airport_code}</Descriptions.Item>
 										<Descriptions.Item label="Airport Name" span={2}>
-											{Airport.airport_name}
+											{this.state.airport.airport_name}
 										</Descriptions.Item>
-										<Descriptions.Item label="Lattitude">{Airport.lat}</Descriptions.Item>
+										<Descriptions.Item label="Lattitude">{this.state.airport.lat}</Descriptions.Item>
 										<Descriptions.Item label="Longitude" span={2}>
-											{Airport.long}
+											{this.state.airport.long}
 										</Descriptions.Item>
 										<Descriptions.Item label="Status" span={3}>
-											<Button color="secondary" onClick={this.toggleHidden}>
-												Create Application
-											</Button>
-											{/* <Button color="info">Application Created & Sent to HQ</Button>
-											<Button color="info">Issued to DGCA</Button>
-											<Button color="info">Assigned to AI</Button>
-											<Button color="info">Approved & Sent to DoAS</Button> */}
-											<Button color="success" onClick={this.toggleLicense}>
-												License Granted
-											</Button>
-											{/* <Button color="warning">Application Need Improvements</Button>
-											<Button color="danger">Application Rejected</Button> */}
+                      {
+                        this.showStatus()
+                      }
+											
+											
 										</Descriptions.Item>
 										<Descriptions.Item label="Feedback" span={3}>
 											{feedback}

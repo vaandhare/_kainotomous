@@ -291,19 +291,14 @@ class UserAdmin extends Component {
                 </Link>
               </Menu.Item>
 
+              
               <Menu.Item key="3">
-                <Link to="/">
-                  <FolderOpenOutlined />
-                  <span>Projects</span>
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="4">
                 <Link to="/useradmin">
                   <UserSwitchOutlined />
                   <span>Manage Users</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="5">
+              <Menu.Item key="4">
                 <Link to="/auth">
                   <LogoutOutlined />
                   <span>Logout</span>
