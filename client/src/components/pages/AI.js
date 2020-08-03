@@ -16,6 +16,7 @@ var application = ''
 var document = ''
 var Airport = ''
 var airportData = ''
+
 var link = "https://ipfs.infura.io/ipfs/"
 
 class AI extends Component {
@@ -102,6 +103,7 @@ class AI extends Component {
                 console.log(document);
             }
         })
+
         this.toggle();
     }
 
