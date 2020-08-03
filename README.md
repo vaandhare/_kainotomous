@@ -19,7 +19,6 @@
 | React JS |  JavaScript library for building Dynamic user interfaces (Frontend) |
 | IPFS |  InterPlanetary File System for storing uploaded documents in a distributed file system |
 |Mongo DB| NoSQL database for Storing User Management System|
-|Mongo DB| NoSQL database for Storing User Management System|
 |Ganache| ethereum Ganache tool - Provides Ethers & gas for local deployment of blockchain for development and testing |
 |Metamask| An chrome extension for accessing ethereum enabled applications, or "Dapps" in your browser  |
 # Aerodrome Licensing Application & Approval 
