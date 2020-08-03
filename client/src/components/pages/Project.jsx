@@ -1,29 +1,39 @@
 import {
-    AppstoreOutlined,
-    FolderOpenOutlined, InboxOutlined, LogoutOutlined,
-    PlusOutlined,
-    UserSwitchOutlined
+  AppstoreOutlined,
+  FolderOpenOutlined, InboxOutlined, LogoutOutlined,
+  PlusOutlined,
+  UserSwitchOutlined,
+  DeleteOutlined,
+  EditOutlined
 } from "@ant-design/icons";
 import {
-    Button,
-    Drawer,
-    Form,
-    Input,
-    Layout,
-    Menu,
+  Button,
 
 
 
 
 
 
-    message, Row,
-    Select, Upload
+  Descriptions, Drawer,
+  Form,
+  Input,
+  Layout,
+  Menu,
+
+
+
+
+
+
+  message, Row,
+  Select, Upload,
+  Skeleton, Switch, Card, Avatar
 } from "antd";
 import axios from "axios";
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import { Card } from "reactstrap";
+// import { Card } from "reactstrap";
+const { Meta } = Card;
 const { TextArea } = Input;
 
 const { Dragger } = Upload;
@@ -43,6 +53,7 @@ class Project extends Component {
   async componentWillMount() {
     await this.loadCurrentUser();
     await this.loadAllADUsers();
+    await this.loadAllProjects();
   }
 
   async loadAllADUsers() {
@@ -55,15 +66,23 @@ class Project extends Component {
             users.push(user)
         }
     })
-    console.log("All AD:", users);
+    
     this.setState({ users: users });
+  }
+
+  async loadAllProjects(){
+    let res = await axios.get("http://localhost:5000/api/projects")
+    let projects = res.data
+    this.setState({projects})
+    this.setState({loading:false})
+    console.log("Projects",this.state.projects)
   }
 
   async loadCurrentUser() {
     let currentUser = localStorage.getItem("currentAccount");
     let res = await axios.get(`http://localhost:5000/api/Users/${currentUser}`);
     this.setState({ currentUser: res.data });
-    console.log("Current User", this.state.currentUser);
+    
   }
 
   constructor(props) {
@@ -77,8 +96,11 @@ class Project extends Component {
       pname:"",
       pdesc:"",
       author:"",
-      files:""
+      files:"",
+      projects:"",
+      loading: true,
     };
+    this.buildshowProject = this.buildshowProject.bind(this)
   }
 
   buildADSelector() {
@@ -95,15 +117,105 @@ class Project extends Component {
     return arr;
   }
 
-  handleSubmit = ()=>{
-      console.log("Name:",this.state.pname);
-      console.log("Description",this.state.pdesc);
-      console.log("Author",this.state.author);
-      console.log("Files");
-      fileList.map((file,key)=>{
-          console.log("File",key,file.name)
-      })
+  buildshowProject(){
+    var arr = [];
+    this.state.projects.map((project,key)=>{
+      arr.push(
+        <Row gutter={16}>
+        <Card
+              style={{marginTop: 16 }}
+              actions={[                    
+              <DeleteOutlined key="delete" onClick={(e)=>{console.log(project)}}/>,
+              <EditOutlined key="edit" onClick={(e)=>{console.log(project)}}/>,
+              ]}
+            >
+            <Skeleton loading={this.state.loading} avatar active>
+            <Descriptions title={project.pname} 
+            layout="horizontal"
+            bordered
+            >                    
+              <Descriptions.Item label="Project Description" span={3}>{project.pdesc}</Descriptions.Item>
+              <Descriptions.Item label="Author" span={3}>{project.author}</Descriptions.Item>
+              <Descriptions.Item label="Airport Code"span={1}>
+                {project.airportCode}
+              </Descriptions.Item>
+              <Descriptions.Item label="Airport Name" span={2}>Name of the Airport</Descriptions.Item>
+                
+              <Descriptions.Item label="Attachments" span={3}>
+                {project.attachment}
+              </Descriptions.Item>                   
+            </Descriptions>
+          </Skeleton>
+        </Card>
+        </Row>
+      )
+    })
+    return arr;
   }
+
+  captureFile = (event) => {
+    event.preventDefault();
+    const file = event.target.files[0];
+    console.log("console.log",file)
+    const reader = new window.FileReader(); // converts the file to a buffer
+    reader.readAsArrayBuffer(file);
+    reader.onloadend = () => {
+      this.setState({ buffer: Buffer(reader.result) }, () => {
+        console.log(this.state.buffer);
+      });
+    };
+  };
+
+  findAirportCode = (address)=>{
+    let airportcode = ""
+    this.state.users.map((user)=>{
+      if(user.address == address){
+        airportcode = user.airportCode
+      }
+    })
+    return airportcode
+  }
+
+  handleSubmit = ()=>{
+      const {pname,pdesc,author} = this.state
+      let airportCode = this.findAirportCode(author);
+      let files = []
+      let size = fileList.length;
+
+      fileList.map(async(file,key)=>{
+          const originfile = file.originFileObj;
+          const reader = new window.FileReader(); // converts the file to a buffer
+          reader.readAsArrayBuffer(originfile);
+          reader.onloadend = async () => {
+            let buffer = Buffer(reader.result);
+            // Send to Ipfs
+            await ipfs.add(buffer, async (error, result) => {
+              console.log("Ipfs result", result);
+              let filehash = result[0].hash;
+              files.push({filename:file.name,fileaddr:filehash})
+              if(key == (size - 1)){
+                console.log(key,size);
+                console.log(files)
+                // Upload Here
+                let res = await axios.post("http://localhost:5000/api/projects",{
+                  pname:pname,
+                  pdesc: pdesc,
+                  author:author,
+                  airport_code: airportCode,
+                  attachment:files
+                }).then((res)=>console.log(res))               
+              }
+            })
+            
+          };
+
+          
+      })
+      
+  
+  
+  }
+
 
   
 
@@ -126,7 +238,8 @@ class Project extends Component {
   };
 
   onChange = ({ target: { value } }) => {
-    this.setState({ value });
+    console.log("Value",value)
+    this.setState({ pdesc:value });
   };
 
   render() {
@@ -214,6 +327,12 @@ class Project extends Component {
                     <PlusOutlined />
                     Add New Project
                   </Button>
+
+                  <Row gutter={18} style={{margin:"10px",padding:"10px"}}>
+                  {this.state.loading === false ? this.buildshowProject() : "loading Projects"}
+                  </Row>
+
+                  
                   <Drawer
                     title={
                       this.state.editmode ? "Edit Project Details" : "Add New Project"
