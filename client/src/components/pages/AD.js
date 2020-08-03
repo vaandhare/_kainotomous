@@ -1,9 +1,22 @@
-import Web3 from 'web3';
-import axios from 'axios';
-import { Row, Col, Card, CardBody, Button, CardHeader, FormGroup, Label, CardFooter } from 'reactstrap';
-import { PlusOutlined } from '@ant-design/icons';
-import React, { Component, Fragment } from 'react';
-import { Layout, Descriptions, Input, Radio, Checkbox } from 'antd';
+
+import Web3 from 'web3'
+import { Layout } from 'antd';
+import axios from "axios";
+import {
+    Row,
+    Col,
+    Card,
+    CardBody,
+    Button,
+    CardHeader,
+    FormGroup,
+    Label,
+    CardFooter
+} from 'reactstrap';
+import React, { Component, Fragment } from 'react'
+import { Input, Radio , Checkbox } from 'antd';
+// import { replaceOne } from '../../../../models/User';
+
 
 const { TextArea } = Input;
 
@@ -15,6 +28,7 @@ const LicenseType = [ 'Public Use', 'Private Use' ];
 const boolValues = [ 'Yes', 'No' ];
 
 const ipfsClient = require('ipfs-http-client');
+
 const ipfs = ipfsClient({
 	host: 'ipfs.infura.io',
 	port: process.env.PORT || '5001',
@@ -43,6 +57,7 @@ class AD extends Component {
 		});
 	};
 
+
 	async componentWillMount() {
 		await this.loadWeb3();
 		await this.loadBlockchainData();
@@ -63,6 +78,7 @@ class AD extends Component {
 		}
 	}
 
+
 	async loadBlockchainData() {
 		const web3 = window.web3;
 		// Load account
@@ -72,28 +88,33 @@ class AD extends Component {
 		this.setState({ account: accounts[0] });
 	}
 
+  async fetchStatus() {
+    console.log("Already Fetched", this.state.currentUser);
+    const res = await axios.get(
+      `http://localhost:5000/api/status/${this.state.currentUser.airportCode}`
+    );
+    let status = res.data[0];
+    if (status == undefined) {
+      console.log("Undefined");
+      this.setState({ isAppExist: false });
+    } else {
+      this.setState({ isAppExist: false });
+      console.log("Apps", this.props.apps);
+      console.log("Status", status);
+      this.setState({ appID: status.appId });
+      this.setState({ state: status.status });
+    }
+    //
+  }
+
+
 	async fetchUserData() {
 		console.log('Address', this.props.account);
 		const response = await axios.get(`http://localhost:5000/api/Users/${this.props.account}`);
 		this.setState({ currentUser: response.data });
 	}
 
-	async fetchStatus() {
-		console.log('Already Fetched', this.state.currentUser);
-		const res = await axios.get(`http://localhost:5000/api/status/${this.state.currentUser.airportCode}`);
-		let status = res.data[0];
-		if (status == undefined) {
-			console.log('Undefined');
-			this.setState({ isAppExist: false });
-		} else {
-			this.setState({ isAppExist: true });
-			console.log('Apps', this.props.apps);
-			console.log('Status', status);
-			this.setState({ appID: status.appId });
-			this.setState({ state: status.status });
-		}
-		//
-	}
+
 
 	async get_Airport() {
 		const res = await axios.get(`http://localhost:5000/api/airports/${this.state.currentUser.airportCode}`);
@@ -103,18 +124,32 @@ class AD extends Component {
 		this.setState({ airport });
 	}
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			collapsed: false,
-			airport: '',
-			airportCode: '',
-			userAppId: '',
-			approved_count: 0,
-			pending_count: 0,
-			buffer: '',
-			isAppExist: false
-		};
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapsed: false,
+      airport:'',
+      airportCode: "",
+      userAppId: "",
+      approved_count: 0,
+      pending_count: 0,
+      buffer: "",
+      isAppExist: false,
+      fullname:"",
+      email:"",
+      tel:0,
+      nation:"",
+      aero_name:"",
+      aero_owner:"",
+      loc:"",
+      details:"",
+      isEnclosed:false,
+      enclosing_details:"",
+      category:"",
+      isAllWeather:"",
+      weatherDetails:"",
+
+    };
 
 		this.get_timestamp = this.get_timestamp.bind(this);
 		this.captureFile = this.captureFile.bind(this);
@@ -148,6 +183,7 @@ class AD extends Component {
 		return timestamp;
 	}
 
+
 	captureFile = (event) => {
 		event.preventDefault();
 		const file = event.target.files[0];
@@ -159,6 +195,82 @@ class AD extends Component {
 			});
 		};
 	};
+
+  async handleSubmit(event) {
+    event.preventDefault();
+    const {fullname,email,tel,nation,aero_name,aero_owner,loc,
+        details,isEnclosed,enclosing_details,category,isAllWeather,weatherDetails} = this.state;
+        console.log(fullname,email,tel,nation,aero_name,aero_owner,loc,
+          details,isEnclosed,enclosing_details,category,isAllWeather,weatherDetails);
+        const applength = this.props.apps.length;  
+        const response = await axios.post("http://localhost:5000/api/ApplicationForm/", {
+        id:applength,
+        appId:applength,
+        fullname: fullname,
+        email:email,
+        telephone:tel,
+        nationality:nation,
+        aerodrome_name:aero_name,
+        aerodrome_owner:aero_owner,
+        location:loc,
+        is_enclosed:isEnclosed,
+        enclosing_details:enclosing_details,
+        category:category,
+        isAllWeather:isAllWeather,
+        weatherDetails:weatherDetails
+    }).then((response) =>{
+      if (response.data.status === 'success'){
+        alert("Message Sent."); 
+        this.resetForm()
+      }else if(response.data.status === 'fail'){
+        alert("Message failed to send.")
+      }
+    } );
+    // axios({
+    //   method: "POST", 
+    //   url:"http://localhost:3002/send", 
+    //   data:  this.state
+    // }).then((response)=>{
+    //   if (response.data.status === 'success'){
+    //     alert("Message Sent."); 
+    //     this.resetForm()
+    //   }else if(response.data.status === 'fail'){
+    //     alert("Message failed to send.")
+    //   }
+  //   / })
+  // }
+    
+    // const airresponse = await axios.get(`http://localhost:5000/api/ApplicationForm/${applength}`)
+    // const application = airresponse.data[0];
+    // console.log(application);
+    // const putres = await axios.put(`http://localhost:5000/api/airports/${airport._id}`, {
+    //   airport_code: airport.airport_code,
+    //   airport_name: airport.airport_name,
+    //   city_name: airport.city_name,
+    //   lat: airport.lat,
+    //   long: airport.long,
+    //   operatorAddr: address,
+    //   status: airport.status,
+    // });
+    // console.log(response.data);
+    this.cleanInputs()
+  }
+
+  cleanInputs(){
+    this.setState({id:""})
+    this.setState({appID:""})
+    this.setState({fullname:""})
+    this.setState({email:""})
+    this.setState({telephone:""})
+    this.setState({nationality:""})
+    this.setState({aerodrome_name:""})
+    this.setState({location:""})
+    this.setState({is_enclosed:""})
+    this.setState({enclosing_details:""})
+    this.setState({category:""})
+    this.setState({isAllWeather:""})
+    this.setState({weatherDetails:""})
+  }
 
 	submitFile = (event) => {
 		event.preventDefault();
@@ -200,6 +312,7 @@ class AD extends Component {
 		const doc3 = this.state.doc3;
 		const doc4 = this.state.doc4;
 		console.log(airportCode, timestamp, doc1, doc2, doc3, doc4);
+
 
 		this.props.createApp(airportCode, doc1, doc2, doc3, doc4, timestamp);
 		let status = {
@@ -621,6 +734,7 @@ class AD extends Component {
 													<div className="row">
 														<div className="col-6">Aerodrome Manual</div>
 														{/* <div className="col-6">
+  
                               <a
                                 href={link.concat(doc.aerodromeManual)}
                                 className="btn btn-secondary text-center"
@@ -697,3 +811,4 @@ class AD extends Component {
 }
 
 export default AD;
+
