@@ -3,16 +3,17 @@ const ApplicationForm = require('../../models/ApplicationForm')
 
 const router = Router()
 
-// router.get('/', async (req, res) => {
-//     try {
-//         const app_data = await ApplicationForm.find()
-//         if (!app_data) throw new Error('No Application Data Found')
+router.get('/', async (req, res) => {
+    try {
+        const app_data = await ApplicationForm.find()
+        if (!app_data) throw new Error('No Application Data Found')
         
-//         res.status(200).json(app_data)
-//     } catch (error) {
-//         res.status(500).json({ message: error.message })
-//     }
-// })
+        res.status(200).json(app_data)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+})
+
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params

@@ -21,11 +21,13 @@ const ipfs = ipfsClient({
   protocol: "https",
 });
 var count = 0;
+
 var airportData = '';
 var Airport="";
 var application="";
 var document="";
 var link = "https://ipfs.infura.io/ipfs/"
+
 
 class MoCA extends Component {
   async componentWillMount() {
@@ -193,6 +195,7 @@ class MoCA extends Component {
     const docNumber = event.target.id;
     console.log(docNumber);
     const file = event.target.files[0];
+    console.log("console.log",file)
     const reader = new window.FileReader(); // converts the file to a buffer
     reader.readAsArrayBuffer(file);
     if(docNumber === "doc1"){
@@ -243,9 +246,25 @@ get_airportData(airportCode){
     // console.log(airport.airport_name);
     if(airport.airport_code === airportCode){
       airportData = airport;
+
       // console.log(airport);
+
     }
   })
+}
+
+displayModal = async (app, airport) => {
+  Airport = airport;
+  console.log(airport);
+  application = app;
+  console.log(application);
+  this.props.docs.map((doc, key) => {
+    if (doc.id === application.id) {
+      document = doc;
+      console.log(document);
+    }
+  })
+  this.toggle();
 }
  
   async submitToBlockchain(event) {
@@ -339,6 +358,7 @@ get_airportData(airportCode){
                       {this.props.apps.map((app, key) => {
                         if(app.state === "created"){
                         // console.log(app.airportCode)
+
                         this.get_airportData(app.airportCode);
                                         let doc = this.props.docs[key];
                                         return (

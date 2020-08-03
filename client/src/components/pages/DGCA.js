@@ -21,8 +21,10 @@ const ipfs = ipfsClient({
 });
 var statement = "Upload Your File";
 var count = 0;
-var application = "";
-var document = "";
+var application = ''
+var document = ''
+var Airport = ''
+var airportData = ''
 var link = "https://ipfs.infura.io/ipfs/";
 var airportData=""
 var Airport=""
