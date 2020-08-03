@@ -23,6 +23,9 @@
 |Ganache| Ethereum Ganache tool - Provides Ethers & gas for local deployment of blockchain for development and testing |
 |Metamask| An chrome extension for accessing Ethereum enabled applications, or "Dapps" in your browser  |
 
+![licensing](https://user-images.githubusercontent.com/50493250/89174577-b61d9900-d5a3-11ea-83a7-94e8fd320846.JPG)
+
+
 Entities:
 1) Deputy /Member - Upload files 
 2) Chief / Hod - Approve Files 
