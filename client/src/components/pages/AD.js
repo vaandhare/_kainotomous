@@ -1,16 +1,5 @@
-
-import React, { Component, Fragment } from 'react';
 import Web3 from 'web3'
-import { Layout, Menu, Breadcrumb } from 'antd';
-import Icon from '@ant-design/icons';
-import {
-    AppstoreOutlined,
-    UserSwitchOutlined,
-    FolderOpenOutlined,
-    SearchOutlined,
-    LogoutOutlined
-} from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Layout } from 'antd';
 import axios from "axios";
 import {
     Row,
@@ -19,34 +8,45 @@ import {
     CardBody,
     Button,
     CardHeader,
-    CardFooter,
-    CardTitle,
-    CardText,
-    Form,
     FormGroup,
     Label,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter
+    CardFooter
 } from 'reactstrap';
-import Title from 'antd/lib/skeleton/Title';
+import React, { Component, Fragment } from 'react'
+import { Input, Radio , Checkbox } from 'antd';
+// import { replaceOne } from '../../../../models/User';
+
+const { TextArea } = Input;
+
+function onChange(checkedValues) {
+  console.log('checked = ', checkedValues);
+}
+
+const LicenseType = ['Public Use', 'Private Use'];
+const boolValues = ['Yes', 'No']
+
 const ipfsClient = require("ipfs-http-client");
 const ipfs = ipfsClient({
     host: "ipfs.infura.io",
     port: process.env.PORT || "5001",
     protocol: "https",
 });
-var statement = "Upload Your File";
 var count = 0;
-// var airportCode ='';
-var userAppId='';
-
 
 const { Header, Content, Footer, Sider } = Layout;
 
 class AD extends Component {
+
+  state = {
+    value: 1,
+  };
+
+  onChange = e => {
+    this.setState({
+      value: e.target.value,
+    });
+  };
+
   async componentWillMount() {
     await this.loadWeb3();
     await this.loadBlockchainData();
@@ -95,7 +95,7 @@ class AD extends Component {
       console.log("Undefined");
       this.setState({ isAppExist: false });
     } else {
-      this.setState({ isAppExist: true });
+      this.setState({ isAppExist: false });
       console.log("Apps", this.props.apps);
       console.log("Status", status);
       this.setState({ appID: status.appId });
@@ -125,11 +125,26 @@ class AD extends Component {
       pending_count: 0,
       buffer: "",
       isAppExist: false,
+      fullname:"",
+      email:"",
+      tel:0,
+      nation:"",
+      aero_name:"",
+      aero_owner:"",
+      loc:"",
+      details:"",
+      isEnclosed:false,
+      enclosing_details:"",
+      category:"",
+      isAllWeather:"",
+      weatherDetails:"",
+
     };
 
     this.get_timestamp = this.get_timestamp.bind(this);
     this.captureFile = this.captureFile.bind(this);
     this.submitFile = this.submitFile.bind(this);
+    this.handleSubmit= this.handleSubmit.bind(this);
     // this.buildAirportSelect = this.buildAirportSelect.bind(this);
     // this.showAirports = this.showAirports.bind(this);
 
@@ -212,6 +227,82 @@ class AD extends Component {
     });
   };
 
+  async handleSubmit(event) {
+    event.preventDefault();
+    const {fullname,email,tel,nation,aero_name,aero_owner,loc,
+        details,isEnclosed,enclosing_details,category,isAllWeather,weatherDetails} = this.state;
+        console.log(fullname,email,tel,nation,aero_name,aero_owner,loc,
+          details,isEnclosed,enclosing_details,category,isAllWeather,weatherDetails);
+        const applength = this.props.apps.length;  
+        const response = await axios.post("http://localhost:5000/api/ApplicationForm/", {
+        id:applength,
+        appId:applength,
+        fullname: fullname,
+        email:email,
+        telephone:tel,
+        nationality:nation,
+        aerodrome_name:aero_name,
+        aerodrome_owner:aero_owner,
+        location:loc,
+        is_enclosed:isEnclosed,
+        enclosing_details:enclosing_details,
+        category:category,
+        isAllWeather:isAllWeather,
+        weatherDetails:weatherDetails
+    }).then((response) =>{
+      if (response.data.status === 'success'){
+        alert("Message Sent."); 
+        this.resetForm()
+      }else if(response.data.status === 'fail'){
+        alert("Message failed to send.")
+      }
+    } );
+    // axios({
+    //   method: "POST", 
+    //   url:"http://localhost:3002/send", 
+    //   data:  this.state
+    // }).then((response)=>{
+    //   if (response.data.status === 'success'){
+    //     alert("Message Sent."); 
+    //     this.resetForm()
+    //   }else if(response.data.status === 'fail'){
+    //     alert("Message failed to send.")
+    //   }
+  //   / })
+  // }
+    
+    // const airresponse = await axios.get(`http://localhost:5000/api/ApplicationForm/${applength}`)
+    // const application = airresponse.data[0];
+    // console.log(application);
+    // const putres = await axios.put(`http://localhost:5000/api/airports/${airport._id}`, {
+    //   airport_code: airport.airport_code,
+    //   airport_name: airport.airport_name,
+    //   city_name: airport.city_name,
+    //   lat: airport.lat,
+    //   long: airport.long,
+    //   operatorAddr: address,
+    //   status: airport.status,
+    // });
+    // console.log(response.data);
+    this.cleanInputs()
+  }
+
+  cleanInputs(){
+    this.setState({id:""})
+    this.setState({appID:""})
+    this.setState({fullname:""})
+    this.setState({email:""})
+    this.setState({telephone:""})
+    this.setState({nationality:""})
+    this.setState({aerodrome_name:""})
+    this.setState({location:""})
+    this.setState({is_enclosed:""})
+    this.setState({enclosing_details:""})
+    this.setState({category:""})
+    this.setState({isAllWeather:""})
+    this.setState({weatherDetails:""})
+  }
+
   async submitToBlockchain(event) {
     event.preventDefault();
     const airportCode = this.state.currentUser.airportCode;
@@ -254,6 +345,185 @@ class AD extends Component {
     return (
       <div>
         {!this.state.isAppExist ? (
+          <div>
+          <Card style={{margin: "10px", padding: "10px"}}>
+          <h3 style={{ textAlign: "center", color: "gray", margin: "10px" }}>Application for an Aerodrome Application</h3>
+          <Row>
+            <Col md={6}>
+              <Card style={{margin: "10px", padding: "10px"}}>
+                <CardHeader>
+                  <h5 style={{ color: "gray", display:"inline"}}>Details of License</h5>
+                  <h6 style={{ color: "gray", display:"inline" }}>(As required to be shown on the License)</h6>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6}>
+                      <Input
+                        type="text"
+                        placeholder="Name of the Applicant"
+                        value={this.state.fullname}
+                        onChange={(e)=>{this.setState({fullname:e.target.value})}}
+                      />
+                    </Col>
+                    <Col md={6}>
+                      <Input
+                        type="email"
+                        placeholder="Email of the Applicant"
+                        value={this.state.email}
+                        onChange={(e)=>{this.setState({email:e.target.value})}}
+                      />
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop: "20px"}}>
+                    <Col md={6}>
+                      <Input
+                        type="text"
+                        placeholder="Telephone"
+                        value={this.state.tel}
+                        onChange={(e)=>{this.setState({tel:e.target.value})}}
+                      />
+                    </Col>
+                    <Col md={6}>
+                      <Input
+                        text="email"
+                        placeholder="Nationality of the Applicant"
+                        value={this.state.nation}
+                        onChange={(e)=>{this.setState({nation:e.target.value})}}
+                      />
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col md={6}>
+              <Card style={{margin: "10px", padding: "10px"}}>
+                <CardHeader>
+                  <h5 style={{color: "gray", display:"inline" }}>Aerodrome Manual</h5>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6}>
+                      <Label>Is the Aerodrome Manual enclosed with this form.</Label>
+                    </Col>
+                    <Col md={6}>
+                    {/* value={this.state.fullname}
+                        onChange={(e)=>{this.setState({fullname:e.target.value})}} */}
+                      <Radio.Group onChange={(e)=>{this.setState({isEnclosed:e.target.value})}} value={this.state.isEnclosed} 
+                      style={{marginLeft: "50px"}}>
+                        <Radio value={1}>Yes</Radio>
+                        <Radio value={2}>No</Radio>
+                      </Radio.Group>                      
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>If No please specify when this is likely to be submitted to DGCA</p>
+                    </Col>
+                    <Col md={6}>
+                      <TextArea rows={2} type="text"  value={this.state.enclosing_details}
+                        onChange={(e)=>{this.setState({enclosing_details:e.target.value})}}/>
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
+              <Card style={{margin: "10px", padding: "10px"}}>
+                <CardHeader>
+                  <h5 style={{ color: "gray", display:"inline"}}>Details of Aerodrome</h5>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6}>
+                      <p>Place name by which the Aerodrome is to be known in all future reference</p>
+                    </Col>
+                    <Col md={6}>
+                      <Input type="text" style={{padding: "5px"}} value={this.state.loc}
+                        onChange={(e)=>{this.setState({loc:e.target.value})}}/>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>Name & Address of the Owner of Aerodrome</p>
+                    </Col>
+                    <Col md={6}>
+                      <Input type="text" style={{padding: "5px"}} value={this.state.aero_owner}
+                        onChange={(e)=>{this.setState({aero_owner:e.target.value})}}/>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>Situation of the Aerodrome Site with reference to the nearest Airport, Railway Station & Town/Village</p>
+                    </Col>
+                    <Col md={6}>
+                      <TextArea row={4} type="text" style={{padding: "5px"}} value={this.state.details}
+                        onChange={(e)=>{this.setState({details:e.target.value})}} />
+                    </Col>
+                  </Row>
+
+                </CardBody>
+              </Card>
+            </Col>
+            <Col md={6}>
+              <Card style={{margin: "10px", padding: "10px"}}>
+                <CardHeader>
+                  <h5 style={{color: "gray", display:"inline" }}>Aerodrome Activities</h5>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col md={6}>
+                      <Label>State category of licence required as defined in Aircraft Rules 1937?</Label>
+                    </Col>
+                    <Col md={6}>
+                      {/* <Checkbox.Group options={LicenseType} value={this.state.category} 
+                         style={{marginLeft: "50px"}}/> */}
+                         {/* <Checkbox onChange={(e)=>{this.setState({category:e.value.checkedValues})}}>
+                           <option value="Public Use">Public Use</option>
+                           <option value="Private Use">Private Use</option>
+                         </Checkbox> */}
+                         <Checkbox value="Public Use" style={{marginLeft: "50px"}} 
+                         onChange={(event)=>{this.setState({category:event.target.value})}}>Public Use</Checkbox>
+                         <Checkbox value="Private Use" style={{marginLeft: "50px"}} 
+                         onChange={(event)=>{this.setState({category:event.target.value})}}>Private Use</Checkbox>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>Is a licence for NIGHT USE/ ALL WEATHER required?</p>
+                    </Col>
+                    <Col md={6}>
+                    <Checkbox value="1" style={{marginLeft: "50px"}} 
+                         onChange={(event)=>{this.setState({isAllWeather:event.target.value})}}>Yes</Checkbox>
+                         <Checkbox value="0" style={{marginLeft: "50px"}} 
+                         onChange={(event)=>{this.setState({category:event.target.value})}}>No</Checkbox>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <p>If the answer of above is YES, Please provide details of proposed lighting along with the lighting plan.</p>
+                    </Col>
+                    <Col md={6}>
+                      <TextArea row={4} type="text" style={{padding: "5px"}} value={this.state.weatherDetails}
+                        onChange={(e)=>{this.setState({weatherDetails:e.target.value})}}/>
+                    </Col>
+                  </Row>
+                  <FormGroup>
+                  <Button
+                    type="submit"
+                    style={{ marginTop: "50px" }}
+                    color="success"
+                    className="btn btn-outline-light btn-block"
+                    onClick={this.handleSubmit}
+                  >
+                    Submit Application
+                  </Button>
+                </FormGroup>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
           <Col md={12}>
             <Card style={{ padding: "20px" }}>
               <form onSubmit={this.submitToBlockchain}>
@@ -268,7 +538,7 @@ class AD extends Component {
                 </Label>
                 <FormGroup>
                   <Row>
-                    <Col md={6}>
+                    <Col md={3}>
                       <Card>
                         <CardHeader>Aerodrome Manual</CardHeader>
                         <CardBody>
@@ -298,7 +568,7 @@ class AD extends Component {
                         </CardBody>
                       </Card>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
                       <Card>
                         <CardHeader>SMS Manual</CardHeader>
                         <CardBody>
@@ -328,12 +598,7 @@ class AD extends Component {
                         </CardBody>
                       </Card>
                     </Col>
-                  </Row>
-                </FormGroup>
-
-                <FormGroup>
-                  <Row>
-                    <Col md={6}>
+                    <Col md={3}>
                       <Card>
                         <CardHeader>CAR Complaince Document</CardHeader>
                         <CardBody>
@@ -363,7 +628,7 @@ class AD extends Component {
                         </CardBody>
                       </Card>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
                       <Card>
                         <CardHeader>Exeptions Document </CardHeader>
                         <CardBody>
@@ -395,17 +660,21 @@ class AD extends Component {
                     </Col>
                   </Row>
                 </FormGroup>
-                <Button
-                  type="submit"
-                  style={{ marginTop: "50px" }}
-                  color="success"
-                  className="btn btn-outline-light btn-block"
-                >
-                  Submit Application
-                </Button>
+                <FormGroup>
+                  <Button
+                    type="submit"
+                    style={{ marginTop: "50px" }}
+                    color="success"
+                    className="btn btn-outline-light btn-block"
+                  >
+                    Submit Application
+                  </Button>
+                </FormGroup>
               </form>
             </Card>
           </Col>
+            </Card>
+            </div>
         ) : (
           <div>
             {this.props.apps.map((app, key) => {
@@ -549,4 +818,3 @@ class AD extends Component {
 }
 
 export default AD;
-

@@ -123,6 +123,7 @@ class MoCA extends Component {
   captureFile = (event) => {
     event.preventDefault();
     const file = event.target.files[0];
+    console.log("console.log",file)
     const reader = new window.FileReader(); // converts the file to a buffer
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
