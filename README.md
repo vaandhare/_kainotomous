@@ -105,6 +105,9 @@ npm start
  register yourself first - use anyone of the address from your ganache client. 
  
  ### Hopefully , you can see the UI Now  !! Congratulations! 
+ 
+ # License 
+ [MIT License](https://github.com/vaandhare/_kainotomous/blob/master/LICENSE).
 
 
 
