@@ -2,6 +2,9 @@
 ### TEAM KAINOTOMOUS
 # Knowledge Management System Using Blockchain
 
+### INTELLECTUAL PROPERTY
+Intellectual property (IP) of the idea & project is belongs to the TEAM KAINOTOMOUS consist of  [Me](https://github.com/vaandhare), [Mohammad Suhaib Ahmed](https://github.com/msa06), [Akshada Babar](https://github.com/akshada2715), [Anuj Iyer](https://github.com/anuj-iyer), [Aditya Porwal](https://github.com/adityap02) and [Neha Kale](https://github.com/nehakale1403) as well as [Airport Authority of India](https://www.aai.aero/) and [Smart India Hackathon](https://www.sih.gov.in/).
+
 #### Problem statement :
 >“A web based application using Block chain technology is sought from Airport Licensing to retrieve important and relevant Project Related information from pool of data source i.e. SAP, E-mail, E-office, Scan documents and Database. Below features are desired in an application: 
 > - Concerned Officers can upload relevant data related to Airport Licensing from 	Airports. 
